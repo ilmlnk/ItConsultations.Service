@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ItConsultations.Business.SharedTypes;
+
+public enum ConsultationCategoryType
+{
+    Frontend = 0,
+    Backend = 1,
+    Fullstack = 2,
+    Management = 3,
+    QaManual = 4,
+    QaAutomation = 5,
+    QaAutomationJava = 6,
+    QaAutomationPython = 7,
+    QaAutomationJs = 8,
+    QaAutomationCSharp = 9,
+    Java = 10,
+    Kotlin = 11,
+    Python = 12,
+    Php = 13,
+    CSharp = 14,
+    CPlus = 15,
+    React = 16,
+    NodeJs = 17,
+    TypeScript = 18,
+    ML = 19,
+    DevOps = 20,
+    DataEngineering = 21,
+    DataAnalytics = 22,
+    ProjectManagement = 23,
+    ProductManagement = 24,
+    GameDesign = 25,
+    GenerativeAI = 26,
+    Design = 27,
+    Angular = 28,
+    Vue = 29
+}
