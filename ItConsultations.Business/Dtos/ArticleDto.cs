@@ -1,17 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ItConsultations.Business.Entities;
 
-namespace ItConsultations.Business.Entities.Article;
+namespace ItConsultations.Business.Dtos;
 
-public class Article : Entity<long>
+public class ArticleDto
 {
-    [Required]
-    [MaxLength(32)]
     public long Id { get; set; }
 
-    [MaxLength(32)]
     public string ArticleConsId { get; set; }
 
-    [MaxLength(500)]
     public string Title { get; set; }
 
     public string Text { get; set; }

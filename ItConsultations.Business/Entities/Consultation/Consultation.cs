@@ -23,7 +23,11 @@ public class Consultation : Entity<long>
     [Required]
     public decimal Price { get; set; }
 
+    public DateTime Duration { get; set; }
+
     public string ThumbnailUrl { get; set; }
 
     public Coach Coach { get; set; }
+
+    public List<Student> Students { get; set; }
 }

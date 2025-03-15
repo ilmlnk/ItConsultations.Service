@@ -1,14 +1,13 @@
 ﻿using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos;
+using ItConsultations.Business.Entities.Consultation;
 
-namespace ItConsultations.Business.Services.Consultation;
+namespace ItConsultations.Business.Services.ConsultationService;
 
 public class ConsultationService : IConsultationService
 {
-    private readonly IRepository<Entities.Consultation.Consultation, long> _repository;
-    public ConsultationService(
-        IRepository<Entities.Consultation.Consultation, long> repository
-        )
+    private readonly IRepository<Consultation, long> _repository;
+    public ConsultationService(IRepository<Consultation, long> repository)
     {
         _repository = repository;
     }
@@ -24,6 +23,11 @@ public class ConsultationService : IConsultationService
         throw new NotImplementedException();
     }
 
+    public Task<ConsultationDto> DeleteAsync(long id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<ConsultationDto> GetAsync(string id)
     {
         throw new NotImplementedException();
@@ -34,7 +38,17 @@ public class ConsultationService : IConsultationService
         throw new NotImplementedException();
     }
 
+    public Task<ConsultationDto> GetAsync(long id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<ConsultationDto> UpdateAsync(ConsultationDto dto, string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ConsultationDto> UpdateAsync(ConsultationDto dto, long id)
     {
         throw new NotImplementedException();
     }

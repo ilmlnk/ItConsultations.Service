@@ -8,5 +8,6 @@ public abstract class Entity<TID> : IEntity<TID>
     }
 
     public virtual TID Id { get; set; }
+
     public virtual DateTime CreatedAt { get; set; }
 }

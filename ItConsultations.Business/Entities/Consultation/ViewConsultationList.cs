@@ -1,9 +1,10 @@
-﻿using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.SharedTypes;
+﻿using ItConsultations.Business.SharedTypes;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ItConsultations.Business.Dtos;
+namespace ItConsultations.Business.Entities.Consultation;
 
-public class ConsultationDto
+[Table("ViewConsultationList")]
+public class ViewConsultationList
 {
     public long Id { get; set; }
 
@@ -16,8 +17,6 @@ public class ConsultationDto
     public ConsultationCategoryType[]? Categories { get; set; }
 
     public decimal Price { get; set; }
-
-    public DateTime Duration { get; set; }
 
     public string ThumbnailUrl { get; set; }
 

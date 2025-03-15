@@ -1,5 +1,5 @@
 ﻿using ItConsultations.Business.Dtos;
-using ItConsultations.Business.Services.Coach;
+using ItConsultations.Business.Services.CoachService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.Controllers;
@@ -39,7 +39,7 @@ public class CoachController : Controller
         }
     }
 
-    public async Task<ActionResult<CoachDto>> GetAllAsync()
+    /*public async Task<ActionResult<CoachDto>> GetAllAsync()
     {
         try
         {
@@ -55,5 +55,5 @@ public class CoachController : Controller
     public Task<CoachDto> UpdateAsync(CoachDto dto, string id)
     {
 
-    }
+    }*/
 }

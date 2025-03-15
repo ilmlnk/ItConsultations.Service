@@ -2,7 +2,9 @@
 
 public class CoachDto
 {
-    public string Id { get; set; }
+    public long Id { get; set; }
+
+    public string CoachConsId { get; set; }
 
     public string FirstName { get; set; }
 

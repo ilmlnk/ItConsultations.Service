@@ -1,17 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace ItConsultations.Business.Entities.Article;
 
-namespace ItConsultations.Business.Entities.Article;
-
-public class Article : Entity<long>
+public class ViewArticleList
 {
-    [Required]
-    [MaxLength(32)]
     public long Id { get; set; }
 
-    [MaxLength(32)]
     public string ArticleConsId { get; set; }
 
-    [MaxLength(500)]
     public string Title { get; set; }
 
     public string Text { get; set; }

@@ -8,7 +8,7 @@ public class Coach : Entity<long>
     public long Id { get; set; }
 
     [MaxLength(32)]
-    public string ConsId { get; set; }
+    public string CoachConsId { get; set; }
 
     [Required]
     public string FirstName { get; set; }
@@ -29,4 +29,10 @@ public class Coach : Entity<long>
     public string? LinkedInUrl { get; set; }
 
     public string? GitHubUrl { get; set; }
+
+    public List<Consultation> Consultations { get; set; }
+
+    public List<Review> Reviews { get; set; }
+
+    public decimal AverageRating { get; set; }
 }
