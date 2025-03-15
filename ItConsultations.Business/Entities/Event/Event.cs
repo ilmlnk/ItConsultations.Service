@@ -1,19 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Business.Entities.Event;
 
 public class Event : Entity<long>
 {
-    public string Id { get; set; }
+    [Required]
+    [MaxLength(32)]
+    public long Id { get; set; }
+
+    [MaxLength(32)]
+    public string ConsId { get; set; }
+
+    [Required]
     public string Title { get; set; }
+
     public string Description { get; set; }
+
+    public List<string> AssigneeEmails { get; set; }
+
+    [Required]
     public Entity<long> Assignee { get; set; }
+
+    [Required]
     public DateTime BeginDateTime { get; set; }
+
+    [Required]
     public DateTime EndDateTime { get; set; }
+
     public DateTime CreatedAt { get; set; }
+
     public DateTime UpdatedAt { get; set; }
 }
