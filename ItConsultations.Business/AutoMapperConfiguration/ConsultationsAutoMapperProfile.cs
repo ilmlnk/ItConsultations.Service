@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using ItConsultations.Business.Dtos;
+using ItConsultations.Business.Dtos.ConsultationDtos;
+using ItConsultations.Business.Dtos.StudentDtos;
 using ItConsultations.Business.Entities.Consultation;
 
 
@@ -22,5 +23,8 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.ThumbnailUrl))
             .ForMember(dest => dest.Coach, opt => opt.MapFrom(src => src.Coach));
+
+        CreateMap<Student, StudentDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
     }
 }

@@ -1,8 +1,8 @@
 ﻿using ItConsultations.Business.Entities;
 
-namespace ItConsultations.Business.Dtos;
+namespace ItConsultations.Business.Dtos.EventDtos;
 
-public class EventDto
+public class CreateEventDto
 {
     public long Id { get; set; }
 

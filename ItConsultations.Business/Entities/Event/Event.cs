@@ -6,7 +6,7 @@ public class Event : Entity<long>
 {
     [Required]
     [MaxLength(32)]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     [MaxLength(32)]
     public string EventConsId { get; set; }

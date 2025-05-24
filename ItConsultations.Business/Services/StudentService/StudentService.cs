@@ -1,10 +1,15 @@
-﻿using ItConsultations.Business.Dtos;
+﻿using ItConsultations.Business.Dtos.StudentDtos;
 
 namespace ItConsultations.Business.Services.Student;
 
 public class StudentService : IStudentService
 {
-    public Task CreateAsync(StudentDto dto)
+    public Task<StudentDto> CreateAsync(CreateStudentDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<StudentDto> CreateAsync(CreateStudentDto dto, string id)
     {
         throw new NotImplementedException();
     }
@@ -19,17 +24,12 @@ public class StudentService : IStudentService
         throw new NotImplementedException();
     }
 
-    public Task<StudentDto> GetByIdAsync(int id)
+    public Task<StudentDto> GetByIdAsync(string id)
     {
         throw new NotImplementedException();
     }
 
     public Task<StudentDto> UpdateAsync(StudentDto dto, string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<StudentDto> IStudentService.CreateAsync(StudentDto dto)
     {
         throw new NotImplementedException();
     }

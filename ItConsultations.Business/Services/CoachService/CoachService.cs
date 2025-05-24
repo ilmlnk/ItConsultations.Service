@@ -1,6 +1,8 @@
-﻿using ItConsultations.Business.DataAccess.Interfaces;
-using ItConsultations.Business.Dtos;
+﻿using ItConsultations.Business.AutoMapperConfiguration;
+using ItConsultations.Business.DataAccess.Interfaces;
+using ItConsultations.Business.Dtos.CoachDtos;
 using ItConsultations.Business.Entities.Consultation;
+using System.Data.Entity;
 
 namespace ItConsultations.Business.Services.CoachService;
 
@@ -14,45 +16,40 @@ public class CoachService : ICoachService
         _repository = repository;
     }
 
-    public async Task<CoachDto> CreateAsync(CoachDto dto)
+    public async Task<CoachDto> CreateAsync(CreateCoachDto dto)
     {
-        return null;
+        var originalDto = MapperManager.Map<CoachDto>(dto);
+        var coach = MapperManager.Map<Coach>(originalDto);
+        await _repository.CreateAsync(coach);
+        var coachDto = MapperManager.Map<CoachDto>(coach);
+        return coachDto;
     }
 
     public async Task<CoachDto> DeleteAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
+        var coachDto = MapperManager.Map<CoachDto>(coach);
         await _repository.DeleteAsync(coach);
-
-        return null;
+        return coachDto;
     }
 
     public async Task<IEnumerable<CoachDto>> GetAllAsync()
     {
-        var coaches = _repository.Get(c => true);
-
-        return await Task.FromResult(coaches.Select(coach => new CoachDto
-        {
-            Id = coach.Id,
-            FirstName = coach.FirstName,
-            LastName = coach.LastName,
-            CoachConsId = coach.CoachConsId,
-            BirthDate = coach.BirthDate,
-            Email = coach.Email,
-            Username = coach.Username,
-            Password = coach.Password,
-            LinkedInUrl = coach.LinkedInUrl,
-            GitHubUrl = coach.GitHubUrl
-        }));
+        var coaches = await _repository.Get(x => true).ToListAsync();
+        return MapperManager.Map<List<CoachDto>>(coaches);
     }
 
-    public Task<CoachDto> GetAsync(string id)
+    public async Task<CoachDto> GetAsync(long id)
     {
-        throw new NotImplementedException();
+        var coach = await _repository.GetAsync(id);
+        var dto = MapperManager.Map<CoachDto>(coach);
+        return dto;
     }
 
-    public Task<CoachDto> UpdateAsync(CoachDto dto)
+    public async Task<CoachDto> UpdateAsync(UpdateCoachDto dto)
     {
-        throw new NotImplementedException();
+        var existingCoach = await _repository.GetAsync(dto.Id);
+        var coachDto = MapperManager.Map<Coach, CoachDto>(existingCoach);
+        return coachDto;
     }
 }

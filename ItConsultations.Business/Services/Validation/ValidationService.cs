@@ -1,12 +1,15 @@
-﻿namespace ItConsultations.Business.Services.Validation;
+﻿using System.Collections.ObjectModel;
+
+namespace ItConsultations.Business.Services.Validation;
 
 public class ValidationService : IValidationService
 {
+    private readonly IList<ErrorObject> _errors;
     private readonly IList<Task> _tasks;
 
-    protected const string _emptyField = "Field is empty";
-
     protected ValidationService() { }
+
+    public IReadOnlyCollection<ErrorObject> Errors => new ReadOnlyCollection<ErrorObject>(_errors);
 
     public virtual async Task ValidateAsync()
     {
@@ -23,7 +26,7 @@ public class ValidationService : IValidationService
 
     }
 
-    public void Validate()
+    public virtual void Validate()
     {
         ValidateNoErrors();
     }

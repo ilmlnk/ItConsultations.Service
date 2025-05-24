@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Dtos;
+﻿using ItConsultations.Business.Dtos.CoachDtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Business.Services.Validation.Coach;

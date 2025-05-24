@@ -8,7 +8,7 @@ public class Consultation : Entity<long>
 {
     [Required]
     [MaxLength(32)]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     [MaxLength(32)]
     public string ConsId { get; set; }
@@ -18,7 +18,7 @@ public class Consultation : Entity<long>
 
     public string Description { get; set; }
 
-    public ConsultationCategoryType[]? Categories { get; set; }
+    public List<ConsultationCategoryType>? Categories { get; set; }
 
     [Required]
     public decimal Price { get; set; }

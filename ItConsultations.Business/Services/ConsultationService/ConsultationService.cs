@@ -1,5 +1,6 @@
-﻿using ItConsultations.Business.DataAccess.Interfaces;
-using ItConsultations.Business.Dtos;
+﻿using ItConsultations.Business.AutoMapperConfiguration;
+using ItConsultations.Business.DataAccess.Interfaces;
+using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Entities.Consultation;
 
 namespace ItConsultations.Business.Services.ConsultationService;
@@ -14,8 +15,8 @@ public class ConsultationService : IConsultationService
 
     public Task<ConsultationDto> CreateAsync(ConsultationDto dto)
     {
-        throw new NotImplementedException();
-        // var dto = MapperManager.
+        var consultationDto = MapperManager.Map<ConsultationDto>(dto);
+        return Task.FromResult(consultationDto);
     }
 
     public Task<ConsultationDto> DeleteAsync(string id)

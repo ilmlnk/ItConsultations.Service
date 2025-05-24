@@ -5,7 +5,7 @@ public class Coach : Entity<long>
 {
     [Required]
     [MaxLength(32)]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     [MaxLength(32)]
     public string CoachConsId { get; set; }
@@ -16,6 +16,8 @@ public class Coach : Entity<long>
     public string LastName { get; set; }
 
     public DateTime BirthDate { get; set; }
+
+    public string Description { get; set; }
 
     [Required]
     public string Email { get; set; }

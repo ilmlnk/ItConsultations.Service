@@ -1,7 +1,7 @@
 ﻿using ItConsultations.Business.Entities.Consultation;
 using Microsoft.EntityFrameworkCore;
 
-namespace ItConsultations.Business.DataAccess.Repository.EntityFramework;
+namespace ItConsultations.DataAccess.Repository.EntityFramework;
 
 public class ConsultationsDbContext : DbContext
 {
@@ -27,7 +27,7 @@ public class ConsultationsDbContext : DbContext
 
         modelBuilder.Entity<Consultation>(entity =>
         {
-            entity.HasKey(c => c.Id); 
+            entity.HasKey(c => c.Id);
             entity.Property(c => c.Id).IsRequired();
             entity.Property(c => c.Title).IsRequired();
             entity.Property(c => c.Price).IsRequired();

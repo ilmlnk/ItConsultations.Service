@@ -1,12 +1,16 @@
-﻿using ItConsultations.Business.Dtos;
+﻿using ItConsultations.Business.Dtos.CoachDtos;
 
 namespace ItConsultations.Business.Services.CoachService;
 
 public interface ICoachService
 {
-    Task<CoachDto> CreateAsync(CoachDto dto);
+    Task<CoachDto> CreateAsync(CreateCoachDto dto);
 
-    Task<CoachDto> UpdateAsync(CoachDto dto);
+    Task<CoachDto> UpdateAsync(UpdateCoachDto dto);
 
     Task<CoachDto> DeleteAsync(long id);
+
+    Task<CoachDto> GetAsync(long id);
+
+    Task<IEnumerable<CoachDto>> GetAllAsync();
 }

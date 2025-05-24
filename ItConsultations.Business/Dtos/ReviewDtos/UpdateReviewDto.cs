@@ -1,14 +1,10 @@
 ﻿using ItConsultations.Business.Entities;
 
-namespace ItConsultations.Business.Dtos;
+namespace ItConsultations.Business.Dtos.ReviewDtos;
 
-public class ArticleDto
+public class UpdateReviewDto
 {
     public long Id { get; set; }
-
-    public string ArticleConsId { get; set; }
-
-    public string Title { get; set; }
 
     public string Text { get; set; }
 
@@ -16,5 +12,7 @@ public class ArticleDto
 
     public DateTime UpdatedAt { get; set; }
 
-    public Entity<long> CreatedBy { get; set; }
+    public int Rating { get; set; }
+
+    public Entity<long> Reviewer { get; set; }
 }

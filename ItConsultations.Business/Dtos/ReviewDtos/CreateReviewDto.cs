@@ -1,8 +1,8 @@
 ﻿using ItConsultations.Business.Entities;
 
-namespace ItConsultations.Business.Dtos;
+namespace ItConsultations.Business.Dtos.ReviewDtos;
 
-public class ReviewDto
+public class CreateReviewDto
 {
     public long Id { get; set; }
 

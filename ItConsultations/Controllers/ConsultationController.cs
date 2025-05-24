@@ -1,28 +1,44 @@
-﻿using ItConsultations.Business.Entities.Consultation;
+﻿using ItConsultations.Business.DataAccess.Interfaces;
+using ItConsultations.Business.Dtos.ConsultationDtos;
+using ItConsultations.Business.Entities.Consultation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.Controllers;
 
 
-[Route("api/consultations")]
 [ApiController]
+[Route("api/consultations")]
 public class ConsultationController : Controller
 {
-    private static List<Consultation> _consultations = [];
+    private readonly IRepository<Consultation, long> _consultationRepository;
 
-    public ConsultationController() { }
-
-    /*public IActionResult CreateConsultation([FromBody] ConsultationDto consultationDto)
+    public ConsultationController(
+        IRepository<Consultation, long> consultationRepository) 
     {
-        if (consultationDto == null)
-        {
-            return BadRequest("Invalid consultation data.");
-        }
+        _consultationRepository = consultationRepository;
+    }
 
-        var consultation = new Consultation
-        {
-            Id = consultationDto.Id,
+    [HttpPost("")]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateConsultationDto dto, string consId)
+    {
 
-        }
-    }*/
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetAsync()
+    {
+
+    }
+
+    [HttpPut("")]
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdateConsultationDto dto, string consId)
+    {
+
+    }
+
+    [HttpGet("")]
+    public async Task<IActionResult> GetAllAsync()
+    {
+
+    }
 }

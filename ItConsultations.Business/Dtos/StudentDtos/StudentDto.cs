@@ -1,10 +1,10 @@
-﻿namespace ItConsultations.Business.Dtos;
+﻿namespace ItConsultations.Business.Dtos.StudentDtos;
 
-public class CoachDto
+public class StudentDto
 {
     public long Id { get; set; }
 
-    public string CoachConsId { get; set; }
+    public string StudentConsId { get; set; }
 
     public string FirstName { get; set; }
 
@@ -20,5 +20,5 @@ public class CoachDto
 
     public string? LinkedInUrl { get; set; }
 
-    public string? GitHubUrl { get; set; }
+    public string GitHubUrl { get; set; }
 }

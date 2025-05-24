@@ -1,9 +1,9 @@
 ﻿using ItConsultations.Business.Entities.Consultation;
 using ItConsultations.Business.SharedTypes;
 
-namespace ItConsultations.Business.Dtos;
+namespace ItConsultations.Business.Dtos.ConsultationDtos;
 
-public class ConsultationDto
+public class CreateConsultationDto
 {
     public long Id { get; set; }
 

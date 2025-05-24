@@ -6,7 +6,7 @@ public class Review
 {
     [Required]
     [StringLength(32)]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     public string Text { get; set; }
 

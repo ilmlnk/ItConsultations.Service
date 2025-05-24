@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Dtos;
+﻿using ItConsultations.Business.Dtos.ConsultationDtos;
 
 namespace ItConsultations.Business.Services.ConsultationService;
 
