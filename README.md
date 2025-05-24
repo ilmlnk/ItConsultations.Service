@@ -23,6 +23,6 @@ dotnet run
 ---
 # ⚙️ Installation & Setup
 1. Make sure you have .NET SDK installed.
-2. Install Node.js if you are using [frontend](https:://github.com/ilmlnk/ItConsultations.Frontend) (click to learn more).
+2. Install Node.js if you are using [frontend](https://github.com/ilmlnk/ItConsultations.Frontend) (click to learn more).
 3. Configure `appsettings.json`.
 4. Run the project.
