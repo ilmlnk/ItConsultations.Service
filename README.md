@@ -15,3 +15,8 @@ ITConsultations is a RESTful API for managing private IT consultations. It allow
 * 🪪 License
 ---
 # 🚀 Quick start
+```
+git clone https://github.com/ilmlnk/ItConsultations.Service.git
+cd ItConsultations.Service
+dotnet run
+```
