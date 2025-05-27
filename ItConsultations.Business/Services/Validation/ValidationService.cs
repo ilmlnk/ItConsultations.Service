@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities.ErrorObject;
+using ItConsultations.Utilities.Guards;
 using System.Collections.ObjectModel;
 
 namespace ItConsultations.Business.Services.Validation;
@@ -29,7 +30,8 @@ public class ValidationService : IValidationService
 
     protected void Expect(Func<bool> condition, ErrorObject error)
     {
-        
+        Guard.NotNull(condition);
+        Guard.NotNull(error);
 
         if (!condition())
         {

@@ -1,6 +1,6 @@
 ﻿using ItConsultations.Business.Services.ConsultationService;
 
-namespace ItConsultations.Business.Services.Validation;
+namespace ItConsultations.Business.Services.Validation.Access.Consultations;
 
 public class ConsultationAccessValidationService : IConsultationAccessValidationService
 {
@@ -8,13 +8,13 @@ public class ConsultationAccessValidationService : IConsultationAccessValidation
 
     public ConsultationAccessValidationService(
         IConsultationService consultationService
-        ) 
+        )
     {
         _consultationService = consultationService;
     }
 
     public void ValidateUpdateConsultationAccess(long id, string consId)
     {
-        
+
     }
 }

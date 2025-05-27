@@ -1,5 +1,6 @@
 ﻿using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Services.ArticleService;
+using ItConsultations.Business.Services.Validation.Access.Articles;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.WebApi.Controllers;
@@ -9,23 +10,36 @@ namespace ItConsultations.WebApi.Controllers;
 public class ArticleController : Controller
 {
     private readonly IArticleService _articleService;
+    private readonly IArticleAccessValidationService _articleAccessValidationService;
 
-    public ArticleController(IArticleService articleService)
+    public ArticleController(
+        IArticleService articleService,
+        IArticleAccessValidationService articleAccessValidationService)
     {
         _articleService = articleService;
+        _articleAccessValidationService = articleAccessValidationService;
     }
 
     [HttpPost("create/{id}")]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateArticleDto dto, string id)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateArticleDto dto, long id)
     {
-        var article = _articleService.CreateAsync(dto);
+        var article = await _articleService.CreateAsync(dto);
         // create normalizer
+        // create validator
+        _articleAccessValidationService.ValidateAccessToModify(id);
+        return Ok(article);
+    }
+
+    [HttpGet("cons/{id}")]
+    public async Task<IActionResult> GetAsync(long id)
+    {
+        var article = await _articleService.GetByIdAsync(id);
         // create validator
         return Ok(article);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetAsync(string id)
+    public IActionResult Get(string id)
     {
         var article = _articleService.GetById(id);
         // create validator

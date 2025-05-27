@@ -1,4 +1,4 @@
-﻿namespace ItConsultations.Business.Services.Validation;
+﻿namespace ItConsultations.Business.Services.Validation.Access.Consultations;
 
 public interface IConsultationAccessValidationService
 {
