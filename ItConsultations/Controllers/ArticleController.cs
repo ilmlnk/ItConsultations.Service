@@ -23,16 +23,17 @@ public class ArticleController : Controller
     [HttpPost("create/{id}")]
     public async Task<IActionResult> CreateAsync([FromBody] CreateArticleDto dto, long id)
     {
+        _articleAccessValidationService.ValidateAccessToAdd(id);
         var article = await _articleService.CreateAsync(dto);
         // create normalizer
         // create validator
-        _articleAccessValidationService.ValidateAccessToModify(id);
         return Ok(article);
     }
 
     [HttpGet("cons/{id}")]
     public async Task<IActionResult> GetAsync(long id)
     {
+        _articleAccessValidationService.ValidateAccessToGet(id);
         var article = await _articleService.GetByIdAsync(id);
         // create validator
         return Ok(article);
@@ -41,6 +42,7 @@ public class ArticleController : Controller
     [HttpGet("{id}")]
     public IActionResult Get(string id)
     {
+        //_articleAccessValidationService.ValidateAccessToGet(id);
         var article = _articleService.GetById(id);
         // create validator
         return Ok(article);
@@ -54,8 +56,9 @@ public class ArticleController : Controller
     }
 
     [HttpDelete("delete/{id}")]
-    public async Task DeleteAsync([FromBody] DeleteArticleDto[] dtos, string id) 
+    public async Task DeleteAsync([FromBody] DeleteArticleDto[] dtos, long id) 
     {
+        _articleAccessValidationService.ValidateAccessToDelete(id);
         // create access validator
         foreach (var dto in dtos)
         {

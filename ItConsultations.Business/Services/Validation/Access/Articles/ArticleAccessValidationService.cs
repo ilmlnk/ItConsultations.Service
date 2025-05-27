@@ -15,4 +15,14 @@ public class ArticleAccessValidationService : ValidationService, IArticleAccessV
     {
 
     }
+
+    public void ValidateAccessToGet(long id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ValidateAccessToAdd(long id)
+    {
+        throw new NotImplementedException();
+    }
 }
