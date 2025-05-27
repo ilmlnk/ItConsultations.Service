@@ -25,11 +25,12 @@ public class ArticleService : IArticleService
         return articleDto;
     }
 
-    public async Task<ArticleDto> DeleteAsync(Article article)
+    public async Task<ArticleDto> DeleteAsync(DeleteArticleDto dto)
     {
+        var originalDto = MapperManager.Map<ArticleDto>(dto);
+        var article = MapperManager.Map<Article>(originalDto);
         await _repository.DeleteAsync(article);
-        var dto = MapperManager.Map<ArticleDto>(article);
-        return dto;
+        return originalDto;
     }
 
     // add filtering for this method
@@ -46,7 +47,7 @@ public class ArticleService : IArticleService
         return dto;
     }
 
-    public async Task<ArticleDto> GetByIdAsync(string articleConsId)
+    public ArticleDto GetById(string articleConsId)
     {
         var article = _repository.Get(c => c.ArticleConsId.Equals(articleConsId));
         var dto = MapperManager.Map<ArticleDto>(article);

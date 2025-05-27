@@ -13,9 +13,4 @@
   <ItemGroup>
     <Folder Include="Helpers\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ItConsultations.Business\ItConsultations.Business.csproj" />
-  </ItemGroup>
-
 </Project>

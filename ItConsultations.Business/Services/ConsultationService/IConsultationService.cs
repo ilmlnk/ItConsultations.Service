@@ -4,7 +4,7 @@ namespace ItConsultations.Business.Services.ConsultationService;
 
 public interface IConsultationService
 {
-    Task<ConsultationDto> CreateAsync(ConsultationDto dto);
+    Task<ConsultationDto> CreateAsync(CreateConsultationDto dto);
 
     Task<ConsultationDto> GetAsync(string consId);
 
@@ -12,9 +12,9 @@ public interface IConsultationService
 
     Task<List<ConsultationDto>> GetAsync();
 
-    Task<ConsultationDto> UpdateAsync(ConsultationDto dto, string consId);
+    Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, string consId);
 
-    Task<ConsultationDto> UpdateAsync(ConsultationDto dto, long id);
+    Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, long id);
 
     Task<ConsultationDto> DeleteAsync(string consId);
     

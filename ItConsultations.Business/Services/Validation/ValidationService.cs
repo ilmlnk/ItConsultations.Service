@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using ItConsultations.Business.Entities.ErrorObject;
+using System.Collections.ObjectModel;
 
 namespace ItConsultations.Business.Services.Validation;
 
@@ -24,6 +25,16 @@ public class ValidationService : IValidationService
     protected virtual void ValidateNoErrors()
     {
 
+    }
+
+    protected void Expect(Func<bool> condition, ErrorObject error)
+    {
+        
+
+        if (!condition())
+        {
+            _errors.Add(error);
+        }
     }
 
     public virtual void Validate()

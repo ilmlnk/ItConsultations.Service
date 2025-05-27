@@ -9,6 +9,7 @@ namespace ItConsultations.WebApi.Controllers;
 public class ArticleController : Controller
 {
     private readonly IArticleService _articleService;
+
     public ArticleController(IArticleService articleService)
     {
         _articleService = articleService;
@@ -26,7 +27,7 @@ public class ArticleController : Controller
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(string id)
     {
-        var article = _articleService.GetByIdAsync(id);
+        var article = _articleService.GetById(id);
         // create validator
         return Ok(article);
     }

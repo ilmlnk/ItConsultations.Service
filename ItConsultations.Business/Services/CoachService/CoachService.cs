@@ -6,7 +6,6 @@ using System.Data.Entity;
 
 namespace ItConsultations.Business.Services.CoachService;
 
-
 public class CoachService : ICoachService
 {
     private readonly IRepository<Coach, long> _repository;
@@ -42,6 +41,13 @@ public class CoachService : ICoachService
     public async Task<CoachDto> GetAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
+        var dto = MapperManager.Map<CoachDto>(coach);
+        return dto;
+    }
+
+    public CoachDto GetById(string consId)
+    {
+        var coach = _repository.Get(c => c.CoachConsId == consId);
         var dto = MapperManager.Map<CoachDto>(coach);
         return dto;
     }

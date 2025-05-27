@@ -10,6 +10,8 @@ public interface ICoachService
 
     Task<CoachDto> DeleteAsync(long id);
 
+    CoachDto GetById(string coachConsId);
+
     Task<CoachDto> GetAsync(long id);
 
     Task<IEnumerable<CoachDto>> GetAllAsync();

@@ -17,43 +17,26 @@ public class CoachController : Controller
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<CoachDto>> CreateAsync([FromBody] CreateCoachDto dto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateCoachDto dto)
     {
         var createdCoach = await _coachService.CreateAsync(dto);
         return Ok(createdCoach);
     }
 
-    [HttpDelete("delete/{id}")]
-    public async Task<ActionResult<CoachDto>> DeleteAsync(long id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync(long id)
     {
-        try
-        {
-            await _coachService.DeleteAsync(id);
-            return NoContent();
-        }
-        catch (KeyNotFoundException e)
-        {
-            return NotFound($"Coach with ID {id} not found.");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal Server Error: {ex.Message}");
-        }
+        var coach = _coachService.GetAsync(id);
+        // create access validator
+        await _coachService.DeleteAsync(id);
+        return Ok(coach);
     }
 
-    [HttpDelete("delete/{coachConsId}")]
-    public async Task<ActionResult> DeleteAsync(string coachConsId)
+    [HttpDelete("coach/{coachConsId}")]
+    public async Task<IActionResult> DeleteAsync(string coachConsId)
     {
-        try
-        {
-            var coach = _coachService.Get(coachConsId);
-            await _coachService.DeleteAsync(coach.Id);
-
-            return Ok();
-        }
-        catch
-        {
-            return StatusCode(500, "An error occurred while processing your request");
-        }
+        var coach = _coachService.GetById(coachConsId);
+        // create access validator
+        return Ok(coach);
     }
 }

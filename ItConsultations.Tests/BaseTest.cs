@@ -10,6 +10,6 @@ public class BaseTest
     protected BaseTest()
     {
         fixture = new Fixture();
-        MapperManager.Initialize
+        //MapperManager.Initialize();
     }
 }
