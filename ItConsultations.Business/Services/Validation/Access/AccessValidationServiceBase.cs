@@ -1,4 +1,5 @@
-﻿
+﻿using ItConsultations.Business.Services.Validation;
+
 namespace ItConsultations.Utilities.Validation.Access;
 
 public abstract class AccessValidationServiceBase : ValidationService
