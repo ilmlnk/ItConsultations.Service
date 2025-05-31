@@ -1,6 +1,6 @@
 ﻿namespace ItConsultations.Business.Dtos.StudentDtos;
 
-public class StudentDto
+public class StudentListItemDto
 {
     public long Id { get; set; }
 
@@ -11,12 +11,6 @@ public class StudentDto
     public string LastName { get; set; }
 
     public DateTime BirthDate { get; set; }
-
-    public string Email { get; set; }
-
-    public string Username { get; set; }
-
-    public string Password { get; set; }
 
     public string? LinkedInUrl { get; set; }
 

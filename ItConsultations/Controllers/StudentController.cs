@@ -1,6 +1,5 @@
 ﻿using ItConsultations.Business.Dtos.StudentDtos;
-using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.Services.Student;
+using ItConsultations.Business.Services.StudentService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,18 +27,30 @@ public class StudentController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetAsync(string id)
+    public async Task<IActionResult> GetAsync(long id)
     {
         var student = await _studentService.GetByIdAsync(id);
         return student == null ? NotFound() : Ok(student);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("get/students")]
     public async Task<IActionResult> GetAllAsync()
     {
+        var students = await _studentService.GetAllAsync();
         // create access validator
-        return null;
+        return Ok(students);
     }
 
+    [HttpDelete("delete")]
+    public async Task<IActionResult> DeleteAsync(string studentConsId)
+    {
+        return Ok(DeleteAsync(studentConsId));
+    }
 
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteAsync(long id)
+    {
+        await _studentService.DeleteAsync(id);
+        return Ok();
+    }
 }

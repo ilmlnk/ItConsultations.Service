@@ -6,7 +6,7 @@ public class Student : Entity<long>
 {
     [Required]
     [MaxLength(32)]
-    public Guid Id { get; set; }
+    public long Id { get; set; }
 
     [MaxLength(32)]
     public string StudentConsId { get; set; }

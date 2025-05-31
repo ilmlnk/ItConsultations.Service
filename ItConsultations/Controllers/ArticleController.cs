@@ -26,7 +26,6 @@ public class ArticleController : Controller
         _articleAccessValidationService.ValidateAccessToAdd(id);
         var article = await _articleService.CreateAsync(dto);
         // create normalizer
-        // create validator
         return Ok(article);
     }
 
