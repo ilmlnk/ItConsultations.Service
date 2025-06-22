@@ -9,6 +9,7 @@ namespace ItConsultations.Business.Services.ConsultationService;
 public class ConsultationService : IConsultationService
 {
     private readonly IRepository<Consultation, long> _repository;
+
     public ConsultationService(IRepository<Consultation, long> repository)
     {
         _repository = repository;
@@ -28,19 +29,25 @@ public class ConsultationService : IConsultationService
         throw new NotImplementedException();
     }
 
-    public Task<ConsultationDto> DeleteAsync(long id)
+    public async Task<ConsultationDto> DeleteAsync(long id)
     {
-        throw new NotImplementedException();
+        var consultation = await _repository.GetAsync(id);
+        await _repository.DeleteAsync(consultation);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id)
+    public async Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id)
     {
-        throw new NotImplementedException();
+        var consultation = await _repository.GetAsync(id);
+        var consultationDto = MapperManager.Map<ConsultationDto>(consultation);
+        await _repository.DeleteAsync(consultation);
+        return consultationDto;
     }
 
-    public Task<ConsultationDto> GetAsync(string id)
+    public async Task<ConsultationDto> GetAsync(string consId)
     {
-        throw new NotImplementedException();
+        var consultation = _repository.Get(x => x.ConsId == consId);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
     public async Task<List<ConsultationDto>> GetAsync()
@@ -49,9 +56,10 @@ public class ConsultationService : IConsultationService
         return MapperManager.Map<List<ConsultationDto>>(consultations);
     }
 
-    public Task<ConsultationDto> GetAsync(long id)
+    public async Task<ConsultationDto> GetAsync(long id)
     {
-        throw new NotImplementedException();
+        var consultation = await _repository.GetAsync(id);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
     public Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, string id)
