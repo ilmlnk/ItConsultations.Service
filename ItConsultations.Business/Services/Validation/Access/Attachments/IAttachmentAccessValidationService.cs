@@ -2,9 +2,5 @@
 
 public interface IAttachmentAccessValidationService
 {
-    void ValidateAccessToModifyAttachments();
-
-    void ValidateAccessToGetAttachments();
-
-    void ValidateAccessToAddAttachments();
+    void ValidateAttachmentAccessAsync(long id, string consId);
 }

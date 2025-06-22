@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ItConsultations.Business.Entities.Attachments;
+using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
@@ -17,4 +18,6 @@ public class Review
     public int Rating { get; set; }
 
     public Entity<long> Reviewer { get; set; }
+
+    public List<Attachment> Attachments { get; set; }
 }

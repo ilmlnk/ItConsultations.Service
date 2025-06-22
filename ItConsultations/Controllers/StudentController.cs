@@ -44,7 +44,8 @@ public class StudentController : Controller
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteAsync(string studentConsId)
     {
-        return Ok(DeleteAsync(studentConsId));
+        await _studentService.DeleteAsync(studentConsId);
+        return Ok();
     }
 
     [HttpDelete("delete/{id}")]

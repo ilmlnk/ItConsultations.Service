@@ -1,5 +1,11 @@
-﻿namespace ItConsultations.Business.Services.StudentsListService;
+﻿using ItConsultations.Business.Dtos.StudentDtos;
 
-public class StudentsListService
+namespace ItConsultations.Business.Services.StudentsListService;
+
+public class StudentsListService : IStudentsListService
 {
+    public Task<StudentListDto> GetStudentListItemsAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

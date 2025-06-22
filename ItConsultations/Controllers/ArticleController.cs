@@ -54,14 +54,21 @@ public class ArticleController : Controller
         return Ok(list);
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("articles/delete/{id}")]
     public async Task DeleteAsync([FromBody] DeleteArticleDto[] dtos, long id) 
     {
         _articleAccessValidationService.ValidateAccessToDelete(id);
         // create access validator
         foreach (var dto in dtos)
         {
-            await _articleService.DeleteAsync(dto);
+            await _articleService.DeleteAsync(id, dto.ArticleConsId);
         }
+    }
+
+    [HttpDelete("article/delete/{articleConsId}")]
+    public async Task DeleteAsync([FromBody] DeleteArticleDto dto, long id)
+    {
+        _articleAccessValidationService.ValidateAccessToDelete(id);
+        await _articleService.DeleteAsync(id, dto.ArticleConsId);
     }
 }

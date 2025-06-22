@@ -2,6 +2,7 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Entities.Article;
+using ItConsultations.Business.Entities.Attachments;
 using System.Data.Entity;
 
 namespace ItConsultations.Business.Services.ArticleService;
@@ -9,11 +10,14 @@ namespace ItConsultations.Business.Services.ArticleService;
 public class ArticleService : IArticleService
 {
     private readonly IRepository<Article, long> _repository;
+    private readonly IRepository<Attachment, long> _attachmentRepository;
 
     public ArticleService(
-        IRepository<Article, long> repository)
+        IRepository<Article, long> repository,
+        IRepository<Attachment, long> attachmentRepository)
     {
         _repository = repository;
+        _attachmentRepository = attachmentRepository;
     }
 
     public async Task<ArticleDto> CreateAsync(CreateArticleDto dto)
@@ -52,5 +56,21 @@ public class ArticleService : IArticleService
         var article = _repository.Get(c => c.ArticleConsId.Equals(articleConsId));
         var dto = MapperManager.Map<ArticleDto>(article);
         return dto;
+    }
+
+    public async Task DeleteAsync(long id, string articleConsId)
+    {
+        var entity = _repository.Include(article => article.Attachments)
+            .SingleOrDefault(article => article.Id == id);
+
+        if (entity == null)
+        {
+            return;
+        }
+
+        if (entity.Attachments != null && entity.Attachments.Any())
+        {
+            await _attachmentRepository.DeleteAsync(entity.Attachments);
+        }
     }
 }

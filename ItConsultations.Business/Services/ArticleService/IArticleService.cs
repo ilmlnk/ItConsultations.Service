@@ -6,7 +6,7 @@ public interface IArticleService
 {
     Task<ArticleDto> CreateAsync(CreateArticleDto dto);
 
-    Task<ArticleDto> DeleteAsync(DeleteArticleDto article);
+    Task DeleteAsync(long id, string articleConsId);
 
     Task<ArticleDto> GetByIdAsync(long id);
 

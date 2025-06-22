@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
-
 public class Consultation : Entity<long>
 {
     [Required]

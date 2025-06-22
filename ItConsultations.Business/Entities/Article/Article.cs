@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ItConsultations.Business.Entities.Attachments;
+using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Business.Entities.Article;
 
@@ -21,4 +22,6 @@ public class Article : Entity<long>
     public DateTime UpdatedAt { get; set; }
 
     public Entity<long> CreatedBy { get; set; }
+
+    public List<Attachment> Attachments { get; set; }
 }

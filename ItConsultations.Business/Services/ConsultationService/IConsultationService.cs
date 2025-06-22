@@ -18,5 +18,5 @@ public interface IConsultationService
 
     Task<ConsultationDto> DeleteAsync(string consId);
     
-    Task<ConsultationDto> DeleteAsync(long id);
+    Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id);
 }

@@ -2,5 +2,5 @@
 
 public interface IConsultationAccessValidationService
 {
-    void ValidateUpdateConsultationAccess(long id, string consId);
+    void ValidateConsultationAccessAsync(long id, string consId);
 }

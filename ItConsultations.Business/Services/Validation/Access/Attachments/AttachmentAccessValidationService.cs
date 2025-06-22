@@ -1,19 +1,20 @@
-﻿namespace ItConsultations.Business.Services.Validation.Access.Attachments;
+﻿using ItConsultations.Business.Services.AttachmentService;
+
+namespace ItConsultations.Business.Services.Validation.Access.Attachments;
 
 public class AttachmentAccessValidationService : IAttachmentAccessValidationService
 {
-    public void ValidateAccessToAddAttachments()
+    private readonly IAttachmentService _attachmentService;
+
+    public AttachmentAccessValidationService(
+        IAttachmentService attachmentService
+        )
     {
-        throw new NotImplementedException();
+        _attachmentService = attachmentService;
     }
 
-    public void ValidateAccessToGetAttachments()
+    public async void ValidateAttachmentAccessAsync(long id, string consId)
     {
-        throw new NotImplementedException();
-    }
-
-    public void ValidateAccessToModifyAttachments()
-    {
-        throw new NotImplementedException();
+        var attachment = await _attachmentService.GetAsync(consId);
     }
 }

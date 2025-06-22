@@ -28,6 +28,8 @@ public class Coach : Entity<long>
     [Required]
     public string Password { get; set; }
 
+    public string PictureUrl { get; set; }
+
     public string? LinkedInUrl { get; set; }
 
     public string? GitHubUrl { get; set; }

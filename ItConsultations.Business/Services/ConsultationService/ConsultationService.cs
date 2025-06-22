@@ -2,6 +2,7 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Entities.Consultation;
+using System.Data.Entity;
 
 namespace ItConsultations.Business.Services.ConsultationService;
 
@@ -13,10 +14,13 @@ public class ConsultationService : IConsultationService
         _repository = repository;
     }
 
-    public Task<ConsultationDto> CreateAsync(CreateConsultationDto dto)
+    public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto)
     {
-        var consultationDto = MapperManager.Map<ConsultationDto>(dto);
-        return Task.FromResult(consultationDto);
+        var originalDto = MapperManager.Map<ConsultationDto>(dto);
+        var consultation = MapperManager.Map<Consultation>(originalDto);
+        consultation = await _repository.CreateAsync(consultation);
+        var consultationDto = MapperManager.Map<ConsultationDto>(consultation);
+        return consultationDto;
     }
 
     public Task<ConsultationDto> DeleteAsync(string id)
@@ -29,14 +33,20 @@ public class ConsultationService : IConsultationService
         throw new NotImplementedException();
     }
 
+    public Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<ConsultationDto> GetAsync(string id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<ConsultationDto>> GetAsync()
+    public async Task<List<ConsultationDto>> GetAsync()
     {
-        throw new NotImplementedException();
+        var consultations = await _repository.Get(x => true).ToListAsync();
+        return MapperManager.Map<List<ConsultationDto>>(consultations);
     }
 
     public Task<ConsultationDto> GetAsync(long id)
