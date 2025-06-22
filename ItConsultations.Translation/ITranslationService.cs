@@ -4,7 +4,7 @@ public interface ITranslationService
 {
     string GetTranslation(string translationKey, string lang);
 
-    string GetTranslation(string key, string lang, params object[] args);
+    Dictionary<string, string> GetAllTranslations(string lang);
 
     IEnumerable<string> GetSupportedLanguages();
 }

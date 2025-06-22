@@ -44,6 +44,11 @@ public class ConsultationService : IConsultationService
         return consultationDto;
     }
 
+    public Task<ConsultationDto> DeleteForUserAsync(DeleteConsultationDto dto, long id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<ConsultationDto> GetAsync(string consId)
     {
         var consultation = _repository.Get(x => x.ConsId == consId);

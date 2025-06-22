@@ -1,28 +1,48 @@
 ﻿
+using System.Collections;
+using System.Globalization;
+using System.Reflection;
+using System.Resources;
+
 namespace ItConsultations.Translation;
 
 public class TranslationService : ITranslationService
 {
-    private readonly ILogger<TranslationService> _logger;
-    private readonly string[] _supportedLangs = new[] { "en", "uk", "fr", "pl", "de", "es", "se", "nb" }; 
+    private const string _defaultLanguage = "en";
+    private readonly string[] _supportedLangs = new[] { "uk", "fr", "pl", "de", "es", "se", "nb" }; 
+    private readonly ResourceManager _resourceManager;
 
-    public TranslationService(ILogger<TranslationService> logger)
+    public TranslationService(ResourceManager resourceManager) 
     {
-        _logger = logger;
+        _resourceManager = new ResourceManager("", Assembly.GetExecutingAssembly());
     }
 
     public string GetTranslation(string translationKey, string lang)
     {
-        throw new NotImplementedException();
+        var cultureInfo = new CultureInfo(lang);
+        return _resourceManager.GetString(translationKey, cultureInfo) ?? translationKey;
     }
 
-    public string GetTranslation(string key, string lang, params object[] args)
+    public Dictionary<string, string> GetAllTranslations(string lang)
     {
-        throw new NotImplementedException();
+        var cultureInfo = new CultureInfo(lang);
+        var resourceSet = _resourceManager.GetResourceSet(cultureInfo, true, false);
+
+        var translations = new Dictionary<string, string>();
+
+        if (resourceSet != null)
+        {
+            foreach (DictionaryEntry entry in resourceSet)
+            {
+                translations.Add(entry.Key.ToString(), entry.Value?.ToString() ?? "");
+            }
+        }
+
+        return translations;
     }
 
     public IEnumerable<string> GetSupportedLanguages()
     {
-        throw new NotImplementedException();
+        return _supportedLangs;
     }
 }
