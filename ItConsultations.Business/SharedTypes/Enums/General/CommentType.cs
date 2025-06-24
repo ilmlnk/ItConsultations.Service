@@ -2,6 +2,6 @@
 
 public enum CommentType
 {
-    System,
-    User
+    System = 0,
+    User = 1
 }
