@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.SharedTypes;
+﻿using ItConsultations.Business.SharedTypes.Enums.Consultation;
 using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Business.Entities.Consultation;

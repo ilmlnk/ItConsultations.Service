@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities.ErrorObject;
+using ItConsultations.Business.Exceptions;
 using ItConsultations.Utilities.Guards;
 using System.Collections.ObjectModel;
 
@@ -25,7 +26,12 @@ public class ValidationService : IValidationService
 
     protected virtual void ValidateNoErrors()
     {
+        if (!_errors.Any())
+        {
+            return;
+        }
 
+        throw new ConsultationsValidationException(_errors);
     }
 
     protected void Expect(Func<bool> condition, ErrorObject error)

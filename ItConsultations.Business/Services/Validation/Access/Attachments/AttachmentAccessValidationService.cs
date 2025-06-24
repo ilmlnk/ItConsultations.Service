@@ -1,8 +1,9 @@
 ﻿using ItConsultations.Business.Services.AttachmentService;
+using ItConsultations.Utilities.Validation.Access;
 
 namespace ItConsultations.Business.Services.Validation.Access.Attachments;
 
-public class AttachmentAccessValidationService : IAttachmentAccessValidationService
+public class AttachmentAccessValidationService : AccessValidationServiceBase, IAttachmentAccessValidationService
 {
     private readonly IAttachmentService _attachmentService;
 

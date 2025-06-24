@@ -1,5 +1,5 @@
 ﻿using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.SharedTypes;
+using ItConsultations.Business.SharedTypes.Enums.Consultation;
 
 namespace ItConsultations.Business.Dtos.ConsultationDtos;
 

@@ -1,9 +1,10 @@
 ﻿using ItConsultations.Business.Services.ConsultationService;
 using ItConsultations.Utilities.Guards;
+using ItConsultations.Utilities.Validation.Access;
 
 namespace ItConsultations.Business.Services.Validation.Access.Consultations;
 
-public class ConsultationAccessValidationService : IConsultationAccessValidationService
+public class ConsultationAccessValidationService : AccessValidationServiceBase, IConsultationAccessValidationService
 {
     private readonly IConsultationService _consultationService;
 

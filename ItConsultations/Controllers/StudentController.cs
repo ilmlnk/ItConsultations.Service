@@ -18,11 +18,11 @@ public class StudentController : Controller
         _studentService = studentService;
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto dto, string id)
+    [HttpPost("create/{studentConsId}")]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto dto, string studentConsId)
     {   
         // create access validator
-        var student = await _studentService.CreateAsync(dto, id);
+        var student = await _studentService.CreateAsync(dto, studentConsId);
         return Ok(student);
     }
 

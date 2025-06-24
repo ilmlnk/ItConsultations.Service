@@ -1,4 +1,4 @@
-﻿namespace ItConsultations.Business.SharedTypes;
+﻿namespace ItConsultations.Business.SharedTypes.Enums.Consultation;
 
 public enum ConsultationCategoryType
 {

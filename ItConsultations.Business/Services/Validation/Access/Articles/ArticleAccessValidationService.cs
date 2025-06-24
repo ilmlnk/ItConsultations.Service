@@ -1,27 +1,10 @@
-﻿using ItConsultations.Business.Entities.ErrorObject;
+﻿using ItConsultations.Utilities.Validation.Access;
 
 namespace ItConsultations.Business.Services.Validation.Access.Articles;
 
-public class ArticleAccessValidationService : ValidationService, IArticleAccessValidationService
+public class ArticleAccessValidationService : AccessValidationServiceBase, IArticleAccessValidationService
 {
-    public void ValidateAccessToModify(long id)
-    {
-        /*Expect(() => id, new ErrorObject());
-
-        Validate();*/
-    }
-
-    public void ValidateAccessToDelete(long id)
-    {
-
-    }
-
-    public void ValidateAccessToGet(long id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ValidateAccessToAdd(long id)
+    public void ValidateArticleAccessAsync(long id)
     {
         throw new NotImplementedException();
     }

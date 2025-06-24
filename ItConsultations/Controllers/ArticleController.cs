@@ -23,31 +23,31 @@ public class ArticleController : Controller
     [HttpPost("create/{id}")]
     public async Task<IActionResult> CreateAsync([FromBody] CreateArticleDto dto, long id)
     {
-        _articleAccessValidationService.ValidateAccessToAdd(id);
+        _articleAccessValidationService.ValidateArticleAccessAsync(id);
         var article = await _articleService.CreateAsync(dto);
         // create normalizer
         return Ok(article);
     }
 
-    [HttpGet("cons/{id}")]
+    [HttpGet("article/{id}")]
     public async Task<IActionResult> GetAsync(long id)
     {
-        _articleAccessValidationService.ValidateAccessToGet(id);
+        _articleAccessValidationService.ValidateArticleAccessAsync(id);
         var article = await _articleService.GetByIdAsync(id);
         // create validator
         return Ok(article);
     }
 
-    [HttpGet("{id}")]
-    public IActionResult Get(string id)
+    [HttpGet("article/{id}/{articleConsId}")]
+    public IActionResult Get(long id, string articleConsId)
     {
-        //_articleAccessValidationService.ValidateAccessToGet(id);
-        var article = _articleService.GetById(id);
+        _articleAccessValidationService.ValidateArticleAccessAsync(id);
+        var article = _articleService.GetById(articleConsId);
         // create validator
         return Ok(article);
     }
 
-    [HttpGet("list")]
+    [HttpGet("get/articles")]
     public async Task<IActionResult> GetAllAsync()
     {
         var list = await _articleService.GetAllAsync();
@@ -57,7 +57,7 @@ public class ArticleController : Controller
     [HttpDelete("articles/delete/{id}")]
     public async Task DeleteAsync([FromBody] DeleteArticleDto[] dtos, long id) 
     {
-        _articleAccessValidationService.ValidateAccessToDelete(id);
+        _articleAccessValidationService.ValidateArticleAccessAsync(id);
         // create access validator
         foreach (var dto in dtos)
         {
@@ -68,7 +68,7 @@ public class ArticleController : Controller
     [HttpDelete("article/delete/{articleConsId}")]
     public async Task DeleteAsync([FromBody] DeleteArticleDto dto, long id)
     {
-        _articleAccessValidationService.ValidateAccessToDelete(id);
+        _articleAccessValidationService.ValidateArticleAccessAsync(id);
         await _articleService.DeleteAsync(id, dto.ArticleConsId);
     }
 }

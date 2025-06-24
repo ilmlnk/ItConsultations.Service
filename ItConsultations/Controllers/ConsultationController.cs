@@ -59,7 +59,7 @@ public class ConsultationController : Controller
         return Ok(consultation);
     }
 
-    [HttpGet("consultations")]
+    [HttpGet("consultation-list")]
     public async Task<IActionResult> GetAllAsync()
     {
         var consultations = await _consultationService.GetAsync();
