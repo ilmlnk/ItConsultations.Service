@@ -1,11 +1,23 @@
-﻿using ItConsultations.Utilities.Validation.Access;
+﻿using ItConsultations.Business.Services.ArticleService;
+using ItConsultations.Utilities.Guards;
+using ItConsultations.Utilities.Validation.Access;
 
 namespace ItConsultations.Business.Services.Validation.Access.Articles;
 
 public class ArticleAccessValidationService : AccessValidationServiceBase, IArticleAccessValidationService
 {
-    public void ValidateArticleAccessAsync(long id)
+    private readonly IArticleService _articleService;
+
+    public ArticleAccessValidationService(IArticleService articleService)
     {
-        throw new NotImplementedException();
+        _articleService = articleService;
+    }
+
+    public async void ValidateArticleAccessAsync(long id)
+    {
+        var article = await _articleService.GetByIdAsync(id);
+
+        Guard.NotNull(article);
+        Guard.That(article.Title == null, "Article does not have a required title.");
     }
 }

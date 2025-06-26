@@ -1,0 +1,6 @@
+@ItConsultations.OpenApi_HostAddress = http://localhost:5001
+
+GET {{ItConsultations.OpenApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Services.AttachmentService;
+using ItConsultations.Utilities.Guards;
 using ItConsultations.Utilities.Validation.Access;
 
 namespace ItConsultations.Business.Services.Validation.Access.Attachments;
@@ -17,5 +18,8 @@ public class AttachmentAccessValidationService : AccessValidationServiceBase, IA
     public async void ValidateAttachmentAccessAsync(long id, string consId)
     {
         var attachment = await _attachmentService.GetAsync(consId);
+
+        Guard.NotNull(attachment);
+        Guard.That(attachment.Id != consId, "Attachment does not have a matched ids.");
     }
 }

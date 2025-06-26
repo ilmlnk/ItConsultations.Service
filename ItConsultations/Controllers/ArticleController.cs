@@ -25,7 +25,7 @@ public class ArticleController : Controller
     {
         _articleAccessValidationService.ValidateArticleAccessAsync(id);
         var article = await _articleService.CreateAsync(dto);
-        // create normalizer
+        
         return Ok(article);
     }
 
@@ -42,8 +42,8 @@ public class ArticleController : Controller
     public IActionResult Get(long id, string articleConsId)
     {
         _articleAccessValidationService.ValidateArticleAccessAsync(id);
+
         var article = _articleService.GetById(articleConsId);
-        // create validator
         return Ok(article);
     }
 
@@ -58,7 +58,7 @@ public class ArticleController : Controller
     public async Task DeleteAsync([FromBody] DeleteArticleDto[] dtos, long id) 
     {
         _articleAccessValidationService.ValidateArticleAccessAsync(id);
-        // create access validator
+
         foreach (var dto in dtos)
         {
             await _articleService.DeleteAsync(id, dto.ArticleConsId);
