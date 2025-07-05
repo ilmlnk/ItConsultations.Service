@@ -10,7 +10,7 @@ public class StudentListItemDto
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     public string? LinkedInUrl { get; set; }
 

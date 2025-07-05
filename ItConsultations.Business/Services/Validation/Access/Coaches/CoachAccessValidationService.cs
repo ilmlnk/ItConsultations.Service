@@ -12,11 +12,11 @@ public class CoachAccessValidationService : AccessValidationServiceBase, ICoachA
         _coachService = coachService;
     }
 
-    public async void ValidateCoachAccessAsync(long id)
+    public void ValidateCoachAccessAsync(long id)
     {
-        var coach = await _coachService.GetAsync(id);
+        var coach = _coachService.GetById(id.ToString());
 
-        Guard.NotNull(coach);
+        Guard.NotNull(coach, nameof(coach));
         Guard.That(coach.Email == null, "Coach does not have a specified email.");
         Guard.That(coach.Username == null, "Coach does not have a specified username.");
     }

@@ -12,7 +12,7 @@ public class CoachDto
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     public string Email { get; set; }
 
@@ -24,9 +24,9 @@ public class CoachDto
 
     public string? GitHubUrl { get; set; }
 
-    public List<Consultation> Consultations { get; set; }
+    public List<long> ConsultationIds { get; set; } = new List<long>();
 
-    public List<Review> Reviews { get; set; }
+    public List<long> ReviewIds { get; set; } = new List<long>();
 
     public decimal AverageRating { get; set; }
 }

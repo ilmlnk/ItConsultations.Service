@@ -14,16 +14,15 @@ public class MultipleRepository<T> : BaseRepository<T>, IMultipleRepository<T>
     {
         var entityList = entities.ToList();
         await _entities.AddRangeAsync(entityList);
-        SaveChanges();
-        return await Task.FromResult(entityList);
+        await SaveChangesAsync();
+        return entityList;
     }
 
     public virtual async Task DeleteAsync(IEnumerable<T> entities)
     {
         var entityList = entities.ToList();
         _entities.RemoveRange(entityList);
-        SaveChanges();
-        await Task.CompletedTask;
+        await SaveChangesAsync();
     }
 
     public void Attach(IEntity<long> entity)
@@ -52,7 +51,7 @@ public class MultipleRepository<T> : BaseRepository<T>, IMultipleRepository<T>
     {
         var entityList = entities.ToList();
         _entities.UpdateRange(entityList);
-        SaveChanges();
-        return await Task.FromResult(entityList);
+        await SaveChangesAsync();
+        return entityList;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.Entities.User;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +12,7 @@ public class StudentMap : IEntityTypeConfiguration<Student>
 
         // builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).ValueGeneratedOnAdd();
-        builder.Property(s => s.StudentConsId).HasMaxLength(32).IsRequired();
+        builder.Property(s => s.StudentConsId).HasMaxLength(36).IsRequired();
         builder.Property(s => s.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(s => s.LastName).HasMaxLength(100);
         builder.Property(s => s.BirthDate);

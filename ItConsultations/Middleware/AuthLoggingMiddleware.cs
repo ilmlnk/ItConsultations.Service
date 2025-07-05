@@ -17,6 +17,12 @@ public class AuthLoggingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        if (context.User?.Identity == null || !context.User.Identity.IsAuthenticated)
+        {
+            await _next(context);
+            return;
+        }
+
         var startTime = DateTime.UtcNow;
         var userId = "anonymous";
         var userEmail = "anonymous";

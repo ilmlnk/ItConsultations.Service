@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
@@ -12,7 +11,7 @@ public class Coach : Entity<long>
     [Required]
     public long Id { get; set; }
 
-    [MaxLength(32)]
+    [MaxLength(36)]
     public string CoachConsId { get; set; }
 
     [Required]
@@ -20,14 +19,14 @@ public class Coach : Entity<long>
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     public string Description { get; set; }
 
     [Required]
     public string Email { get; set; }
 
-    public string PictureUrl { get; set; }
+    public string? PictureUrl { get; set; }
 
     public string? LinkedInUrl { get; set; }
 
@@ -39,5 +38,5 @@ public class Coach : Entity<long>
 
     public decimal AverageRating { get; set; }
 
-    public ItConsultations.Business.Entities.User.User User { get; set; } = null!;
+    public User.User User { get; set; } = null!;
 }

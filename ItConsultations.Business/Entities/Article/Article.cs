@@ -13,7 +13,7 @@ public class Article : Entity<long>
     [Required]
     public long Id { get; set; }
 
-    [MaxLength(32)]
+    [MaxLength(36)]
     public string ArticleConsId { get; set; }
 
     [MaxLength(500)]

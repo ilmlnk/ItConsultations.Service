@@ -1,17 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using ItConsultations.DataAccess.Repository.EntityFramework;
 
-namespace ItConsultations.DataAccess.Repository.EntityFramework;
+namespace ItConsultations.Database;
 
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ConsultationsDbContext>
 {
     public ConsultationsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ConsultationsDbContext>();
-        
-        var connectionString = "Server=VICTUS\\SQLEXPRESS;Database=ItConsultationsDB;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true";
-        
-        optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.UseSqlServer("Server=VICTUS\\SQLEXPRESS;Database=ItConsultationsDb;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true",
+            b => b.MigrationsAssembly("ItConsultations.Database"));
 
         return new ConsultationsDbContext(optionsBuilder.Options);
     }

@@ -16,26 +16,25 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
     public virtual async Task<T> CreateAsync(T entity)
     {
         var e = await _entities.AddAsync(entity);
-        SaveChanges();
+        await SaveChangesAsync();
         return e.Entity;
     }
 
     public virtual async Task DeleteAsync(T entity)
     {
         _entities.Remove(entity);
-        SaveChanges();
-        await Task.CompletedTask;
+        await SaveChangesAsync();
     }
 
     public virtual async Task<T> UpdateAsync(T entity)
     {
         _entities.Update(entity);
-        SaveChanges();
-        return await Task.FromResult(entity);
+        await SaveChangesAsync();
+        return entity;
     }
 
-    protected virtual void SaveChanges()
+    protected virtual async Task SaveChangesAsync()
     {
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 }

@@ -1,5 +1,4 @@
 ﻿using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +11,7 @@ public class CoachMap : IEntityTypeConfiguration<Coach>
         builder.ToTable("Coaches");
 
         // builder.HasKey(c => c.Id);
-        builder.Property(c => c.CoachConsId).HasMaxLength(32).IsRequired();
+        builder.Property(c => c.CoachConsId).HasMaxLength(36).IsRequired();
         builder.Property(c => c.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(c => c.LastName).HasMaxLength(100);
         builder.Property(c => c.BirthDate);

@@ -18,6 +18,7 @@ public class StudentService : IStudentService
     {
         var originalDto = MapperManager.Map<StudentDto>(dto);
         var student = MapperManager.Map<Student>(originalDto);
+        student.StudentConsId = GenerateStudentId();
         await _repository.CreateAsync(student);
         var studentDto = MapperManager.Map<StudentDto>(student);
         return studentDto;
@@ -85,5 +86,11 @@ public class StudentService : IStudentService
     public Task<StudentDto> UpdateAsync(UpdateStudentDto dto, long id)
     {
         throw new NotImplementedException();
+    }
+
+    // to generate student id it is used 0003 prefix
+    private string GenerateStudentId()
+    {
+        return $"0003{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 }

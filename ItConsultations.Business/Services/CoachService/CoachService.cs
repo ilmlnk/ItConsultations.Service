@@ -18,6 +18,7 @@ public class CoachService : ICoachService
     public async Task<CoachDto> CreateAsync(CreateCoachDto dto)
     {
         var coach = MapperManager.Map<Coach>(dto);
+        coach.CoachConsId = GenerateCoachId();
         await _repository.CreateAsync(coach);
         return MapperManager.Map<CoachDto>(coach);
     }
@@ -25,27 +26,31 @@ public class CoachService : ICoachService
     public async Task<CoachDto> DeleteAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
+        if (coach == null)
+        {
+            return null;
+        }
+        
         await _repository.DeleteAsync(coach);
         return MapperManager.Map<CoachDto>(coach);
     }
 
     public async Task<IEnumerable<CoachDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
-        /*var coaches = await _repository.GetAllAsync();
-        return MapperManager.Map<List<CoachDto>>(coaches);*/
+        var coaches = await _repository.GetAllAsync();
+        return MapperManager.Map<List<CoachDto>>(coaches);
     }
 
     public async Task<CoachDto> GetAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
-        return MapperManager.Map<CoachDto>(coach);
+        return coach != null ? MapperManager.Map<CoachDto>(coach) : null;
     }
 
     public CoachDto GetById(string consId)
     {
-        var coach = _repository.Get(c => c.CoachConsId == consId);
-        return MapperManager.Map<CoachDto>(coach);
+        var coach = _repository.Get(c => c.CoachConsId == consId).FirstOrDefault();
+        return coach != null ? MapperManager.Map<CoachDto>(coach) : null;
     }
 
     public async Task<CoachDto> UpdateAsync(UpdateCoachDto dto)
@@ -57,5 +62,27 @@ public class CoachService : ICoachService
         await _repository.UpdateAsync(existingCoach);
 
         return MapperManager.Map<CoachDto>(existingCoach);
+    }
+
+    // to generate coach id it is used 0001 prefix
+    // for consultation id it is used 0002 prefix
+    // for student id it is used 0003 prefix
+    // for review id it is used 0004 prefix
+    // for attachment id it is used 0005 prefix
+    // for article id it is used 0006 prefix
+    // 0001 2025 0705 1234 5678 9000 0000 0000
+    private string GenerateCoachId()
+    {
+        return $"0001{DateTime.UtcNow:yyyyMMddHHmmssfff}{GetRandomSequenceNumber():D15}";
+    }
+
+    private static readonly object _lockObject = new object();
+
+    private long GetRandomSequenceNumber()
+    {
+        lock (_lockObject)
+        {
+            return Random.Shared.NextInt64(0, 1_000_000_000_000_000);
+        }
     }
 }

@@ -14,7 +14,7 @@ public class StudentListFilter : PagedFilter
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     public string Email { get; set; }
 

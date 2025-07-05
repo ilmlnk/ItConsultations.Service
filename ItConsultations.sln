@@ -19,19 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItConsultations.Translation
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItConsultations.OpenApi", "ItConsultations.OpenApi\ItConsultations.OpenApi.csproj", "{FDF53BA8-5455-4BAE-B8D6-0AF3920C7085}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{2D6C7CD5-AAA6-4A6C-AE11-D995F8A0825F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{B299A362-7A67-40A0-A8C7-F6312B7E66E3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{B55E15BD-A5E3-441E-A48D-7ADC675E010E}"
-	ProjectSection(SolutionItems) = preProject
-		ItConsultations.DataAccess\Migrations\20250705154140_InitialCreate.cs = ItConsultations.DataAccess\Migrations\20250705154140_InitialCreate.cs
-		ItConsultations.DataAccess\Migrations\20250705154140_InitialCreate.Designer.cs = ItConsultations.DataAccess\Migrations\20250705154140_InitialCreate.Designer.cs
-		ItConsultations.DataAccess\Migrations\ConsultationsDbContextModelSnapshot.cs = ItConsultations.DataAccess\Migrations\ConsultationsDbContextModelSnapshot.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Queries", "Queries", "{389DA004-AA45-45E9-A4D4-15AFE741D024}"
-	ProjectSection(SolutionItems) = preProject
-		ItConsultations\Queries\CreateDatabaseWithRoles.sql = ItConsultations\Queries\CreateDatabaseWithRoles.sql
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItConsultations.Database", "ItConsultations.Database\ItConsultations.Database.csproj", "{3367E5F7-DB52-42CC-AEC7-943FA70DE0C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,13 +61,16 @@ Global
 		{FDF53BA8-5455-4BAE-B8D6-0AF3920C7085}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDF53BA8-5455-4BAE-B8D6-0AF3920C7085}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDF53BA8-5455-4BAE-B8D6-0AF3920C7085}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3367E5F7-DB52-42CC-AEC7-943FA70DE0C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3367E5F7-DB52-42CC-AEC7-943FA70DE0C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3367E5F7-DB52-42CC-AEC7-943FA70DE0C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3367E5F7-DB52-42CC-AEC7-943FA70DE0C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B55E15BD-A5E3-441E-A48D-7ADC675E010E} = {2D6C7CD5-AAA6-4A6C-AE11-D995F8A0825F}
-		{389DA004-AA45-45E9-A4D4-15AFE741D024} = {2D6C7CD5-AAA6-4A6C-AE11-D995F8A0825F}
+		{3367E5F7-DB52-42CC-AEC7-943FA70DE0C2} = {B299A362-7A67-40A0-A8C7-F6312B7E66E3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3A4FA94-8EBF-4B94-9C9A-980C5D4BB435}

@@ -10,7 +10,11 @@ public class ValidationService : IValidationService
     private readonly IList<ErrorObject> _errors;
     private readonly IList<Task> _tasks;
 
-    protected ValidationService() { }
+    public ValidationService()
+    {
+        _errors = new List<ErrorObject>();
+        _tasks = new List<Task>();
+    }
 
     public IReadOnlyCollection<ErrorObject> Errors => new ReadOnlyCollection<ErrorObject>(_errors);
 
@@ -62,20 +66,18 @@ public class ValidationService : IValidationService
 
     public bool IsValid()
     {
-        throw new NotImplementedException();
+        return !_errors.Any();
     }
 
     public void Clear()
     {
-        throw new NotImplementedException();
+        _errors.Clear();
+        _tasks.Clear();
     }
 
     // TODO: Add other condition for isValid variable
     private bool HasNoErrors()
     {
-        var isValid = true;
-        Clear();
-
-        return isValid;
+        return !_errors.Any();
     }
 }

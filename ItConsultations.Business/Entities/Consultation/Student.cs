@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
@@ -12,7 +11,7 @@ public class Student : Entity<long>
     [Required]
     public long Id { get; set; }
 
-    [MaxLength(32)]
+    [MaxLength(36)]
     public string StudentConsId { get; set; }
 
     [Required]
@@ -20,7 +19,7 @@ public class Student : Entity<long>
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     [Required]
     public string Email { get; set; }

@@ -23,6 +23,7 @@ public class ArticleService : IArticleService
     public async Task<ArticleDto> CreateAsync(CreateArticleDto dto)
     {
         var article = MapperManager.Map<Article>(dto);
+        article.ArticleConsId = GenerateArticleId();
         article = await _repository.CreateAsync(article);
         return MapperManager.Map<ArticleDto>(article);
     }
@@ -79,5 +80,11 @@ public class ArticleService : IArticleService
     public Task<List<ArticleDto>> GetAllAsync()
     {
         throw new NotImplementedException();
+    }
+
+    // to generate article id it is used 0006 prefix
+    private string GenerateArticleId()
+    {
+        return $"0006{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 }

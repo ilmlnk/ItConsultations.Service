@@ -1,5 +1,4 @@
 ﻿using ItConsultations.Business.Entities.Attachments;
-using ItConsultations.Business.Entities.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,7 +12,7 @@ public class Review
     [Required]
     public long Id { get; set; }
 
-    [MaxLength(32)]
+    [MaxLength(36)]
     public string ReviewConsId { get; set; }
 
     [Required]

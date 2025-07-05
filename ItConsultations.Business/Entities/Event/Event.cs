@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Event;
 
@@ -12,7 +11,7 @@ public class Event : Entity<long>
     [Required]
     public long Id { get; set; }
 
-    [MaxLength(32)]
+    [MaxLength(36)]
     public string EventConsId { get; set; }
 
     [Required]

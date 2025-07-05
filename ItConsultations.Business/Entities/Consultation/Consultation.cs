@@ -12,7 +12,7 @@ public class Consultation : Entity<long>
     [Required]
     public long Id { get; set; }
 
-    [MaxLength(32)]
+    [MaxLength(36)]
     public string ConsId { get; set; }
 
     [Required]

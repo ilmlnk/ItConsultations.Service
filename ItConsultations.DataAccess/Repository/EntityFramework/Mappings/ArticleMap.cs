@@ -10,7 +10,7 @@ public class ArticleMap
     {
         entityBuilder.HasKey(a => a.Id);
         entityBuilder.Property(a => a.Id).ValueGeneratedNever();
-        entityBuilder.Property(a => a.ArticleConsId).HasMaxLength(32).IsRequired();
+        entityBuilder.Property(a => a.ArticleConsId).HasMaxLength(36).IsRequired();
         entityBuilder.Property(a => a.Title).HasMaxLength(500).IsRequired();
         entityBuilder.Property(a => a.Text).IsRequired();
         entityBuilder.Property(a => a.CreatedAt).IsRequired();

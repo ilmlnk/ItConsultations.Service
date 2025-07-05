@@ -18,6 +18,7 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto)
     {
         var consultation = MapperManager.Map<Consultation>(dto);
+        consultation.ConsId = GenerateConsultationId();
         consultation = await _repository.CreateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -25,6 +26,7 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto, string consId)
     {
         var consultation = MapperManager.Map<Consultation>(dto);
+        consultation.ConsId = consId;
         consultation = await _repository.CreateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -94,5 +96,11 @@ public class ConsultationService : IConsultationService
         Guard.NotNull(consultation, nameof(consultation));
         await _repository.UpdateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
+    }
+
+    // to generate consultation id it is used 0002 prefix
+    private string GenerateConsultationId()
+    {
+        return $"0002{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 }

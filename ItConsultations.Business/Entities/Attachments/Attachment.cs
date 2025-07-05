@@ -16,4 +16,7 @@ public class Attachment : AttachmentBase
     public object EntityName { get; set; }
 
     public string AttachmentId { get; set; }
+
+    [MaxLength(36)]
+    public string AttachmentConsId { get; set; }
 }

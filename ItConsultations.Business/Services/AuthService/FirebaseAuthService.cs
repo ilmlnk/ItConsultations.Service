@@ -140,7 +140,7 @@ public class FirebaseAuthService : IFirebaseAuthService
                     CoachConsId = GenerateCoachId(),
                     FirstName = registerDto.FirstName ?? string.Empty,
                     LastName = registerDto.LastName ?? string.Empty,
-                    BirthDate = registerDto.BirthDate ?? DateTime.MinValue,
+                    BirthDate = registerDto.BirthDate,
                     Description = registerDto.Description ?? string.Empty,
                     Email = user.Email,
                     PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
@@ -160,7 +160,7 @@ public class FirebaseAuthService : IFirebaseAuthService
                     StudentConsId = GenerateStudentId(),
                     FirstName = registerDto.FirstName ?? string.Empty,
                     LastName = registerDto.LastName ?? string.Empty,
-                    BirthDate = registerDto.BirthDate ?? DateTime.MinValue,
+                    BirthDate = registerDto.BirthDate,
                     Email = user.Email,
                     PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
                     LinkedInUrl = registerDto.LinkedInUrl,
@@ -397,12 +397,12 @@ public class FirebaseAuthService : IFirebaseAuthService
 
     private string GenerateCoachId()
     {
-        return $"COACH_{DateTime.UtcNow:yyyyMMddHHmmss}_{Random.Shared.Next(1000, 9999)}";
+        return $"0001{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 
     private string GenerateStudentId()
     {
-        return $"STUDENT_{DateTime.UtcNow:yyyyMMddHHmmss}_{Random.Shared.Next(1000, 9999)}";
+        return $"0003{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 
     Task<User> IFirebaseAuthService.CreateUserAsync(UserInfoDto userInfo)
