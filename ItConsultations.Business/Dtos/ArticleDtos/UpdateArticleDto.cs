@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Dtos.ArticleDtos;
 
@@ -16,5 +17,5 @@ public class UpdateArticleDto
 
     public DateTime UpdatedAt { get; set; }
 
-    public Entity<long> CreatedBy { get; set; }
+    public User CreatedBy { get; set; }
 }

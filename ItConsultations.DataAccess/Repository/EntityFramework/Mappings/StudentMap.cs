@@ -11,7 +11,7 @@ public class StudentMap : IEntityTypeConfiguration<Student>
     {
         builder.ToTable("Students");
 
-        builder.HasKey(s => s.Id);
+        // builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).ValueGeneratedOnAdd();
         builder.Property(s => s.StudentConsId).HasMaxLength(32).IsRequired();
         builder.Property(s => s.FirstName).HasMaxLength(100).IsRequired();

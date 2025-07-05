@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities.Attachments;
+using ItConsultations.Business.Entities.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,7 +23,7 @@ public class Article : Entity<long>
 
     public DateTime UpdatedAt { get; set; }
 
-    public Entity<long> CreatedBy { get; set; }
+    public User.User CreatedBy { get; set; }
 
     public List<Attachment> Attachments { get; set; }
 }

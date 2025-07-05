@@ -11,7 +11,7 @@ public class UserMap : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users");
 
-        builder.HasKey(x => x.Id);
+        // builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.Property(x => x.FirebaseUid)
@@ -71,7 +71,7 @@ public class RefreshTokenMap : IEntityTypeConfiguration<RefreshToken>
     {
         builder.ToTable("RefreshTokens");
 
-        builder.HasKey(x => x.Id);
+        // builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.Property(x => x.Token)

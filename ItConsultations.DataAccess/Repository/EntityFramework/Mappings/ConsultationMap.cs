@@ -8,7 +8,7 @@ public class ConsultationMap
 {
     public static void Map(EntityTypeBuilder<Consultation> entityBuilder)
     {
-        entityBuilder.HasKey(c => c.Id);
+        // entityBuilder.HasKey(c => c.Id);
         entityBuilder.Property(c => c.Id).ValueGeneratedNever();
         entityBuilder.Property(c => c.ConsId).HasMaxLength(32).IsRequired();
         entityBuilder.Property(c => c.Title).HasMaxLength(200).IsRequired();

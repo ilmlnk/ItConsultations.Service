@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Event;
 
@@ -15,7 +16,7 @@ public class ViewEventList
 
     public List<string> AssigneeEmails { get; set; }
 
-    public Entity<long> Creator { get; set; }
+    public User.User Creator { get; set; }
 
     public DateTime BeginDateTime { get; set; }
 

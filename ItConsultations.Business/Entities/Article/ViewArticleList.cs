@@ -1,4 +1,6 @@
-﻿namespace ItConsultations.Business.Entities.Article;
+﻿using ItConsultations.Business.Entities.User;
+
+namespace ItConsultations.Business.Entities.Article;
 
 public class ViewArticleList
 {
@@ -14,5 +16,5 @@ public class ViewArticleList
 
     public DateTime UpdatedAt { get; set; }
 
-    public Entity<long> CreatedBy { get; set; }
+    public User.User CreatedBy { get; set; }
 }

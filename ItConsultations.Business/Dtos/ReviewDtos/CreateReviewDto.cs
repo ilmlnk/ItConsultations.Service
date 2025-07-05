@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Dtos.ReviewDtos;
 
@@ -14,5 +15,5 @@ public class CreateReviewDto
 
     public int Rating { get; set; }
 
-    public Entity<long> Reviewer { get; set; }
+    public User Reviewer { get; set; }
 }

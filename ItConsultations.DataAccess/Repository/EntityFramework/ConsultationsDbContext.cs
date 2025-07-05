@@ -1,6 +1,7 @@
 ﻿using ItConsultations.Business.Entities.Article;
 using ItConsultations.Business.Entities.Attachments;
 using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.LogEntry;
 using ItConsultations.Business.Entities.User;
 using ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class ConsultationsDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<LogEntry> LogEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,6 +32,7 @@ public class ConsultationsDbContext : DbContext
         modelBuilder.ApplyConfiguration(new StudentMap());
         modelBuilder.ApplyConfiguration(new UserMap());
         modelBuilder.ApplyConfiguration(new RefreshTokenMap());
+        modelBuilder.ApplyConfiguration(new LogEntryMap());
         
         modelBuilder.Entity<Attachment>(entity =>
         {
@@ -40,7 +43,7 @@ public class ConsultationsDbContext : DbContext
             entity.Property(a => a.FileName).IsRequired().HasMaxLength(255);
             entity.Property(a => a.CreatedAt).IsRequired();
             entity.Property(a => a.EntityId);
-            entity.Property(a => a.EntityName);
+            entity.Ignore(a => a.EntityName);
             entity.Property(a => a.Id).HasMaxLength(32);
         });
 

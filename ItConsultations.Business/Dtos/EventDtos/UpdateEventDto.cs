@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Dtos.EventDtos;
 
@@ -14,7 +15,7 @@ public class UpdateEventDto
 
     public List<string> AssigneeEmails { get; set; }
 
-    public Entity<long> Creator { get; set; }
+    public User Creator { get; set; }
 
     public DateTime BeginDateTime { get; set; }
 
