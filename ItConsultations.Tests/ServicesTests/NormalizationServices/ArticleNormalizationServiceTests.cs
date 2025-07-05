@@ -26,7 +26,7 @@ public class ArticleNormalizationServiceTests
             Text = "This is a test text.\n\nWith multiple lines.\n\nAnd extra spaces.",
             CreatedAt = DateTime.UtcNow.AddDays(-1),
             UpdatedAt = DateTime.UtcNow.AddDays(-1),
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -52,7 +52,7 @@ public class ArticleNormalizationServiceTests
             Text = "Test content with quotes 'single' and \"double\" quotes.",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -76,7 +76,7 @@ public class ArticleNormalizationServiceTests
             Text = "This is test content with special characters @#$%^&*()",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -101,7 +101,7 @@ public class ArticleNormalizationServiceTests
             Text = "First paragraph.\n\nSecond paragraph.\n\nThird paragraph.",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -138,7 +138,7 @@ public class ArticleNormalizationServiceTests
             Text = "Test content",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -159,7 +159,7 @@ public class ArticleNormalizationServiceTests
             Text = "Тестовий текст з літерами і та ї",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -185,7 +185,7 @@ public class ArticleNormalizationServiceTests
             Text = "Test text with ß character",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 
@@ -212,7 +212,7 @@ public class ArticleNormalizationServiceTests
             Text = "Test content",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         }, "test-cons-id");
 
@@ -236,7 +236,7 @@ public class ArticleNormalizationServiceTests
             Text = "Test content",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            CreatedBy = new Entity<long> { Id = 1 },
+            CreatedBy = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         }, "en");
 

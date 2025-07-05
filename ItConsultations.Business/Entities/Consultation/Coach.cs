@@ -39,5 +39,5 @@ public class Coach : Entity<long>
 
     public decimal AverageRating { get; set; }
 
-    public User User { get; set; } = null!;
+    public ItConsultations.Business.Entities.User.User User { get; set; } = null!;
 }

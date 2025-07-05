@@ -1,8 +1,8 @@
 using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Services.AuthService;
-using ItConsultations.Business.Guards;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Controllers;
 
@@ -81,7 +81,7 @@ public class AuthController : ControllerBase
             Guard.NotNull(userId, nameof(userId));
 
             var result = await _firebaseAuthService.RevokeTokenAsync(logoutDto.RefreshToken, userId);
-            Guard.True(result, nameof(result));
+            Guard.That(result, nameof(result));
             return Ok(new { message = "Logged out successfully" });
         }
         catch (Exception ex)

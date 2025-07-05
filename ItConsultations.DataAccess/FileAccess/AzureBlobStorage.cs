@@ -1,3 +1,7 @@
+using ItConsultations.Business.DataAccess.Interfaces;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+
 namespace ItConsultations.DataAccess.FileAccess;
 
 public class AzureBlobStorage : IFileStorage
@@ -13,7 +17,7 @@ public class AzureBlobStorage : IFileStorage
         _containerName = containerName;
     }
 
-    public CloudBlobContainer UploadAsync(string fileName, Stream fileStream)
+    /*public CloudBlobContainer UploadAsync(string fileName, Stream fileStream)
     {
         var storageAccount = CloudStorageAccount.Parse(_connectionString);
         var blobClient = storageAccount.CreateCloudBlobClient();
@@ -38,7 +42,7 @@ public class AzureBlobStorage : IFileStorage
         var blobClient = storageAccount.CreateCloudBlobClient();
         var container = blobClient.GetContainerReference(_containerName);
         var blob = container.GetBlockBlobReference(blobName);
-        blob.UploadFromStream(fileStream);
+        blob.UploadFromStreamAsync(fileStream);
     }
 
     public void DeleteBlob(string blobName)
@@ -47,6 +51,6 @@ public class AzureBlobStorage : IFileStorage
         var blobClient = storageAccount.CreateCloudBlobClient();
         var container = blobClient.GetContainerReference(_containerName);
         var blob = container.GetBlockBlobReference(blobName);
-        blob.Delete();
-    }
+        blob.DeleteAsync();
+    }*/
 }

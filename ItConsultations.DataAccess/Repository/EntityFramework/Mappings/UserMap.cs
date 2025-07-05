@@ -1,4 +1,5 @@
 using ItConsultations.Business.Entities.User;
+using ItConsultations.Business.Entities.Consultation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -49,12 +50,12 @@ public class UserMap : IEntityTypeConfiguration<User>
 
         builder.HasOne<Coach>()
             .WithOne()
-            .HasForeignKey<User>(x => x.CoachId)
+            .HasForeignKey<ItConsultations.Business.Entities.User.User>(x => x.CoachId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne<Student>()
             .WithOne()
-            .HasForeignKey<User>(x => x.StudentId)
+            .HasForeignKey<ItConsultations.Business.Entities.User.User>(x => x.StudentId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(x => x.RefreshTokens)

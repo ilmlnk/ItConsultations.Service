@@ -31,8 +31,9 @@ public class CoachService : ICoachService
 
     public async Task<IEnumerable<CoachDto>> GetAllAsync()
     {
-        var coaches = await _repository.GetAllAsync();
-        return MapperManager.Map<List<CoachDto>>(coaches);
+        throw new NotImplementedException();
+        /*var coaches = await _repository.GetAllAsync();
+        return MapperManager.Map<List<CoachDto>>(coaches);*/
     }
 
     public async Task<CoachDto> GetAsync(long id)

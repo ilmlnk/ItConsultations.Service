@@ -1,5 +1,5 @@
 using ItConsultations.Business.SharedTypes.Enums.System;
-using Microsoft.AspNetCore.Mvc;
+using ItConsultations.Utilities.Guards;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 
@@ -19,13 +19,13 @@ public class AuthorizeRolesAttribute : Attribute, IAuthorizationFilter
     {
         var user = context.HttpContext.User;
 
-        Guard.True(user.Identity?.IsAuthenticated == true, nameof(user.Identity?.IsAuthenticated));
+        //Guard.That(user.Identity?.IsAuthenticated == true, nameof(user.Identity?.IsAuthenticated));
 
         var userRoleClaim = user.FindFirst(ClaimTypes.Role)?.Value;
         Guard.NotNullOrEmpty(userRoleClaim, nameof(userRoleClaim));
 
-        Guard.True(Enum.TryParse<UserRole>(userRoleClaim, out var userRole), nameof(userRole));
+        Guard.That(Enum.TryParse<UserRole>(userRoleClaim, out var userRole), nameof(userRole));
 
-        Guard.True(_roles.Contains(userRole), nameof(userRole));
+        Guard.That(_roles.Contains(userRole), nameof(userRole));
     }
 } 

@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
 namespace ItConsultations.ActionFilters.Attributes;
 
 public class PermissionsAttribute : TypeFilterAttribute
@@ -11,7 +14,7 @@ public class PermissionsAttribute : TypeFilterAttribute
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var permissions = context.Filters.Get<PermissionsAttribute>().Permissions;
+            //var permissions = context.Filters.Get<PermissionsAttribute>().Permissions;
         }
     }
 }

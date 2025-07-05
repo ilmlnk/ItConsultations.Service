@@ -1,4 +1,5 @@
 using ItConsultations.Logger.Services;
+using ItConsultations.Utilities.Guards;
 using System.Security.Claims;
 
 namespace ItConsultations.Middleware;
@@ -21,14 +22,14 @@ public class AuthLoggingMiddleware
         var userEmail = "anonymous";
 
         Guard.NotNull(context.User.Identity, nameof(context.User.Identity));
-        Guard.True(context.User.Identity.IsAuthenticated, nameof(context.User.Identity.IsAuthenticated));
+        Guard.That(context.User.Identity.IsAuthenticated, nameof(context.User.Identity.IsAuthenticated));
 
         userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown";
         userEmail = context.User.FindFirst(ClaimTypes.Email)?.Value ?? "unknown";
 
         await _loggingService.LogAsync(
             $"Request started: {context.Request.Method} {context.Request.Path} by {userEmail}",
-            Models.LogLevel.Debug,
+            Logger.Models.LogLevel.Debug,
             "AuthMiddleware"
         );
 
@@ -40,7 +41,7 @@ public class AuthLoggingMiddleware
         {
             await _loggingService.LogAsync(
                 $"Request failed for user {userEmail}: {ex.Message}",
-                Models.LogLevel.Error,
+                Logger.Models.LogLevel.Error,
                 "AuthMiddleware",
                 ex
             );
@@ -51,7 +52,7 @@ public class AuthLoggingMiddleware
             var duration = DateTime.UtcNow - startTime;
             await _loggingService.LogAsync(
                 $"Request completed for user {userEmail} in {duration.TotalMilliseconds}ms - Status: {context.Response.StatusCode}",
-                Models.LogLevel.Debug,
+                Logger.Models.LogLevel.Debug,
                 "AuthMiddleware"
             );
         }

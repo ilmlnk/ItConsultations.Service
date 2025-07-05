@@ -1,4 +1,5 @@
 ﻿using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.User;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +29,7 @@ public class StudentMap : IEntityTypeConfiguration<Student>
 
         builder.HasOne(s => s.User)
                .WithOne()
-               .HasForeignKey<User>(u => u.StudentId)
+               .HasForeignKey<ItConsultations.Business.Entities.User.User>(u => u.StudentId)
                .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasIndex(s => s.StudentConsId).IsUnique();

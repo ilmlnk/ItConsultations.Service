@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
@@ -38,5 +39,5 @@ public class Student : Entity<long>
 
     public Consultation Consultation { get; set; }
 
-    public User User { get; set; } = null!;
+    public ItConsultations.Business.Entities.User.User User { get; set; } = null!;
 }
