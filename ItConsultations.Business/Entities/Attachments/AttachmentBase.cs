@@ -1,6 +1,6 @@
 ﻿namespace ItConsultations.Business.Entities.Attachments;
 
-public class AttachmentBase : IEntity<long>
+public abstract class AttachmentBase : IEntity<long>
 {
     public long Id { get; set; }
 

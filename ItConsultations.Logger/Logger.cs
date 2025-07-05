@@ -6,6 +6,14 @@ namespace ItConsultations.Logger;
 public class Logger : ILogger
 {
     private readonly ILog _log;
+    private readonly string _categoryName;
+
+    public Logger(string categoryName)
+    {
+        _categoryName = categoryName;
+        _log = LogManager.GetLogger(categoryName);
+    }
+
     public IDisposable? BeginScope<TState>(TState state) => null;
 
     public bool IsEnabled(LogLevel logLevel)
@@ -28,8 +36,7 @@ public class Logger : ILogger
         EventId eventId, 
         TState state, 
         Exception? exception, 
-        Func<TState, Exception?, 
-        string> formatter
+        Func<TState, Exception?, string> formatter
         )
     {
         if (!IsEnabled(logLevel))
@@ -40,6 +47,31 @@ public class Logger : ILogger
         if (formatter == null)
         {
             return;
+        }
+
+        var message = formatter(state, exception);
+        var formattedMessage = $"[{_categoryName}] {message}";
+
+        switch (logLevel)
+        {
+            case LogLevel.Critical:
+                _log.Fatal(formattedMessage, exception);
+                break;
+            case LogLevel.Error:
+                _log.Error(formattedMessage, exception);
+                break;
+            case LogLevel.Warning:
+                _log.Warn(formattedMessage, exception);
+                break;
+            case LogLevel.Information:
+                _log.Info(formattedMessage, exception);
+                break;
+            case LogLevel.Debug:
+                _log.Debug(formattedMessage, exception);
+                break;
+            case LogLevel.Trace:
+                _log.Debug(formattedMessage, exception);
+                break;
         }
     }
 }

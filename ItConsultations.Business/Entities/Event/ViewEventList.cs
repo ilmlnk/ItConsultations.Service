@@ -1,5 +1,8 @@
-﻿namespace ItConsultations.Business.Entities.Event;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace ItConsultations.Business.Entities.Event;
+
+[Table("ViewEventList")]
 public class ViewEventList
 {
     public long Id { get; set; }

@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
 public class Student : Entity<long>
 {
-    [Required]
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [MaxLength(32)]
+    [Required]
     public long Id { get; set; }
 
     [MaxLength(32)]
@@ -34,4 +37,6 @@ public class Student : Entity<long>
     public string? LinkedInUrl { get; set; }
 
     public Consultation Consultation { get; set; }
+
+    public User User { get; set; } = null!;
 }

@@ -2,7 +2,7 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Entities.Consultation;
-using System.Data.Entity;
+using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.ConsultationService;
 
@@ -17,21 +17,30 @@ public class ConsultationService : IConsultationService
 
     public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto)
     {
-        var originalDto = MapperManager.Map<ConsultationDto>(dto);
-        var consultation = MapperManager.Map<Consultation>(originalDto);
+        var consultation = MapperManager.Map<Consultation>(dto);
         consultation = await _repository.CreateAsync(consultation);
-        var consultationDto = MapperManager.Map<ConsultationDto>(consultation);
-        return consultationDto;
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public Task<ConsultationDto> DeleteAsync(string id)
+    public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto, string consId)
     {
-        throw new NotImplementedException();
+        var consultation = MapperManager.Map<Consultation>(dto);
+        consultation = await _repository.CreateAsync(consultation);
+        return MapperManager.Map<ConsultationDto>(consultation);
+    }
+
+    public async Task<ConsultationDto> DeleteAsync(string id)
+    {
+        var consultation = _repository.Get(c => c.ConsId == id);
+        Guard.NotNull(consultation, nameof(consultation));
+        await _repository.DeleteAsync(consultation);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
     public async Task<ConsultationDto> DeleteAsync(long id)
     {
         var consultation = await _repository.GetAsync(id);
+        Guard.NotNull(consultation, nameof(consultation));
         await _repository.DeleteAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -39,14 +48,17 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id)
     {
         var consultation = await _repository.GetAsync(id);
-        var consultationDto = MapperManager.Map<ConsultationDto>(consultation);
+        Guard.NotNull(consultation, nameof(consultation));
         await _repository.DeleteAsync(consultation);
-        return consultationDto;
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public Task<ConsultationDto> DeleteForUserAsync(DeleteConsultationDto dto, long id)
+    public async Task<ConsultationDto> DeleteForUserAsync(DeleteConsultationDto dto, long id)
     {
-        throw new NotImplementedException();
+        var consultation = await _repository.GetAsync(id);
+        Guard.NotNull(consultation, nameof(consultation));
+        await _repository.DeleteAsync(consultation);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
     public async Task<ConsultationDto> GetAsync(string consId)
@@ -57,8 +69,9 @@ public class ConsultationService : IConsultationService
 
     public async Task<List<ConsultationDto>> GetAsync()
     {
-        var consultations = await _repository.Get(x => true).ToListAsync();
-        return MapperManager.Map<List<ConsultationDto>>(consultations);
+        throw new NotImplementedException();
+        //var consultations = await _repository.GetAllAsync();
+        //return MapperManager.Map<List<ConsultationDto>>(consultations);
     }
 
     public async Task<ConsultationDto> GetAsync(long id)
@@ -67,13 +80,19 @@ public class ConsultationService : IConsultationService
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, string id)
+    public async Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, string id)
     {
-        throw new NotImplementedException();
+        var consultation = _repository.Get(c => c.ConsId == id);
+        Guard.NotNull(consultation, nameof(consultation));
+        await _repository.UpdateAsync(consultation);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, long id)
+    public async Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, long id)
     {
-        throw new NotImplementedException();
+        var consultation = await _repository.GetAsync(id);
+        Guard.NotNull(consultation, nameof(consultation));
+        await _repository.UpdateAsync(consultation);
+        return MapperManager.Map<ConsultationDto>(consultation);
     }
 }

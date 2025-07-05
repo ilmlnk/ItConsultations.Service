@@ -3,7 +3,7 @@ using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Entities.Article;
 using ItConsultations.Business.Entities.Attachments;
-using System.Data.Entity;
+using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.ArticleService;
 
@@ -22,55 +22,62 @@ public class ArticleService : IArticleService
 
     public async Task<ArticleDto> CreateAsync(CreateArticleDto dto)
     {
-        var originalDto = MapperManager.Map<ArticleDto>(dto);
-        var article = MapperManager.Map<Article>(originalDto);
+        var article = MapperManager.Map<Article>(dto);
         article = await _repository.CreateAsync(article);
-        var articleDto = MapperManager.Map<ArticleDto>(article);
-        return articleDto;
+        return MapperManager.Map<ArticleDto>(article);
     }
 
     public async Task<ArticleDto> DeleteAsync(DeleteArticleDto dto)
     {
-        var originalDto = MapperManager.Map<ArticleDto>(dto);
-        var article = MapperManager.Map<Article>(originalDto);
+        var article = MapperManager.Map<Article>(dto);
         await _repository.DeleteAsync(article);
-        return originalDto;
+        return MapperManager.Map<ArticleDto>(article);
     }
 
-    // add filtering for this method
-    public async Task<List<ArticleDto>> GetAllAsync()
+    /*public async Task<List<ArticleDto>> GetAllAsync()
     {
-        var articles = await _repository.Get(x => true).ToListAsync();
+        var articles = await _repository.Include(article => article.CreatedBy)
+            .Where(;
         return MapperManager.Map<List<ArticleDto>>(articles);
-    }
+    }*/
 
     public async Task<ArticleDto> GetByIdAsync(long id)
     {
         var article = await _repository.GetAsync(id);
-        var dto = MapperManager.Map<ArticleDto>(article);
-        return dto;
+        return MapperManager.Map<ArticleDto>(article);
     }
 
     public ArticleDto GetById(string articleConsId)
     {
         var article = _repository.Get(c => c.ArticleConsId.Equals(articleConsId));
-        var dto = MapperManager.Map<ArticleDto>(article);
-        return dto;
+        return MapperManager.Map<ArticleDto>(article);
     }
 
-    public async Task DeleteAsync(long id, string articleConsId)
+    public async Task DeleteAsync(long id)
     {
         var entity = _repository.Include(article => article.Attachments)
             .SingleOrDefault(article => article.Id == id);
 
-        if (entity == null)
-        {
-            return;
-        }
+        Guard.NotNull(entity, nameof(entity));
+        Guard.NotNull(entity.Attachments, nameof(entity.Attachments));
 
-        if (entity.Attachments != null && entity.Attachments.Any())
-        {
-            await _attachmentRepository.DeleteAsync(entity.Attachments);
-        }
+        await _attachmentRepository.DeleteAsync(entity.Attachments);
+    }
+
+    public async Task DeleteAsync(string articleConsId) 
+    {
+        var entity = _repository.Include(article => article.Attachments)
+            .SingleOrDefault(article => article.ArticleConsId.Equals(articleConsId));
+
+        Guard.NotNull(entity, nameof(entity));
+        Guard.NotNull(entity.Attachments, nameof(entity.Attachments));
+
+        await _attachmentRepository.DeleteAsync(entity.Attachments);
+        await _repository.DeleteAsync(entity);
+    }
+
+    public Task<List<ArticleDto>> GetAllAsync()
+    {
+        throw new NotImplementedException();
     }
 }

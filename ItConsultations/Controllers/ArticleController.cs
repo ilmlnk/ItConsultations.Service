@@ -61,7 +61,7 @@ public class ArticleController : Controller
 
         foreach (var dto in dtos)
         {
-            await _articleService.DeleteAsync(id, dto.ArticleConsId);
+            await _articleService.DeleteAsync(id);
         }
     }
 
@@ -69,6 +69,6 @@ public class ArticleController : Controller
     public async Task DeleteAsync([FromBody] DeleteArticleDto dto, long id)
     {
         _articleAccessValidationService.ValidateArticleAccessAsync(id);
-        await _articleService.DeleteAsync(id, dto.ArticleConsId);
+        await _articleService.DeleteAsync(id);
     }
 }

@@ -1,5 +1,8 @@
-﻿namespace ItConsultations.Business.Entities.Consultation;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace ItConsultations.Business.Entities.Consultation;
+
+[Table("ViewStudentList")]
 public class ViewStudentList
 {
     public long Id { get; set; }

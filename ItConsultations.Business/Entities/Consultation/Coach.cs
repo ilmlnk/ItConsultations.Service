@@ -1,10 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using ItConsultations.Business.Entities.User;
+
 namespace ItConsultations.Business.Entities.Consultation;
 
 public class Coach : Entity<long>
 {
-    [Required]
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [MaxLength(32)]
+    [Required]
     public long Id { get; set; }
 
     [MaxLength(32)]
@@ -22,12 +27,6 @@ public class Coach : Entity<long>
     [Required]
     public string Email { get; set; }
 
-    [Required]
-    public string Username { get; set; }
-
-    [Required]
-    public string Password { get; set; }
-
     public string PictureUrl { get; set; }
 
     public string? LinkedInUrl { get; set; }
@@ -39,4 +38,6 @@ public class Coach : Entity<long>
     public List<Review> Reviews { get; set; }
 
     public decimal AverageRating { get; set; }
+
+    public User User { get; set; } = null!;
 }

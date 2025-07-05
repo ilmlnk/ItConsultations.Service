@@ -1,5 +1,6 @@
 ﻿using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Entities.Attachments;
+using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.AttachmentService;
 
@@ -12,9 +13,18 @@ public class AttachmentService : IAttachmentService
         _repository = repository;
     }
 
-    public Task DeleteAsync(long id)
+    public async Task DeleteAsync(long id)
     {
-        throw new NotImplementedException();
+        var attachment = await _repository.GetAsync(id);
+        Guard.NotNull(attachment);
+        await _repository.DeleteAsync(attachment);
+    }
+
+    public async Task<Attachment> GetAsync(long id)
+    {
+        var attachment = await _repository.GetAsync(id);
+        Guard.NotNull(attachment);
+        return attachment;
     }
 
     public Task<Attachment> GetAsync(string consId)

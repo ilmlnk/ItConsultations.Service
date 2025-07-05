@@ -20,6 +20,6 @@ public class AttachmentAccessValidationService : AccessValidationServiceBase, IA
         var attachment = await _attachmentService.GetAsync(consId);
 
         Guard.NotNull(attachment);
-        Guard.That(attachment.Id != consId, "Attachment does not have a matched ids.");
+        //Guard.That(attachment.EntityId != consId, "Attachment does not have a matched ids.");
     }
 }

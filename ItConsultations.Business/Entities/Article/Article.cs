@@ -1,12 +1,15 @@
 ﻿using ItConsultations.Business.Entities.Attachments;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ItConsultations.Business.Entities.Article;
 
 public class Article : Entity<long>
 {
-    [Required]
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [MaxLength(32)]
+    [Required]
     public long Id { get; set; }
 
     [MaxLength(32)]
@@ -16,8 +19,6 @@ public class Article : Entity<long>
     public string Title { get; set; }
 
     public string Text { get; set; }
-
-    public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 

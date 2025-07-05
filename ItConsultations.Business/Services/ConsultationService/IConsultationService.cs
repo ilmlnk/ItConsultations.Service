@@ -6,6 +6,8 @@ public interface IConsultationService
 {
     Task<ConsultationDto> CreateAsync(CreateConsultationDto dto);
 
+    Task<ConsultationDto> CreateAsync(CreateConsultationDto dto, string consId);
+
     Task<ConsultationDto> GetAsync(string consId);
 
     Task<ConsultationDto> GetAsync(long id);

@@ -2,7 +2,7 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.CoachDtos;
 using ItConsultations.Business.Entities.Consultation;
-using System.Data.Entity;
+using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.CoachService;
 
@@ -17,45 +17,44 @@ public class CoachService : ICoachService
 
     public async Task<CoachDto> CreateAsync(CreateCoachDto dto)
     {
-        var originalDto = MapperManager.Map<CoachDto>(dto);
-        var coach = MapperManager.Map<Coach>(originalDto);
+        var coach = MapperManager.Map<Coach>(dto);
         await _repository.CreateAsync(coach);
-        var coachDto = MapperManager.Map<CoachDto>(coach);
-        return coachDto;
+        return MapperManager.Map<CoachDto>(coach);
     }
 
     public async Task<CoachDto> DeleteAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
-        var coachDto = MapperManager.Map<CoachDto>(coach);
         await _repository.DeleteAsync(coach);
-        return coachDto;
+        return MapperManager.Map<CoachDto>(coach);
     }
 
     public async Task<IEnumerable<CoachDto>> GetAllAsync()
     {
-        var coaches = await _repository.Get(x => true).ToListAsync();
+        var coaches = await _repository.GetAllAsync();
         return MapperManager.Map<List<CoachDto>>(coaches);
     }
 
     public async Task<CoachDto> GetAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
-        var dto = MapperManager.Map<CoachDto>(coach);
-        return dto;
+        return MapperManager.Map<CoachDto>(coach);
     }
 
     public CoachDto GetById(string consId)
     {
         var coach = _repository.Get(c => c.CoachConsId == consId);
-        var dto = MapperManager.Map<CoachDto>(coach);
-        return dto;
+        return MapperManager.Map<CoachDto>(coach);
     }
 
     public async Task<CoachDto> UpdateAsync(UpdateCoachDto dto)
     {
         var existingCoach = await _repository.GetAsync(dto.Id);
-        var coachDto = MapperManager.Map<Coach, CoachDto>(existingCoach);
-        return coachDto;
+        Guard.NotNull(existingCoach, nameof(existingCoach));
+
+        existingCoach = MapperManager.Map<Coach>(dto);
+        await _repository.UpdateAsync(existingCoach);
+
+        return MapperManager.Map<CoachDto>(existingCoach);
     }
 }

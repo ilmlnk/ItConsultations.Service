@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ItConsultations.Business.Entities.Event;
 
 public class Event : Entity<long>
 {
-    [Required]
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [MaxLength(32)]
+    [Required]
     public long Id { get; set; }
 
     [MaxLength(32)]
