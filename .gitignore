@@ -380,6 +380,7 @@ appsettings.Local.json
 appsettings.Development.json
 !appsettings.json
 !appsettings.Development.json
+!get-token.html
 
 # API Keys and secrets
 *.key
