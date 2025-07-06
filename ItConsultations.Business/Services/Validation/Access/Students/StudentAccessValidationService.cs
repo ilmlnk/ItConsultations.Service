@@ -14,11 +14,15 @@ public class StudentAccessValidationService : AccessValidationServiceBase, IStud
         _studentService = studentService;
     }
 
-    public async void ValidateStudentAccessAsync(long id)
+    public void ValidateStudentAccessAsync(long id)
     {
-        var student = await _studentService.GetByIdAsync(id);
+        var student = _studentService.GetByIdAsync(id).Result;
 
-        Guard.NotNull(student);
+        if (student == null)
+        {
+            throw new ArgumentException($"Student with id {id} not found");
+        }
+
         Guard.That(student.Username == null, "Student does not have a specified username.");
     }
 }

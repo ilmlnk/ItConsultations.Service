@@ -11,7 +11,7 @@ public class UserMap : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users");
 
-        // builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.Property(x => x.FirebaseUid)
@@ -48,16 +48,6 @@ public class UserMap : IEntityTypeConfiguration<User>
         builder.HasIndex(x => x.Email).IsUnique();
         builder.HasIndex(x => x.Role);
 
-        builder.HasOne<Coach>()
-            .WithOne()
-            .HasForeignKey<ItConsultations.Business.Entities.User.User>(x => x.CoachId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-        builder.HasOne<Student>()
-            .WithOne()
-            .HasForeignKey<ItConsultations.Business.Entities.User.User>(x => x.StudentId)
-            .OnDelete(DeleteBehavior.SetNull);
-
         builder.HasMany(x => x.RefreshTokens)
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
@@ -71,7 +61,7 @@ public class RefreshTokenMap : IEntityTypeConfiguration<RefreshToken>
     {
         builder.ToTable("RefreshTokens");
 
-        // builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.Property(x => x.Token)

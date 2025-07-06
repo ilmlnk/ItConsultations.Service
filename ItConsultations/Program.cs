@@ -44,8 +44,7 @@ builder.Services.AddControllers()
 
 // Configure Entity Framework with SQL Server
 builder.Services.AddDbContext<ConsultationsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), 
-        b => b.MigrationsAssembly("ItConsultations.Database")), 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), 
     ServiceLifetime.Transient);
 
 builder.Services.Configure<FirebaseConfig>(builder.Configuration.GetSection("Firebase"));
@@ -63,21 +62,6 @@ builder.Services.AddSingleton<ILoggingService, LoggingService>();
 var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "your-super-secret-key-with-at-least-32-characters";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "ItConsultations";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "ItConsultationsUsers";
-
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret))
-        };
-    });*/
 
 builder.Services.AddAuthorization();
 
@@ -119,6 +103,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ConsultationsDbContext>();
+    context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
 }
 

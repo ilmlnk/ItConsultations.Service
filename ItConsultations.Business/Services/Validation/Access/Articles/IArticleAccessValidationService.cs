@@ -2,5 +2,5 @@
 
 public interface IArticleAccessValidationService
 {
-    void ValidateArticleAccessAsync(long id);
+    void ValidateArticleAccessAsync(string consId);
 }

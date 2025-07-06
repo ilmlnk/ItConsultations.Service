@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 
-public class ConsultationMap
+public class ConsultationMap : IEntityTypeConfiguration<Consultation>
 {
-    public static void Map(EntityTypeBuilder<Consultation> entityBuilder)
+    public void Configure(EntityTypeBuilder<Consultation> entityBuilder)
     {
-        // entityBuilder.HasKey(c => c.Id);
-        entityBuilder.Property(c => c.Id).ValueGeneratedNever();
+        entityBuilder.ToTable("Consultations");
+        
+        entityBuilder.HasKey(c => c.Id);
+        entityBuilder.Property(c => c.Id).ValueGeneratedOnAdd();
         entityBuilder.Property(c => c.ConsId).HasMaxLength(36).IsRequired();
         entityBuilder.Property(c => c.Title).HasMaxLength(200).IsRequired();
         entityBuilder.Property(c => c.Description).HasMaxLength(2000);
@@ -17,7 +19,6 @@ public class ConsultationMap
         entityBuilder.Property(c => c.Duration);
         entityBuilder.Property(c => c.ThumbnailUrl).HasMaxLength(500);
         
-        // Настройка отношений
         entityBuilder.HasOne(c => c.Coach)
                      .WithMany(c => c.Consultations)
                      .HasForeignKey("CoachId")
@@ -28,7 +29,6 @@ public class ConsultationMap
                      .HasForeignKey("ConsultationId")
                      .OnDelete(DeleteBehavior.Restrict);
         
-        // Индексы для улучшения производительности
         entityBuilder.HasIndex(c => c.ConsId).IsUnique();
         entityBuilder.HasIndex(c => c.Title);
         entityBuilder.HasIndex(c => c.Price);

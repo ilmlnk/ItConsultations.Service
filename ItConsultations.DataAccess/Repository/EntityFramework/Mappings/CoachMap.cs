@@ -10,7 +10,8 @@ public class CoachMap : IEntityTypeConfiguration<Coach>
     {
         builder.ToTable("Coaches");
 
-        // builder.HasKey(c => c.Id);
+        builder.HasKey(c => c.Id);
+        builder.Property(c => c.Id).ValueGeneratedOnAdd();
         builder.Property(c => c.CoachConsId).HasMaxLength(36).IsRequired();
         builder.Property(c => c.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(c => c.LastName).HasMaxLength(100);

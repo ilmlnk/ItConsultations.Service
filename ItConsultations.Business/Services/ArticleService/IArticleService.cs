@@ -4,7 +4,7 @@ namespace ItConsultations.Business.Services.ArticleService;
 
 public interface IArticleService
 {
-    Task<ArticleDto> CreateAsync(CreateArticleDto dto);
+    Task<ArticleDto> CreateAsync(CreateArticleDto dto, string consId);
 
     Task DeleteAsync(long id);
 

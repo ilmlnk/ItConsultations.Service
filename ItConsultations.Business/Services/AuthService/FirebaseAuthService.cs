@@ -51,22 +51,71 @@ public class FirebaseAuthService : IFirebaseAuthService
 
     private void InitializeFirebase()
     {
-        Guard.That(FirebaseApp.DefaultInstance == null, nameof(FirebaseApp.DefaultInstance));
-        var credential = GoogleCredential.FromJson(GetFirebaseServiceAccountJson());
-        FirebaseApp.Create(new AppOptions
+        try
+        {
+            if (FirebaseApp.DefaultInstance != null)
+            {
+                return;
+            }
+
+            var serviceAccountJson = GetFirebaseServiceAccountJson();
+            
+            if (string.IsNullOrEmpty(serviceAccountJson))
+            {
+                throw new InvalidOperationException("Failed to generate Firebase service account JSON");
+            }
+
+            var credential = GoogleCredential.FromJson(serviceAccountJson);
+            FirebaseApp.Create(new AppOptions
             {
                 Credential = credential,
                 ProjectId = _firebaseConfig.ProjectId
-        });
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to initialize Firebase: {ex.Message}", ex);
+        }
     }
 
     private string GetFirebaseServiceAccountJson()
     {
+        // Проверяем, что все необходимые поля заполнены
+        if (string.IsNullOrEmpty(_firebaseConfig.ProjectId)) 
+        {
+            throw new InvalidOperationException("Firebase ProjectId is not configured");
+        }
+        
+        if (string.IsNullOrEmpty(_firebaseConfig.PrivateKey)) 
+        {
+            throw new InvalidOperationException("Firebase PrivateKey is not configured");
+        }
+        
+        if (string.IsNullOrEmpty(_firebaseConfig.ClientEmail)) 
+        {
+            throw new InvalidOperationException("Firebase ClientEmail is not configured");
+        }
+        
+        if (string.IsNullOrEmpty(_firebaseConfig.PrivateKeyId)) 
+        {
+            throw new InvalidOperationException("Firebase PrivateKeyId is not configured");
+        }
+
+        if (_firebaseConfig.PrivateKey.Contains("YOUR_PRIVATE_KEY_HERE"))
+        {
+            throw new InvalidOperationException("Firebase PrivateKey is not properly configured. Please replace 'YOUR_PRIVATE_KEY_HERE' with actual private key");
+        }
+
+        var escapedPrivateKey = _firebaseConfig.PrivateKey
+            .Replace("\n", "\\n")
+            .Replace("\r", "\\r")
+            .Replace("\"", "\\\"");
+        
         return $@"{{
             ""type"": ""{_firebaseConfig.Type}"",
             ""project_id"": ""{_firebaseConfig.ProjectId}"",
             ""private_key_id"": ""{_firebaseConfig.PrivateKeyId}"",
-            ""private_key"": ""{_firebaseConfig.PrivateKey}"",
+            ""private_key"": ""{escapedPrivateKey}"",
             ""client_email"": ""{_firebaseConfig.ClientEmail}"",
             ""client_id"": ""{_firebaseConfig.ClientId}"",
             ""auth_uri"": ""{_firebaseConfig.AuthUri}"",
@@ -80,11 +129,26 @@ public class FirebaseAuthService : IFirebaseAuthService
     {
         try
         {
+            // Проверяем формат токена
+            if (string.IsNullOrEmpty(idToken))
+            {
+                throw new ArgumentException("ID token cannot be null or empty");
+            }
+
+            var tokenParts = idToken.Split('.');
+            if (tokenParts.Length != 3)
+            {
+                throw new ArgumentException($"Invalid ID token format. Expected 3 segments, got {tokenParts.Length}. Token should be in format: header.payload.signature");
+            }
+
             var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
             var uid = decodedToken.Uid;
 
             var user = await GetUserByFirebaseUidAsync(uid);
-            Guard.NotNull(user, nameof(user));
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with Firebase UID {uid} not found");
+            }
 
             await UpdateUserLastLoginAsync(uid);
 
@@ -101,6 +165,14 @@ public class FirebaseAuthService : IFirebaseAuthService
                 User = userInfo
             };
         }
+        catch (ArgumentException ex)
+        {
+            throw new InvalidOperationException($"Invalid ID token: {ex.Message}", ex);
+        }
+        catch (FirebaseAuthException ex)
+        {
+            throw new InvalidOperationException($"Firebase authentication failed: {ex.Message}", ex);
+        }
         catch (Exception ex)
         {
             throw new InvalidOperationException($"Authentication failed: {ex.Message}", ex);
@@ -111,11 +183,26 @@ public class FirebaseAuthService : IFirebaseAuthService
     {
         try
         {
+            // Проверяем формат токена
+            if (string.IsNullOrEmpty(registerDto.IdToken))
+            {
+                throw new ArgumentException("ID token cannot be null or empty");
+            }
+
+            var tokenParts = registerDto.IdToken.Split('.');
+            if (tokenParts.Length != 3)
+            {
+                throw new ArgumentException($"Invalid ID token format. Expected 3 segments, got {tokenParts.Length}. Token should be in format: header.payload.signature");
+            }
+
             var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(registerDto.IdToken);
             var uid = decodedToken.Uid;
 
             var existingUser = await GetUserByFirebaseUidAsync(uid);
-            Guard.NotNull(existingUser, nameof(existingUser));
+            if (existingUser != null)
+            {
+                throw new InvalidOperationException($"User with Firebase UID {uid} already exists");
+            }
 
             var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
 
@@ -131,7 +218,14 @@ public class FirebaseAuthService : IFirebaseAuthService
                 IsActive = true
             };
 
-            await _userRepository.CreateAsync(user);
+            try
+            {
+                await _userRepository.CreateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to create user in database: {ex.Message}", ex);
+            }
 
             if (registerDto.Role == UserRole.Coach)
             {
@@ -150,8 +244,15 @@ public class FirebaseAuthService : IFirebaseAuthService
                     User = user
                 };
 
-                await _coachRepository.CreateAsync(coach);
-                user.CoachId = coach.Id;
+                try
+                {
+                    await _coachRepository.CreateAsync(coach);
+                    user.CoachId = coach.Id;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Failed to create coach in database: {ex.Message}", ex);
+                }
             }
             else if (registerDto.Role == UserRole.Student)
             {
@@ -164,17 +265,48 @@ public class FirebaseAuthService : IFirebaseAuthService
                     Email = user.Email,
                     PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
                     LinkedInUrl = registerDto.LinkedInUrl,
-                    GitHubUrl = registerDto.GitHubUrl,
-                    User = user
+                    GitHubUrl = registerDto.GitHubUrl
                 };
 
-                await _studentRepository.CreateAsync(student);
-                user.StudentId = student.Id;
+                try
+                {
+                    Console.WriteLine($"Creating student with StudentConsId: {student.StudentConsId}");
+                    Console.WriteLine($"Student Email: {student.Email}");
+                    Console.WriteLine($"Student FirstName: {student.FirstName}");
+                    Console.WriteLine($"Student LastName: {student.LastName}");
+                    Console.WriteLine($"Student BirthDate: {student.BirthDate}");
+                    
+                    await _studentRepository.CreateAsync(student);
+                    user.StudentId = student.Id;
+                    
+                    Console.WriteLine($"Student created successfully with ID: {student.Id}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error creating student: {ex.Message}");
+                    Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+                    throw new InvalidOperationException($"Failed to create student in database: {ex.Message}", ex);
+                }
             }
 
-            await _userRepository.UpdateAsync(user);
+            try
+            {
+                await _userRepository.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to update user in database: {ex.Message}", ex);
+            }
 
             return await GetUserInfoAsync(uid);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new InvalidOperationException($"Invalid ID token: {ex.Message}", ex);
+        }
+        catch (FirebaseAuthException ex)
+        {
+            throw new InvalidOperationException($"Firebase authentication failed: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -187,7 +319,11 @@ public class FirebaseAuthService : IFirebaseAuthService
         try
         {
             var user = await GetUserByFirebaseUidAsync(firebaseUid);
-            Guard.NotNull(user, nameof(user));
+
+            if (user == null)
+            {
+                return null;
+            }
 
             var userInfo = new UserInfoDto
             {
@@ -241,8 +377,17 @@ public class FirebaseAuthService : IFirebaseAuthService
     public async Task<UserInfoDto?> GetUserByRoleAsync(string firebaseUid, UserRole role)
     {
         var user = await GetUserByFirebaseUidAsync(firebaseUid);
-        Guard.NotNull(user, nameof(user));
-        Guard.That(user.Role == role, nameof(user.Role));
+
+        if (user == null)
+        {
+            return null;
+        }
+        
+        if (user.Role != role)
+        {
+            throw new InvalidOperationException($"User role {user.Role} does not match expected role {role}");
+        }
+        
         return await GetUserInfoAsync(firebaseUid);
     }
 
@@ -277,11 +422,22 @@ public class FirebaseAuthService : IFirebaseAuthService
     {
         var tokenEntity = _refreshTokenRepository.Get(rt => rt.Token == refreshToken && !rt.IsRevoked).FirstOrDefault();
         
-        Guard.NotNull(tokenEntity, nameof(tokenEntity));
-        Guard.That(tokenEntity.ExpiresAt > DateTime.UtcNow, nameof(tokenEntity.ExpiresAt));
+        if (tokenEntity == null)
+        {
+            throw new InvalidOperationException("Invalid refresh token");
+        }
+        
+        if (tokenEntity.ExpiresAt <= DateTime.UtcNow)
+        {
+            throw new InvalidOperationException("Refresh token has expired");
+        }
 
         var user = await _userRepository.GetAsync(tokenEntity.UserId);
-        Guard.NotNull(user, nameof(user));
+
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
 
         var newAccessToken = await GenerateAccessTokenAsync(user);
         var newRefreshToken = await GenerateRefreshTokenAsync(user);
@@ -305,10 +461,17 @@ public class FirebaseAuthService : IFirebaseAuthService
     {
         var tokenEntity = _refreshTokenRepository.Get(rt => rt.Token == refreshToken && !rt.IsRevoked).FirstOrDefault();
         
-        Guard.NotNull(tokenEntity, nameof(tokenEntity));
+        if (tokenEntity == null)
+        {
+            throw new InvalidOperationException("Invalid refresh token");
+        }
 
         var user = await _userRepository.GetAsync(tokenEntity.UserId);
-        Guard.That(user.FirebaseUid == userId, nameof(user.FirebaseUid));
+
+        if (user == null || user.FirebaseUid != userId)
+        {
+            throw new InvalidOperationException("User not found or unauthorized");
+        }
 
         tokenEntity.IsRevoked = true;
         tokenEntity.RevokedAt = DateTime.UtcNow;
@@ -344,7 +507,11 @@ public class FirebaseAuthService : IFirebaseAuthService
     private async Task UpdateUserLastLoginAsync(string firebaseUid)
     {
         var user = await GetUserByFirebaseUidAsync(firebaseUid);
-        Guard.NotNull(user, nameof(user));
+        
+        if (user == null)
+        {
+            throw new InvalidOperationException($"User with Firebase UID {firebaseUid} not found");
+        }
         user.LastLoginAt = DateTime.UtcNow;
         await _userRepository.UpdateAsync(user);
     }

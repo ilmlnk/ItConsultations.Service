@@ -1,21 +1,12 @@
 ﻿using ItConsultations.Business.Entities;
 using ItConsultations.Business.Entities.User;
+using System.Text.Json.Serialization;
 
 namespace ItConsultations.Business.Dtos.ArticleDtos;
 
 public class CreateArticleDto
 {
-    public long Id { get; set; }
+    public string Title { get; set; } = string.Empty;
 
-    public string ArticleConsId { get; set; }
-
-    public string Title { get; set; }
-
-    public string Text { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime UpdatedAt { get; set; }
-
-    public User CreatedBy { get; set; }
+    public string Text { get; set; } = string.Empty;
 }

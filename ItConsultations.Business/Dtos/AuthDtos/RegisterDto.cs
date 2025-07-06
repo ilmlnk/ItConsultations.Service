@@ -15,6 +15,8 @@ public class RegisterDto
 
     public string? LastName { get; set; }
 
+    public string? Email { get; set; }
+
     [DataType(DataType.Date)]
     public DateTime? BirthDate { get; set; }
 

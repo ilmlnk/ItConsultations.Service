@@ -16,7 +16,11 @@ public class CoachAccessValidationService : AccessValidationServiceBase, ICoachA
     {
         var coach = _coachService.GetById(id.ToString());
 
-        Guard.NotNull(coach, nameof(coach));
+        if (coach == null)
+        {
+            throw new ArgumentException($"Coach with id {id} not found");
+        }
+
         Guard.That(coach.Email == null, "Coach does not have a specified email.");
         Guard.That(coach.Username == null, "Coach does not have a specified username.");
     }

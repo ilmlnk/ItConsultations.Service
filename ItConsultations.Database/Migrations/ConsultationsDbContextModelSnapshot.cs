@@ -56,9 +56,16 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ArticleConsId")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Articles");
+                    b.HasIndex("Title");
+
+                    b.ToTable("Articles", (string)null);
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Attachments.Attachment", b =>
@@ -202,27 +209,38 @@ namespace ItConsultations.Database.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("Duration")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("ThumbnailUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId");
 
-                    b.ToTable("Consultations");
+                    b.HasIndex("ConsId")
+                        .IsUnique();
+
+                    b.HasIndex("Price");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("Consultations", (string)null);
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Consultation.Review", b =>
@@ -297,8 +315,8 @@ namespace ItConsultations.Database.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("GitHubUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -306,12 +324,8 @@ namespace ItConsultations.Database.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("LinkedInUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PictureUrl")
                         .IsRequired()
@@ -322,10 +336,6 @@ namespace ItConsultations.Database.Migrations
                         .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -514,9 +524,6 @@ namespace ItConsultations.Database.Migrations
                     b.Property<long?>("CoachId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("CoachId1")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -555,18 +562,11 @@ namespace ItConsultations.Database.Migrations
                     b.Property<long?>("StudentId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("StudentId1")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId")
                         .IsUnique()
                         .HasFilter("[CoachId] IS NOT NULL");
-
-                    b.HasIndex("CoachId1")
-                        .IsUnique()
-                        .HasFilter("[CoachId1] IS NOT NULL");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -575,14 +575,6 @@ namespace ItConsultations.Database.Migrations
                         .IsUnique();
 
                     b.HasIndex("Role");
-
-                    b.HasIndex("StudentId")
-                        .IsUnique()
-                        .HasFilter("[StudentId] IS NOT NULL");
-
-                    b.HasIndex("StudentId1")
-                        .IsUnique()
-                        .HasFilter("[StudentId1] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -602,7 +594,8 @@ namespace ItConsultations.Database.Migrations
                 {
                     b.HasOne("ItConsultations.Business.Entities.Article.Article", null)
                         .WithMany("Attachments")
-                        .HasForeignKey("ArticleId");
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ItConsultations.Business.Entities.Consultation.Review", null)
                         .WithMany("Attachments")
@@ -673,22 +666,9 @@ namespace ItConsultations.Database.Migrations
             modelBuilder.Entity("ItConsultations.Business.Entities.User.User", b =>
                 {
                     b.HasOne("ItConsultations.Business.Entities.Consultation.Coach", null)
-                        .WithOne()
+                        .WithOne("User")
                         .HasForeignKey("ItConsultations.Business.Entities.User.User", "CoachId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ItConsultations.Business.Entities.Consultation.Coach", null)
-                        .WithOne("User")
-                        .HasForeignKey("ItConsultations.Business.Entities.User.User", "CoachId1");
-
-                    b.HasOne("ItConsultations.Business.Entities.Consultation.Student", null)
-                        .WithOne()
-                        .HasForeignKey("ItConsultations.Business.Entities.User.User", "StudentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ItConsultations.Business.Entities.Consultation.Student", null)
-                        .WithOne("User")
-                        .HasForeignKey("ItConsultations.Business.Entities.User.User", "StudentId1");
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Article.Article", b =>
@@ -714,12 +694,6 @@ namespace ItConsultations.Database.Migrations
             modelBuilder.Entity("ItConsultations.Business.Entities.Consultation.Review", b =>
                 {
                     b.Navigation("Attachments");
-                });
-
-            modelBuilder.Entity("ItConsultations.Business.Entities.Consultation.Student", b =>
-                {
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.User.User", b =>

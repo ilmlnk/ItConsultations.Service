@@ -33,8 +33,13 @@ public class ConsultationService : IConsultationService
 
     public async Task<ConsultationDto> DeleteAsync(string id)
     {
-        var consultation = _repository.Get(c => c.ConsId == id);
-        Guard.NotNull(consultation, nameof(consultation));
+        var consultation = _repository.Get(c => c.ConsId == id).FirstOrDefault();
+
+        if (consultation == null)
+        {
+            return null;
+        }
+
         await _repository.DeleteAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -42,7 +47,12 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> DeleteAsync(long id)
     {
         var consultation = await _repository.GetAsync(id);
-        Guard.NotNull(consultation, nameof(consultation));
+        
+        if (consultation == null)
+        {
+            return null;
+        }
+
         await _repository.DeleteAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -50,7 +60,12 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id)
     {
         var consultation = await _repository.GetAsync(id);
-        Guard.NotNull(consultation, nameof(consultation));
+        
+        if (consultation == null)
+        {
+            return null;
+        }
+
         await _repository.DeleteAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -58,15 +73,20 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> DeleteForUserAsync(DeleteConsultationDto dto, long id)
     {
         var consultation = await _repository.GetAsync(id);
-        Guard.NotNull(consultation, nameof(consultation));
+        
+        if (consultation == null)
+        {
+            return null;
+        }
+
         await _repository.DeleteAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
     public async Task<ConsultationDto> GetAsync(string consId)
     {
-        var consultation = _repository.Get(x => x.ConsId == consId);
-        return MapperManager.Map<ConsultationDto>(consultation);
+        var consultation = _repository.Get(x => x.ConsId == consId).FirstOrDefault();
+        return consultation != null ? MapperManager.Map<ConsultationDto>(consultation) : null;
     }
 
     public async Task<List<ConsultationDto>> GetAsync()
@@ -79,13 +99,18 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> GetAsync(long id)
     {
         var consultation = await _repository.GetAsync(id);
-        return MapperManager.Map<ConsultationDto>(consultation);
+        return consultation != null ? MapperManager.Map<ConsultationDto>(consultation) : null;
     }
 
     public async Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, string id)
     {
-        var consultation = _repository.Get(c => c.ConsId == id);
-        Guard.NotNull(consultation, nameof(consultation));
+        var consultation = _repository.Get(c => c.ConsId == id).FirstOrDefault();
+        
+        if (consultation == null)
+        {
+            return null;
+        }
+
         await _repository.UpdateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
@@ -93,7 +118,12 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, long id)
     {
         var consultation = await _repository.GetAsync(id);
-        Guard.NotNull(consultation, nameof(consultation));
+        
+        if (consultation == null)
+        {
+            return null;
+        }
+        
         await _repository.UpdateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }

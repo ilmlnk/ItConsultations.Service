@@ -2,6 +2,7 @@
 using ItConsultations.Business.Entities.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ItConsultations.Business.Entities.Article;
 
@@ -21,9 +22,13 @@ public class Article : Entity<long>
 
     public string Text { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public DateTime UpdatedAt { get; set; }
 
+    [JsonIgnore]
     public User.User CreatedBy { get; set; }
 
-    public List<Attachment> Attachments { get; set; }
+    [JsonIgnore]
+    public List<Attachment> Attachments { get; set; } = new();
 }

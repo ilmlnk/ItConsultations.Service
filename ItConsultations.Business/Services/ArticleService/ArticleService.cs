@@ -20,12 +20,23 @@ public class ArticleService : IArticleService
         _attachmentRepository = attachmentRepository;
     }
 
-    public async Task<ArticleDto> CreateAsync(CreateArticleDto dto)
+    public async Task<ArticleDto> CreateAsync(CreateArticleDto dto, string consId)
     {
-        var article = MapperManager.Map<Article>(dto);
-        article.ArticleConsId = GenerateArticleId();
-        article = await _repository.CreateAsync(article);
-        return MapperManager.Map<ArticleDto>(article);
+        try
+        {
+            var article = MapperManager.Map<Article>(dto);
+            article.ArticleConsId = GenerateArticleId();
+            article.CreatedAt = DateTime.UtcNow;
+            article.UpdatedAt = DateTime.UtcNow;
+            article = await _repository.CreateAsync(article);
+            return MapperManager.Map<ArticleDto>(article);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in CreateAsync: {ex.Message}");
+            Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+            throw;
+        }
     }
 
     public async Task<ArticleDto> DeleteAsync(DeleteArticleDto dto)
@@ -35,23 +46,22 @@ public class ArticleService : IArticleService
         return MapperManager.Map<ArticleDto>(article);
     }
 
-    /*public async Task<List<ArticleDto>> GetAllAsync()
+    public async Task<List<ArticleDto>> GetAllAsync()
     {
-        var articles = await _repository.Include(article => article.CreatedBy)
-            .Where(;
+        var articles = await _repository.GetAllAsync();
         return MapperManager.Map<List<ArticleDto>>(articles);
-    }*/
+    }
 
     public async Task<ArticleDto> GetByIdAsync(long id)
     {
         var article = await _repository.GetAsync(id);
-        return MapperManager.Map<ArticleDto>(article);
+        return article != null ? MapperManager.Map<ArticleDto>(article) : null;
     }
 
     public ArticleDto GetById(string articleConsId)
     {
-        var article = _repository.Get(c => c.ArticleConsId.Equals(articleConsId));
-        return MapperManager.Map<ArticleDto>(article);
+        var article = _repository.Get(c => c.ArticleConsId.Equals(articleConsId)).FirstOrDefault();
+        return article != null ? MapperManager.Map<ArticleDto>(article) : null;
     }
 
     public async Task DeleteAsync(long id)
@@ -75,11 +85,6 @@ public class ArticleService : IArticleService
 
         await _attachmentRepository.DeleteAsync(entity.Attachments);
         await _repository.DeleteAsync(entity);
-    }
-
-    public Task<List<ArticleDto>> GetAllAsync()
-    {
-        throw new NotImplementedException();
     }
 
     // to generate article id it is used 0006 prefix

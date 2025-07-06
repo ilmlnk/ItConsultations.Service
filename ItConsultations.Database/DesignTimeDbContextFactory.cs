@@ -9,8 +9,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Consultati
     public ConsultationsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ConsultationsDbContext>();
-        optionsBuilder.UseSqlServer("Server=VICTUS\\SQLEXPRESS;Database=ItConsultationsDb;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true",
-            b => b.MigrationsAssembly("ItConsultations.Database"));
+        optionsBuilder.UseSqlServer("Server=VICTUS\\SQLEXPRESS;Database=ItConsultationsDb;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true");
 
         return new ConsultationsDbContext(optionsBuilder.Options);
     }

@@ -1,5 +1,6 @@
 using ItConsultations.Business.SharedTypes.Enums.System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ItConsultations.Business.Entities.User;
 
@@ -32,6 +33,7 @@ public class User : Entity<long>
 
     public long? StudentId { get; set; }
 
+    [JsonIgnore]
     public List<RefreshToken> RefreshTokens { get; set; } = new();
 }
 
@@ -44,6 +46,7 @@ public class RefreshToken : Entity<long>
     [Required]
     public long UserId { get; set; }
 
+    [JsonIgnore]
     public User User { get; set; } = null!;
 
     public DateTime ExpiresAt { get; set; }

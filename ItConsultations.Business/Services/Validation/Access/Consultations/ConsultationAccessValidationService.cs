@@ -15,11 +15,15 @@ public class ConsultationAccessValidationService : AccessValidationServiceBase, 
         _consultationService = consultationService;
     }
 
-    public async void ValidateConsultationAccessAsync(long id, string consId)
+    public void ValidateConsultationAccessAsync(long id, string consId)
     {
-        var consultation = await _consultationService.GetAsync(consId);
+        var consultation = _consultationService.GetAsync(consId).Result;
 
-        Guard.NotNull(consultation);
+        if (consultation == null)
+        {
+            throw new ArgumentException($"Consultation with consId {consId} not found");
+        }
+
         Guard.That(consultation.Coach?.CoachConsId != consId, "User doesn't have access to consultation.");
         Guard.That(consultation.Coach == null, "Consultation does not have a coach for targeted consultation.");
     }

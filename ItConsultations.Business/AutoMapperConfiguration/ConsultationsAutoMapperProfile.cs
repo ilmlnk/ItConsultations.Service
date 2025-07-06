@@ -2,7 +2,9 @@
 using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Dtos.StudentDtos;
 using ItConsultations.Business.Dtos.CoachDtos;
+using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Article;
 
 
 namespace ItConsultations.Business.AutoMapperConfiguration;
@@ -72,5 +74,26 @@ public class ConsultationsAutoMapperProfile : Profile
         // Student mappings
         CreateMap<Student, StudentDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
+        // Article mappings
+        CreateMap<CreateArticleDto, Article>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.ArticleConsId, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+            .ForMember(dest => dest.Attachments, opt => opt.Ignore());
+
+        CreateMap<Article, ArticleDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.ArticleConsId, opt => opt.MapFrom(src => src.ArticleConsId))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
+            .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
+            .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
     }
 }

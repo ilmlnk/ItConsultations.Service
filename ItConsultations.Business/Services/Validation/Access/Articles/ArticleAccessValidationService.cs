@@ -13,11 +13,8 @@ public class ArticleAccessValidationService : AccessValidationServiceBase, IArti
         _articleService = articleService;
     }
 
-    public async void ValidateArticleAccessAsync(long id)
+    public void ValidateArticleAccessAsync(string consId)
     {
-        var article = await _articleService.GetByIdAsync(id);
-
-        Guard.NotNull(article);
-        Guard.That(article.Title == null, "Article does not have a required title.");
+        //Guard.That(article.Title == null, "Article does not have a required title.");
     }
 }

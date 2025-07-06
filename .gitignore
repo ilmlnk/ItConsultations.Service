@@ -361,3 +361,108 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# ===========================================
+# SENSITIVE INFORMATION - DO NOT COMMIT
+# ===========================================
+
+# Firebase configuration files
+firebase-service-account.json
+firebase-config.json
+firebase-credentials.json
+*firebase*.json
+
+# Database connection strings and credentials
+appsettings.Production.json
+appsettings.Staging.json
+appsettings.QA.json
+appsettings.Local.json
+appsettings.Development.json
+!appsettings.json
+!appsettings.Development.json
+
+# API Keys and secrets
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.json
+secrets.xml
+*.secret
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+
+# Log files with sensitive data
+logs/
+*.log
+error.log
+access.log
+
+# SSL certificates
+*.crt
+*.cer
+*.der
+*.p7b
+*.p7c
+
+# Private keys
+private_key.pem
+private-key.pem
+id_rsa
+id_rsa.pub
+
+# Docker secrets
+docker-secrets/
+
+# Azure credentials
+.azure/
+azure-credentials.json
+
+# AWS credentials
+.aws/
+aws-credentials.json
+
+# Google Cloud credentials
+gcp-credentials.json
+service-account-key.json
+
+# Database backup files
+*.bak
+*.backup
+*.sql
+*.mdf
+*.ldf
+
+# User-specific configuration
+user.config
+personal.config
+
+# Temporary files with sensitive data
+temp/
+tmp/
+*.tmp
+
+# IDE specific sensitive files
+.vscode/settings.json
+.idea/workspace.xml
+*.suo
+*.user
+
+# Test data with sensitive information
+test-data/
+sample-data/
+mock-data/
+
+# Backup files
+backup/
+*.backup
+*.bak
+
+# Local development files
+local/
+dev/
+development/

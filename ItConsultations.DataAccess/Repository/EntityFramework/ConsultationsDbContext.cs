@@ -28,9 +28,9 @@ public class ConsultationsDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        //modelBuilder.ApplyConfiguration(new ArticleMap());
+        modelBuilder.ApplyConfiguration(new ArticleMap());
         modelBuilder.ApplyConfiguration(new CoachMap());
-        //modelBuilder.ApplyConfiguration(new ConsultationMap());
+        modelBuilder.ApplyConfiguration(new ConsultationMap());
         modelBuilder.ApplyConfiguration(new StudentMap());
         modelBuilder.ApplyConfiguration(new UserMap());
         modelBuilder.ApplyConfiguration(new RefreshTokenMap());
@@ -47,7 +47,6 @@ public class ConsultationsDbContext : DbContext
             entity.Property(a => a.CreatedAt).IsRequired();
             entity.Property(a => a.EntityId);
             entity.Ignore(a => a.EntityName);
-            entity.Property(a => a.Id).HasMaxLength(32);
         });
 
         modelBuilder.Entity<Review>(entity =>

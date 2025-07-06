@@ -2,7 +2,7 @@ using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Services.AuthService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ItConsultations.Utilities.Guards;
+using FirebaseAdmin;
 
 namespace ItConsultations.Controllers;
 
@@ -11,10 +11,12 @@ namespace ItConsultations.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IFirebaseAuthService _firebaseAuthService;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IFirebaseAuthService firebaseAuthService)
+    public AuthController(IFirebaseAuthService firebaseAuthService, ILogger<AuthController> logger)
     {
         _firebaseAuthService = firebaseAuthService;
+        _logger = logger;
     }
 
     [HttpPost("register")]
@@ -22,14 +24,13 @@ public class AuthController : ControllerBase
     {
         try
         {
-            Guard.NotNull(registerDto, nameof(registerDto));
-            Guard.NotNullOrEmpty(registerDto.IdToken, nameof(registerDto.IdToken));
-
+            var tokenParts = registerDto.IdToken.Split('.');
             var userInfo = await _firebaseAuthService.RegisterAsync(registerDto);
             return Ok(userInfo);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error during registration for email: {Email}", registerDto?.Email);
             return BadRequest(new { message = ex.Message });
         }
     }
@@ -39,14 +40,14 @@ public class AuthController : ControllerBase
     {
         try
         {
-            Guard.NotNull(loginDto, nameof(loginDto));
-            Guard.NotNullOrEmpty(loginDto.IdToken, nameof(loginDto.IdToken));
 
+            var tokenParts = loginDto.IdToken.Split('.');
             var result = await _firebaseAuthService.LoginAsync(loginDto.IdToken);
             return Ok(result);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error during login");
             return BadRequest(new { message = ex.Message });
         }
     }
@@ -54,16 +55,13 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
     {
-        try
-        {
-            Guard.NotNull(refreshTokenDto, nameof(refreshTokenDto));
-            Guard.NotNullOrEmpty(refreshTokenDto.RefreshToken, nameof(refreshTokenDto.RefreshToken));
-
+        try {
             var result = await _firebaseAuthService.RefreshTokenAsync(refreshTokenDto.RefreshToken);
             return Ok(result);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error during token refresh");
             return BadRequest(new { message = ex.Message });
         }
     }
@@ -74,18 +72,14 @@ public class AuthController : ControllerBase
     {
         try
         {
-            Guard.NotNull(logoutDto, nameof(logoutDto));
-            Guard.NotNullOrEmpty(logoutDto.RefreshToken, nameof(logoutDto.RefreshToken));
 
             var userId = User.FindFirst("firebase_uid")?.Value;
-            Guard.NotNull(userId, nameof(userId));
-
             var result = await _firebaseAuthService.RevokeTokenAsync(logoutDto.RefreshToken, userId);
-            Guard.That(result, nameof(result));
             return Ok(new { message = "Logged out successfully" });
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error during logout");
             return BadRequest(new { message = ex.Message });
         }
     }
@@ -97,16 +91,41 @@ public class AuthController : ControllerBase
         try
         {
             var firebaseUid = User.FindFirst("firebase_uid")?.Value;
-            Guard.NotNull(firebaseUid, nameof(firebaseUid));
 
             var userInfo = await _firebaseAuthService.GetUserInfoAsync(firebaseUid);
-            Guard.NotNull(userInfo, nameof(userInfo));
 
             return Ok(userInfo);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error getting current user");
             return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("firebase-status")]
+    public IActionResult GetFirebaseStatus()
+    {
+        try
+        {
+            var status = new
+            {
+                isInitialized = FirebaseApp.DefaultInstance != null,
+                projectId = FirebaseApp.DefaultInstance?.Options?.ProjectId,
+                message = FirebaseApp.DefaultInstance != null 
+                    ? "Firebase is properly initialized" 
+                    : "Firebase is not initialized"
+            };
+
+            return Ok(status);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking Firebase status");
+            return BadRequest(new { 
+                message = "Error checking Firebase status",
+                details = ex.Message
+            });
         }
     }
 
@@ -115,14 +134,12 @@ public class AuthController : ControllerBase
     {
         try
         {
-            Guard.NotNull(validateTokenDto, nameof(validateTokenDto));
-            Guard.NotNullOrEmpty(validateTokenDto.AccessToken, nameof(validateTokenDto.AccessToken));
-
             var isValid = await _firebaseAuthService.ValidateTokenAsync(validateTokenDto.AccessToken);
             return Ok(new { isValid });
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error validating token");
             return BadRequest(new { message = ex.Message });
         }
     }
