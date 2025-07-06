@@ -23,6 +23,8 @@ public class ArticleNormalizationService : IArticleNormalizationService
             CreatedAt = articleDto.CreatedAt,
             UpdatedAt = DateTime.UtcNow,
             CreatedBy = articleDto.CreatedBy,
+            CoachConsId = articleDto.CoachConsId,
+            StudentConsId = articleDto.StudentConsId,
             Attachments = articleDto.Attachments
         };
 
@@ -42,6 +44,8 @@ public class ArticleNormalizationService : IArticleNormalizationService
             CreatedAt = articleDto.CreatedAt,
             UpdatedAt = articleDto.UpdatedAt,
             CreatedBy = articleDto.CreatedBy,
+            CoachConsId = articleDto.CoachConsId,
+            StudentConsId = articleDto.StudentConsId,
             Attachments = articleDto.Attachments
         };
 
@@ -61,6 +65,8 @@ public class ArticleNormalizationService : IArticleNormalizationService
             CreatedAt = articleDto.CreatedAt,
             UpdatedAt = articleDto.UpdatedAt,
             CreatedBy = articleDto.CreatedBy,
+            CoachConsId = articleDto.CoachConsId,
+            StudentConsId = articleDto.StudentConsId,
             Attachments = articleDto.Attachments
         };
 
@@ -80,6 +86,8 @@ public class ArticleNormalizationService : IArticleNormalizationService
             CreatedAt = articleDto.CreatedAt,
             UpdatedAt = articleDto.UpdatedAt,
             CreatedBy = articleDto.CreatedBy,
+            CoachConsId = articleDto.CoachConsId,
+            StudentConsId = articleDto.StudentConsId,
             Attachments = articleDto.Attachments
         };
 

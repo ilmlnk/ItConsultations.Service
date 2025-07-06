@@ -1,4 +1,5 @@
 ﻿using ItConsultations.DataAccess.Repository.EntityFramework;
+using ItConsultations.DataAccess.Repository;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ItConsultations.DataAccess.Repository;
@@ -16,7 +17,7 @@ public class UnitOfWork : IUnitOfWork
 
     public void Commit()
     {
-        if (_transaction != null)
+        if (_transaction == null)
         {
             return;
         }
@@ -38,7 +39,7 @@ public class UnitOfWork : IUnitOfWork
 
     public void Rollback()
     {
-        if (_transaction != null)
+        if (_transaction == null)
         {
             return;
         }

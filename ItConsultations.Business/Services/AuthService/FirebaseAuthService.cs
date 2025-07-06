@@ -14,7 +14,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.AuthService;
 
@@ -80,7 +79,6 @@ public class FirebaseAuthService : IFirebaseAuthService
 
     private string GetFirebaseServiceAccountJson()
     {
-        // Проверяем, что все необходимые поля заполнены
         if (string.IsNullOrEmpty(_firebaseConfig.ProjectId)) 
         {
             throw new InvalidOperationException("Firebase ProjectId is not configured");
@@ -221,81 +219,51 @@ public class FirebaseAuthService : IFirebaseAuthService
             try
             {
                 await _userRepository.CreateAsync(user);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Failed to create user in database: {ex.Message}", ex);
-            }
 
-            if (registerDto.Role == UserRole.Coach)
-            {
-                var coach = new Coach
+                if (registerDto.Role == UserRole.Coach)
                 {
-                    CoachConsId = GenerateCoachId(),
-                    FirstName = registerDto.FirstName ?? string.Empty,
-                    LastName = registerDto.LastName ?? string.Empty,
-                    BirthDate = registerDto.BirthDate,
-                    Description = registerDto.Description ?? string.Empty,
-                    Email = user.Email,
-                    PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
-                    LinkedInUrl = registerDto.LinkedInUrl,
-                    GitHubUrl = registerDto.GitHubUrl,
-                    AverageRating = 0,
-                    User = user
-                };
+                    var coach = new Coach
+                    {
+                        CoachConsId = GenerateCoachId(),
+                        FirstName = registerDto.FirstName ?? string.Empty,
+                        LastName = registerDto.LastName ?? string.Empty,
+                        BirthDate = registerDto.BirthDate,
+                        Description = registerDto.Description ?? string.Empty,
+                        Email = user.Email,
+                        PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
+                        LinkedInUrl = registerDto.LinkedInUrl,
+                        GitHubUrl = registerDto.GitHubUrl,
+                        AverageRating = 0,
+                        User = user
+                    };
 
-                try
-                {
                     await _coachRepository.CreateAsync(coach);
                     user.CoachId = coach.Id;
                 }
-                catch (Exception ex)
+                else if (registerDto.Role == UserRole.Student)
                 {
-                    throw new InvalidOperationException($"Failed to create coach in database: {ex.Message}", ex);
-                }
-            }
-            else if (registerDto.Role == UserRole.Student)
-            {
-                var student = new Student
-                {
-                    StudentConsId = GenerateStudentId(),
-                    FirstName = registerDto.FirstName ?? string.Empty,
-                    LastName = registerDto.LastName ?? string.Empty,
-                    BirthDate = registerDto.BirthDate,
-                    Email = user.Email,
-                    PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
-                    LinkedInUrl = registerDto.LinkedInUrl,
-                    GitHubUrl = registerDto.GitHubUrl
-                };
+                    var student = new Student
+                    {
+                        StudentConsId = GenerateStudentId(),
+                        FirstName = registerDto.FirstName ?? string.Empty,
+                        LastName = registerDto.LastName ?? string.Empty,
+                        BirthDate = registerDto.BirthDate,
+                        Email = user.Email,
+                        PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
+                        LinkedInUrl = registerDto.LinkedInUrl,
+                        GitHubUrl = registerDto.GitHubUrl
+                    };
 
-                try
-                {
-                    Console.WriteLine($"Creating student with StudentConsId: {student.StudentConsId}");
-                    Console.WriteLine($"Student Email: {student.Email}");
-                    Console.WriteLine($"Student FirstName: {student.FirstName}");
-                    Console.WriteLine($"Student LastName: {student.LastName}");
-                    Console.WriteLine($"Student BirthDate: {student.BirthDate}");
                     
                     await _studentRepository.CreateAsync(student);
                     user.StudentId = student.Id;
-                    
-                    Console.WriteLine($"Student created successfully with ID: {student.Id}");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error creating student: {ex.Message}");
-                    Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
-                    throw new InvalidOperationException($"Failed to create student in database: {ex.Message}", ex);
-                }
-            }
 
-            try
-            {
                 await _userRepository.UpdateAsync(user);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to update user in database: {ex.Message}", ex);
+                throw new InvalidOperationException($"Failed to create user in database: {ex.Message}", ex);
             }
 
             return await GetUserInfoAsync(uid);

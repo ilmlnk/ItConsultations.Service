@@ -26,6 +26,7 @@ public class CoachService : ICoachService
     public async Task<CoachDto> DeleteAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
+
         if (coach == null)
         {
             return null;
@@ -47,9 +48,9 @@ public class CoachService : ICoachService
         return coach != null ? MapperManager.Map<CoachDto>(coach) : null;
     }
 
-    public CoachDto GetById(string consId)
+    public CoachDto GetByCoachConsId(string coachConsId)
     {
-        var coach = _repository.Get(c => c.CoachConsId == consId).FirstOrDefault();
+        var coach = _repository.Get(c => c.CoachConsId == coachConsId).FirstOrDefault();
         return coach != null ? MapperManager.Map<CoachDto>(coach) : null;
     }
 

@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities;
+using ItConsultations.Business.Entities;
 
 namespace ItConsultations.Business.DataAccess.Interfaces;
 
@@ -13,4 +13,4 @@ public interface IMultipleRepository<T> : IBaseRepository<T> where T : class
     void Attach(IEntity<long> entity);
 
     void Dettach(IEntity<long> entity);
-}
+} 

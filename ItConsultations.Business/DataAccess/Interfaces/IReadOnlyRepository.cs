@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities;
+using ItConsultations.Business.Entities;
 using System.Linq.Expressions;
 
 namespace ItConsultations.Business.DataAccess.Interfaces;
@@ -16,4 +16,4 @@ public interface IReadOnlyRepository<T, in TID> where T : class, IEntity<TID>
     Task<IEnumerable<T>> GetAsync(IEnumerable<TID> ids);
 
     Task<T> GetWithAsync<TProperty>(TID id, Expression<Func<T, TProperty>> subEntity);
-}
+} 

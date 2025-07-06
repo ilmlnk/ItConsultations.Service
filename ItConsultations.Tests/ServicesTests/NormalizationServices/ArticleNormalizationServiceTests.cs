@@ -27,6 +27,8 @@ public class ArticleNormalizationServiceTests
             CreatedAt = DateTime.UtcNow.AddDays(-1),
             UpdatedAt = DateTime.UtcNow.AddDays(-1),
             CreatedBy = null,
+            CoachConsId = null,
+            StudentConsId = null,
             Attachments = new List<ItConsultations.Business.Entities.Attachments.Attachment>()
         };
 

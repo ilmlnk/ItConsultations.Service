@@ -20,5 +20,9 @@ public class ArticleDto
 
     public UserEntity CreatedBy { get; set; }
 
+    public string? CoachConsId { get; set; }
+
+    public string? StudentConsId { get; set; }
+
     public List<Attachment> Attachments { get; set; }
 }

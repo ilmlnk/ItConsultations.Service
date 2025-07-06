@@ -1,4 +1,4 @@
-﻿namespace ItConsultations.Business.DataAccess.Interfaces;
+namespace ItConsultations.Business.DataAccess.Interfaces;
 
 public interface IBaseRepository<T> where T : class
 {
@@ -7,4 +7,4 @@ public interface IBaseRepository<T> where T : class
     Task<T> UpdateAsync(T entity);
 
     Task DeleteAsync(T entity);
-}
+} 

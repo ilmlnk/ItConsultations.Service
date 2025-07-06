@@ -129,6 +129,10 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
+            .ForMember(dest => dest.CoachConsId, opt => opt.MapFrom(src => 
+                src.CreatedBy != null && src.CreatedBy.Coach != null ? src.CreatedBy.Coach.CoachConsId : null))
+            .ForMember(dest => dest.StudentConsId, opt => opt.MapFrom(src => 
+                src.CreatedBy != null && src.CreatedBy.Student != null ? src.CreatedBy.Student.StudentConsId : null))
             .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
     }
 }

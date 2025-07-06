@@ -14,7 +14,7 @@ public class CoachAccessValidationService : AccessValidationServiceBase, ICoachA
 
     public void ValidateCoachAccessAsync(long id)
     {
-        var coach = _coachService.GetById(id.ToString());
+        var coach = _coachService.GetByCoachConsId(id.ToString());
 
         if (coach == null)
         {

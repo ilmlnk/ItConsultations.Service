@@ -28,11 +28,11 @@ public class ArticleController : Controller
 
     [Authorize]
     [AuthorizeRoles(UserRole.Student, UserRole.Admin, UserRole.Coach)]
-    [HttpPost("create/{consId}")]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateArticleDto dto, string consId)
+    [HttpPost("{userConsId}")]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateArticleDto dto, string userConsId)
     {
         //_articleAccessValidationService.ValidateArticleAccessAsync(id);
-        var article = await _articleService.CreateAsync(dto, consId);
+        var article = await _articleService.CreateAsync(dto, userConsId);
         return Ok(article);
     }
 
@@ -44,25 +44,21 @@ public class ArticleController : Controller
         return Ok(article);
     }
 
-    [HttpGet("article/{consId}/{id}")]
-    public async Task<IActionResult> GetAsync(long id, string consId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetAsync(long id)
     {
         //_articleAccessValidationService.ValidateArticleAccessAsync(consId);
         var article = await _articleService.GetByIdAsync(id);
         return Ok(article);
     }
 
-    [Authorize]
-    [AuthorizeRoles(UserRole.Student, UserRole.Admin, UserRole.Coach)]
-    [HttpGet("get/articles")]
+    [HttpGet("articles")]
     public async Task<IActionResult> GetAllAsync()
     {
         var list = await _articleService.GetAllAsync();
         return Ok(list);
     }
 
-    [Authorize]
-    [AuthorizeRoles(UserRole.Student, UserRole.Admin, UserRole.Coach)]
     [HttpGet("user/{userConsId}")]
     public async Task<IActionResult> GetByUserConsIdAsync(string userConsId)
     {
@@ -70,9 +66,7 @@ public class ArticleController : Controller
         return Ok(articles);
     }
 
-    [Authorize]
-    [AuthorizeRoles(UserRole.Student, UserRole.Admin, UserRole.Coach)]
-    [HttpDelete("articles/delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromBody] DeleteArticleDto[] dtos, long id)
     {
         //_articleAccessValidationService.ValidateArticleAccessAsync(id);
@@ -87,7 +81,7 @@ public class ArticleController : Controller
 
     [Authorize]
     [AuthorizeRoles(UserRole.Student, UserRole.Admin, UserRole.Coach)]
-    [HttpDelete("article/delete/{articleConsId}")]
+    [HttpDelete("article/{articleConsId}")]
     public async Task<IActionResult> DeleteAsync([FromBody] DeleteArticleDto dto, long id)
     {
         //_articleAccessValidationService.ValidateArticleAccessAsync(id);

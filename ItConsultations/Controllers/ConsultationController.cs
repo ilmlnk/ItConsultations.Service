@@ -40,11 +40,18 @@ public class ConsultationController : Controller
     }
 
     [HttpGet("consultation/{consId}")]
-    public async Task<IActionResult> GetAsync(string consId)
+    public async Task<IActionResult> GetByConsIdAsync(string consId)
     {
         var consultation = await _consultationService.GetAsync(consId);
         // add access validator
         return Ok(consultation);
+    }
+
+    [HttpGet("consultation/coach/{coachConsId}")]
+    public async Task<IActionResult> GetByCoachConsIdAsync(string coachConsId)
+    {
+        var consultations = await _consultationService.GetByCoachConsIdAsync(coachConsId);
+        return Ok(consultations);
     }
 
     [Authorize]
@@ -56,29 +63,46 @@ public class ConsultationController : Controller
         return Ok(consultation);
     }
 
-    [HttpGet("consultation-list")]
+    [HttpGet("consultations")]
     public async Task<IActionResult> GetAllAsync()
     {
-        var consultations = await _consultationService.GetAsync();
+        var consultations = await _consultationService.GetAllAsync();
         // create access validator
         return Ok(consultations);
     }
 
     [Authorize]
-    [HttpDelete("consultations/{id}/{consId}")]
-    public async Task<IActionResult> DeleteAsync([FromBody] DeleteConsultationDto dto, long id)
+    [HttpDelete("consultations/coach/{coachConsId}")]
+    public async Task<IActionResult> DeleteAsync(string coachConsId)
     {
-        _accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
-        await _consultationService.DeleteAsync(dto, id);
+        //_accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
+        await _consultationService.DeleteForUserAsync(coachConsId);
+        return Ok();
+    }
+
+    /*[Authorize]
+    [HttpDelete("consultations/delete")]
+    public async Task<IActionResult> DeleteAsync([FromBody] DeleteConsultationDto dto)
+    {
+        //_accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
+        await _consultationService.DeleteForUserAsync(dto);
+        return Ok();
+    }*/
+
+    [Authorize]
+    [HttpDelete("consultations/consId/{consId}")]
+    public async Task<IActionResult> DeleteByConsIdAsync(string consId)
+    {
+        //_accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
+        await _consultationService.DeleteAsync(consId);
         return Ok();
     }
 
     [Authorize]
     [HttpDelete("consultations/{id}")]
-    public async Task<IActionResult> DeleteForUserAsync([FromBody] DeleteConsultationDto dto, long id)
+    public async Task<IActionResult> DeleteAsync(long id)
     {
-        _accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
-        await _consultationService.DeleteForUserAsync(dto, id);
+        await _consultationService.DeleteAsync(id);
         return Ok();
     }
 }

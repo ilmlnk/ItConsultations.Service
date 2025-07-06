@@ -7,6 +7,7 @@ using ItConsultations.Business.Services.ConsultationService;
 using ItConsultations.Business.Services.StudentService;
 using ItConsultations.Business.Services.Validation;
 using ItConsultations.Business.DataAccess.Interfaces;
+using ItConsultations.DataAccess.Repository;
 using ItConsultations.Business.Configs;
 using ItConsultations.Business.Services.Validation.Access.Articles;
 using ItConsultations.Business.Services.Validation.Access.Consultations;
@@ -16,7 +17,6 @@ using ItConsultations.Business.Services.Validation.Access.Students;
 using ItConsultations.Business.Services.Validation.Consultation;
 using ItConsultations.Business.Services.Validation.Student;
 using ItConsultations.Business.Services.Validation.Coach;
-using ItConsultations.DataAccess.Repository;
 using ItConsultations.DataAccess.Repository.EntityFramework;
 using ItConsultations.Logger.Configs;
 using ItConsultations.Logger.Services;
@@ -50,7 +50,7 @@ builder.Services.AddControllers()
 // Configure Entity Framework with SQL Server
 builder.Services.AddDbContext<ConsultationsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), 
-    ServiceLifetime.Transient);
+    ServiceLifetime.Scoped);
 
 builder.Services.Configure<FirebaseConfig>(builder.Configuration.GetSection("Firebase"));
 

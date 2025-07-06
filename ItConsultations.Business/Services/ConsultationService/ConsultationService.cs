@@ -2,7 +2,6 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.ConsultationService;
 
@@ -70,17 +69,11 @@ public class ConsultationService : IConsultationService
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public async Task<ConsultationDto> DeleteForUserAsync(DeleteConsultationDto dto, long id)
+    public async Task<IEnumerable<ConsultationDto>> DeleteForUserAsync(string userConsId)
     {
-        var consultation = await _repository.GetAsync(id);
-        
-        if (consultation == null)
-        {
-            return null;
-        }
-
-        await _repository.DeleteAsync(consultation);
-        return MapperManager.Map<ConsultationDto>(consultation);
+        var consultations = _repository.Get(c => c.Coach.CoachConsId == userConsId).ToList();
+        await _repository.DeleteAsync(consultations);
+        return MapperManager.Map<IEnumerable<ConsultationDto>>(consultations);
     }
 
     public async Task<ConsultationDto> GetAsync(string consId)
@@ -89,17 +82,25 @@ public class ConsultationService : IConsultationService
         return consultation != null ? MapperManager.Map<ConsultationDto>(consultation) : null;
     }
 
-    public async Task<List<ConsultationDto>> GetAsync()
+    public async Task<IEnumerable<ConsultationDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
-        //var consultations = await _repository.GetAllAsync();
-        //return MapperManager.Map<List<ConsultationDto>>(consultations);
+        var consultations = await _repository.GetAllAsync();
+        return MapperManager.Map<IEnumerable<ConsultationDto>>(consultations);
     }
 
     public async Task<ConsultationDto> GetAsync(long id)
     {
         var consultation = await _repository.GetAsync(id);
         return consultation != null ? MapperManager.Map<ConsultationDto>(consultation) : null;
+    }
+
+    public async Task<IEnumerable<ConsultationDto>> GetByCoachConsIdAsync(string coachConsId)
+    {
+        var consultations = _repository
+            .Get(x => x.Coach.CoachConsId == coachConsId)
+            .ToList();
+
+        return MapperManager.Map<List<ConsultationDto>>(consultations);
     }
 
     public async Task<ConsultationDto> UpdateAsync(UpdateConsultationDto dto, string id)
@@ -123,7 +124,7 @@ public class ConsultationService : IConsultationService
         {
             return null;
         }
-        
+
         await _repository.UpdateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }

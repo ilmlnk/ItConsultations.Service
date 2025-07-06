@@ -1,5 +1,4 @@
 using ItConsultations.Business.DataAccess.Interfaces;
-using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace ItConsultations.DataAccess.FileAccess;

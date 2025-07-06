@@ -10,7 +10,7 @@ public interface ICoachService
 
     Task<CoachDto> DeleteAsync(long id);
 
-    CoachDto GetById(string coachConsId);
+    CoachDto GetByCoachConsId(string coachConsId);
 
     Task<CoachDto> GetAsync(long id);
 

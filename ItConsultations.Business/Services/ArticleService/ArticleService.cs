@@ -4,11 +4,8 @@ using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Entities.Article;
 using ItConsultations.Business.Entities.Attachments;
 using ItConsultations.Business.Entities.User;
-using ItConsultations.Business.Entities.Consultation;
 using ItConsultations.Utilities.Guards;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq;
 
 namespace ItConsultations.Business.Services.ArticleService;
 
@@ -16,21 +13,37 @@ public class ArticleService : IArticleService
 {
     private readonly IRepository<Article, long> _repository;
     private readonly IRepository<Attachment, long> _attachmentRepository;
+    private readonly IRepository<UserEntity, long> _userRepository;
 
     public ArticleService(
         IRepository<Article, long> repository,
-        IRepository<Attachment, long> attachmentRepository)
+        IRepository<Attachment, long> attachmentRepository,
+        IRepository<UserEntity, long> userRepository)
     {
         _repository = repository;
         _attachmentRepository = attachmentRepository;
+        _userRepository = userRepository;
     }
 
-    public async Task<ArticleDto> CreateAsync(CreateArticleDto dto, string consId)
+    public async Task<ArticleDto> CreateAsync(CreateArticleDto dto, string userConsId)
     {
+        var user = _userRepository
+            .Get(u => (u.Coach != null && u.Coach.CoachConsId == userConsId) ||
+                      (u.Student != null && u.Student.StudentConsId == userConsId))
+            .Include(u => u.Coach)
+            .Include(u => u.Student)
+            .FirstOrDefault();
+
+        if (user == null)
+        {
+            throw new ArgumentException($"User with consId {userConsId} not found");
+        }
+
         var article = MapperManager.Map<Article>(dto);
         article.ArticleConsId = GenerateArticleId();
         article.CreatedAt = DateTime.UtcNow;
         article.UpdatedAt = DateTime.UtcNow;
+        article.CreatedBy = user;
         article = await _repository.CreateAsync(article);
         return MapperManager.Map<ArticleDto>(article);
     }
@@ -44,19 +57,37 @@ public class ArticleService : IArticleService
 
     public async Task<List<ArticleDto>> GetAllAsync()
     {
-        var articles = await _repository.GetAllAsync();
+        var articles = await _repository
+            .Include(a => a.CreatedBy)
+            .Include(a => a.CreatedBy.Coach)
+            .Include(a => a.CreatedBy.Student)
+            .Include(a => a.Attachments)
+            .ToListAsync();
+
         return MapperManager.Map<List<ArticleDto>>(articles);
     }
 
     public async Task<ArticleDto> GetByIdAsync(long id)
     {
-        var article = await _repository.GetAsync(id);
+        var article = await _repository
+            .Include(a => a.CreatedBy)
+            .Include(a => a.CreatedBy.Coach)
+            .Include(a => a.CreatedBy.Student)
+            .Include(a => a.Attachments)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
         return article != null ? MapperManager.Map<ArticleDto>(article) : null;
     }
 
     public ArticleDto GetById(string articleConsId)
     {
-        var article = _repository.Get(c => c.ArticleConsId.Equals(articleConsId)).FirstOrDefault();
+        var article = _repository
+            .Include(a => a.CreatedBy)
+            .Include(a => a.CreatedBy.Coach)
+            .Include(a => a.CreatedBy.Student)
+            .Include(a => a.Attachments)
+            .FirstOrDefault(c => c.ArticleConsId.Equals(articleConsId));
+
         return article != null ? MapperManager.Map<ArticleDto>(article) : null;
     }
 
