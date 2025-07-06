@@ -16,9 +16,9 @@ public class StudentService : IStudentService
 
     public async Task<StudentDto> CreateAsync(CreateStudentDto dto)
     {
-        var originalDto = MapperManager.Map<StudentDto>(dto);
-        var student = MapperManager.Map<Student>(originalDto);
+        var student = MapperManager.Map<Student>(dto);
         student.StudentConsId = GenerateStudentId();
+        student.PictureUrl = string.Empty;
         await _repository.CreateAsync(student);
         var studentDto = MapperManager.Map<StudentDto>(student);
         return studentDto;
@@ -26,10 +26,9 @@ public class StudentService : IStudentService
 
     public async Task<StudentDto> CreateAsync(CreateStudentDto dto, string id)
     {
-        var originalDto = MapperManager.Map<StudentDto>(dto);
-        originalDto.StudentConsId = id;
-
-        var student = MapperManager.Map<Student>(originalDto);
+        var student = MapperManager.Map<Student>(dto);
+        student.StudentConsId = id;
+        student.PictureUrl = string.Empty;
         await _repository.CreateAsync(student);
         var studentDto = MapperManager.Map<StudentDto>(student);
         return studentDto;
@@ -38,8 +37,8 @@ public class StudentService : IStudentService
     public async Task DeleteAsync(long id)
     {
         var entity = _repository
-            .Include(student => student.Consultation)
-            .SingleOrDefault(student => student.Id == id);
+            .Get(student => student.Id == id)
+            .SingleOrDefault();
 
         if (entity == null)
         {
@@ -52,8 +51,8 @@ public class StudentService : IStudentService
     public async Task DeleteAsync(string id)
     {
         var entity = _repository
-            .Include(student => student.Consultation)
-            .SingleOrDefault(student => student.StudentConsId == id);
+            .Get(student => student.StudentConsId == id)
+            .SingleOrDefault();
 
         if (entity == null)
         {
@@ -63,29 +62,75 @@ public class StudentService : IStudentService
         await _repository.DeleteAsync(entity);
     }
 
-    public Task<IEnumerable<StudentDto>> GetAllAsync()
+    public async Task<IEnumerable<StudentDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var students = _repository
+            .Get(s => true)
+            .ToList();
+        
+        return MapperManager.Map<IEnumerable<StudentDto>>(students);
     }
 
-    public Task<StudentDto> GetByIdAsync(string id)
+    public async Task<StudentDto> GetByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        var student = _repository
+            .Get(s => s.StudentConsId == id)
+            .FirstOrDefault();
+        
+        return student != null ? MapperManager.Map<StudentDto>(student) : null;
     }
 
-    public Task<StudentDto> GetByIdAsync(long id)
+    public async Task<StudentDto> GetByIdAsync(long id)
     {
-        throw new NotImplementedException();
+        var student = _repository
+            .Get(s => s.Id == id)
+            .FirstOrDefault();
+        
+        return student != null ? MapperManager.Map<StudentDto>(student) : null;
     }
 
-    public Task<StudentDto> UpdateAsync(UpdateStudentDto dto, string id)
+    public async Task<StudentDto> UpdateAsync(UpdateStudentDto dto, string id)
     {
-        throw new NotImplementedException();
+        var existingStudent = _repository
+            .Get(s => s.StudentConsId == id)
+            .FirstOrDefault();
+        
+        if (existingStudent == null)
+        {
+            return null;
+        }
+        
+        existingStudent.FirstName = dto.FirstName;
+        existingStudent.LastName = dto.LastName;
+        existingStudent.Email = dto.Email;
+        existingStudent.LinkedInUrl = dto.LinkedInUrl;
+        existingStudent.GitHubUrl = dto.GitHubUrl;
+        
+        await _repository.UpdateAsync(existingStudent);
+        
+        return MapperManager.Map<StudentDto>(existingStudent);
     }
 
-    public Task<StudentDto> UpdateAsync(UpdateStudentDto dto, long id)
+    public async Task<StudentDto> UpdateAsync(UpdateStudentDto dto, long id)
     {
-        throw new NotImplementedException();
+        var existingStudent = _repository
+            .Get(s => s.Id == id)
+            .FirstOrDefault();
+        
+        if (existingStudent == null)
+        {
+            return null;
+        }
+        
+        existingStudent.FirstName = dto.FirstName;
+        existingStudent.LastName = dto.LastName;
+        existingStudent.Email = dto.Email;
+        existingStudent.LinkedInUrl = dto.LinkedInUrl;
+        existingStudent.GitHubUrl = dto.GitHubUrl;
+        
+        await _repository.UpdateAsync(existingStudent);
+        
+        return MapperManager.Map<StudentDto>(existingStudent);
     }
 
     // to generate student id it is used 0003 prefix

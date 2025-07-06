@@ -2,23 +2,15 @@
 
 public class CreateStudentDto
 {
-    public long Id { get; set; }
+    public string FirstName { get; set; } = string.Empty;
 
-    public string ConsStudentId { get; set; }
-
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
+    public string LastName { get; set; } = string.Empty;
 
     public DateTime? BirthDate { get; set; }
 
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
-    public string Username { get; set; }
+    public string? LinkedInUrl { get; set; }
 
-    public string Password { get; set; }
-
-    public string LinkedInUrl { get; set; }
-
-    public string GitHubUrl { get; set; }
+    public string? GitHubUrl { get; set; }
 }

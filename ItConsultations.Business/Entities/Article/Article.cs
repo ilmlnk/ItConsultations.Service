@@ -27,7 +27,7 @@ public class Article : Entity<long>
     public DateTime UpdatedAt { get; set; }
 
     [JsonIgnore]
-    public User.User CreatedBy { get; set; }
+    public UserEntity CreatedBy { get; set; }
 
     [JsonIgnore]
     public List<Attachment> Attachments { get; set; } = new();

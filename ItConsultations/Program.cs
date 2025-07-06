@@ -23,6 +23,11 @@ using ItConsultations.Logger.Services;
 using ItConsultations.Middleware;
 using Microsoft.EntityFrameworkCore;
 using ItConsultations.Converters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +68,22 @@ var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "your-super-secret-key-wi
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "ItConsultations";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "ItConsultationsUsers";
 
+// Configure authentication with default scheme
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret))
+        };
+    });
+
 builder.Services.AddAuthorization();
 
 // Register repositories
@@ -96,15 +117,58 @@ MapperManager.Initialize(cfg =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo 
+    { 
+        Title = "ItConsultations API", 
+        Version = "v1",
+        Description = "API for IT Consultations"
+    });
+    
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ConsultationsDbContext>();
-    context.Database.EnsureDeleted();
-    context.Database.EnsureCreated();
+    
+    if (!context.Database.CanConnect())
+    {
+        context.Database.EnsureCreated();
+    }
+    else
+    {
+        var pendingMigrations = context.Database.GetPendingMigrations().ToList();
+        if (pendingMigrations.Any())
+        {
+            context.Database.Migrate();
+        }
+    }
 }
 
 if (app.Environment.IsDevelopment())

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
@@ -25,7 +26,7 @@ public class Student : Entity<long>
     [Required]
     public string Email { get; set; }
 
-    public string PictureUrl { get; set; }
+    public string? PictureUrl { get; set; }
 
     public string? GitHubUrl { get; set; }
 
@@ -35,5 +36,5 @@ public class Student : Entity<long>
     public Consultation? Consultation { get; set; }
 
     [JsonIgnore]
-    public ItConsultations.Business.Entities.User.User User { get; set; } = null!;
+    public UserEntity User { get; set; } = null!;
 }

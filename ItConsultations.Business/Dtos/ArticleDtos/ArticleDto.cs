@@ -18,7 +18,7 @@ public class ArticleDto
 
     public DateTime UpdatedAt { get; set; }
 
-    public User CreatedBy { get; set; }
+    public UserEntity CreatedBy { get; set; }
 
     public List<Attachment> Attachments { get; set; }
 }

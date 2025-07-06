@@ -15,5 +15,5 @@ public class CreateReviewDto
 
     public int Rating { get; set; }
 
-    public User Reviewer { get; set; }
+    public UserEntity Reviewer { get; set; }
 }

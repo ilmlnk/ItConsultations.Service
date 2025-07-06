@@ -22,7 +22,7 @@ public class Event : Entity<long>
     public List<string> AssigneeEmails { get; set; }
 
     [Required]
-    public User.User Creator { get; set; }
+    public User.UserEntity Creator { get; set; }
 
     [Required]
     public DateTime BeginDateTime { get; set; }

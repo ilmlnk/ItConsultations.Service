@@ -8,30 +8,30 @@ namespace ItConsultations.Business.Services.UserService;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<User, long> _repository;
+    private readonly IRepository<UserEntity, long> _repository;
 
-    public UserService(IRepository<User, long> repository)
+    public UserService(IRepository<UserEntity, long> repository)
     {
         _repository = repository;
     }
 
     public async Task<UserDto> CreateAsync(CreateUserDto dto)
     {
-        var user = MapperManager.Map<User>(dto);
+        var user = MapperManager.Map<UserEntity>(dto);
         await _repository.CreateAsync(user);
         return MapperManager.Map<UserDto>(user);
     }
 
     public async Task<UserDto> CreateAsync(CreateUserDto dto, string consId)
     {
-        var user = MapperManager.Map<User>(dto);
+        var user = MapperManager.Map<UserEntity>(dto);
         await _repository.CreateAsync(user);
         return MapperManager.Map<UserDto>(user);
     }
 
     public async Task<UserDto> UpdateAsync(UpdateUserDto dto)
     {
-        var user = MapperManager.Map<User>(dto);
+        var user = MapperManager.Map<UserEntity>(dto);
         await _repository.UpdateAsync(user);
         return MapperManager.Map<UserDto>(user);
     }

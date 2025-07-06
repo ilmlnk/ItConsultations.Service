@@ -16,5 +16,5 @@ public class ViewArticleList
 
     public DateTime UpdatedAt { get; set; }
 
-    public User.User CreatedBy { get; set; }
+    public User.UserEntity CreatedBy { get; set; }
 }

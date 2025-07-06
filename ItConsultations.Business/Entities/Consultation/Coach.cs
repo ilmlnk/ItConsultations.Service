@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Entities.Consultation;
 
@@ -38,5 +39,5 @@ public class Coach : Entity<long>
 
     public decimal AverageRating { get; set; }
 
-    public User.User User { get; set; } = null!;
+    public UserEntity User { get; set; } = null!;
 }

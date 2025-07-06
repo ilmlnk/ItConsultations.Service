@@ -23,17 +23,17 @@ public class ConsultationService : IConsultationService
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto, string consId)
+    public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto, string coachConsId)
     {
         var consultation = MapperManager.Map<Consultation>(dto);
-        consultation.ConsId = consId;
+        consultation.Coach.CoachConsId = coachConsId;
         consultation = await _repository.CreateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public async Task<ConsultationDto> DeleteAsync(string id)
+    public async Task<ConsultationDto> DeleteAsync(string consId)
     {
-        var consultation = _repository.Get(c => c.ConsId == id).FirstOrDefault();
+        var consultation = _repository.Get(c => c.ConsId == consId).FirstOrDefault();
 
         if (consultation == null)
         {

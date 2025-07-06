@@ -26,7 +26,7 @@ public class Review
     public int Rating { get; set; }
 
     [Required]
-    public User.User Reviewer { get; set; }
+    public User.UserEntity Reviewer { get; set; }
 
     public List<Attachment> Attachments { get; set; }
 }

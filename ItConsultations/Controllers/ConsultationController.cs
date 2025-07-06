@@ -1,8 +1,7 @@
-﻿using ItConsultations.Business.DataAccess.Interfaces;
-using ItConsultations.Business.Dtos.ConsultationDtos;
-using ItConsultations.Business.Entities.Consultation;
+﻿using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Services.ConsultationService;
 using ItConsultations.Business.Services.Validation.Access.Consultations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.Controllers;
@@ -12,24 +11,22 @@ namespace ItConsultations.Controllers;
 [Route("api/consultations")]
 public class ConsultationController : Controller
 {
-    private readonly IRepository<Consultation, long> _consultationRepository;
     private readonly IConsultationService _consultationService;
     private readonly IConsultationAccessValidationService _accessValidationService;
 
     public ConsultationController(
-        IRepository<Consultation, long> consultationRepository,
         IConsultationService consultationService,
         IConsultationAccessValidationService accessValidationService) 
     {
-        _consultationRepository = consultationRepository;
         _consultationService = consultationService;
         _accessValidationService = accessValidationService;
     }
 
-    [HttpPost("consultation/{id}/{consId}")]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateConsultationDto dto, string consId)
+    [Authorize]
+    [HttpPost("consultation/{coachConsId}")]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateConsultationDto dto, string coachConsId)
     {
-        var consultation = await _consultationService.CreateAsync(dto);
+        var consultation = await _consultationService.CreateAsync(dto, coachConsId);
         // create access validator
         return Ok(consultation);
     }
@@ -50,7 +47,7 @@ public class ConsultationController : Controller
         return Ok(consultation);
     }
 
-
+    [Authorize]
     [HttpPut("consultation/{id}")]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateConsultationDto dto, long id)
     {
@@ -67,6 +64,7 @@ public class ConsultationController : Controller
         return Ok(consultations);
     }
 
+    [Authorize]
     [HttpDelete("consultations/{id}/{consId}")]
     public async Task<IActionResult> DeleteAsync([FromBody] DeleteConsultationDto dto, long id)
     {
@@ -75,6 +73,7 @@ public class ConsultationController : Controller
         return Ok();
     }
 
+    [Authorize]
     [HttpDelete("consultations/{id}")]
     public async Task<IActionResult> DeleteForUserAsync([FromBody] DeleteConsultationDto dto, long id)
     {

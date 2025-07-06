@@ -1,146 +1,149 @@
 using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Services.AuthService;
+using ItConsultations.Business.SharedTypes.Enums.System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FirebaseAdmin;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ItConsultations.Controllers;
 
 [ApiController]
-[Route("api/AuthController")]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IFirebaseAuthService _firebaseAuthService;
-    private readonly ILogger<AuthController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(IFirebaseAuthService firebaseAuthService, ILogger<AuthController> logger)
+    public AuthController(IFirebaseAuthService firebaseAuthService, IConfiguration configuration)
     {
         _firebaseAuthService = firebaseAuthService;
-        _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
-        try
-        {
-            var tokenParts = registerDto.IdToken.Split('.');
-            var userInfo = await _firebaseAuthService.RegisterAsync(registerDto);
-            return Ok(userInfo);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during registration for email: {Email}", registerDto?.Email);
-            return BadRequest(new { message = ex.Message });
-        }
+        var userInfo = await _firebaseAuthService.RegisterAsync(registerDto);
+        return Ok(userInfo);
+    }
+
+    [HttpPost("register-simple")]
+    public IActionResult RegisterSimple([FromBody] RegisterRequest request)
+    {
+        var token = GenerateJwtToken(request.Username, request.Role);
+        return Ok(new { token });
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    public IActionResult Login([FromBody] LoginRequest request)
     {
-        try
-        {
+        var token = GenerateJwtToken(request.Username, request.Role);
+        return Ok(new { token });
+    }
 
-            var tokenParts = loginDto.IdToken.Split('.');
-            var result = await _firebaseAuthService.LoginAsync(loginDto.IdToken);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during login");
-            return BadRequest(new { message = ex.Message });
-        }
+    [HttpPost("token/{role}")]
+    public IActionResult GetTokenWithRole(string role, [FromBody] LoginRequest request)
+    {
+        var token = GenerateJwtToken(request.Username, role);
+        return Ok(new { token, role });
     }
 
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
     {
-        try {
-            var result = await _firebaseAuthService.RefreshTokenAsync(refreshTokenDto.RefreshToken);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during token refresh");
-            return BadRequest(new { message = ex.Message });
-        }
+        var result = await _firebaseAuthService.RefreshTokenAsync(refreshTokenDto.RefreshToken);
+        return Ok(result);
     }
 
     [HttpPost("logout")]
     [Authorize]
     public async Task<IActionResult> Logout([FromBody] LogoutDto logoutDto)
     {
-        try
-        {
-
-            var userId = User.FindFirst("firebase_uid")?.Value;
-            var result = await _firebaseAuthService.RevokeTokenAsync(logoutDto.RefreshToken, userId);
-            return Ok(new { message = "Logged out successfully" });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during logout");
-            return BadRequest(new { message = ex.Message });
-        }
+        var userId = User.FindFirst("firebase_uid")?.Value;
+        var result = await _firebaseAuthService.RevokeTokenAsync(logoutDto.RefreshToken, userId);
+        return Ok(new { message = "Logged out successfully" });
     }
 
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
-        try
-        {
-            var firebaseUid = User.FindFirst("firebase_uid")?.Value;
-
-            var userInfo = await _firebaseAuthService.GetUserInfoAsync(firebaseUid);
-
-            return Ok(userInfo);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting current user");
-            return BadRequest(new { message = ex.Message });
-        }
+        var firebaseUid = User.FindFirst("firebase_uid")?.Value;
+        var userInfo = await _firebaseAuthService.GetUserInfoAsync(firebaseUid);
+        return Ok(userInfo);
     }
 
     [HttpGet("firebase-status")]
     public IActionResult GetFirebaseStatus()
     {
-        try
+        var status = new
         {
-            var status = new
-            {
-                isInitialized = FirebaseApp.DefaultInstance != null,
-                projectId = FirebaseApp.DefaultInstance?.Options?.ProjectId,
-                message = FirebaseApp.DefaultInstance != null 
-                    ? "Firebase is properly initialized" 
-                    : "Firebase is not initialized"
-            };
+            isInitialized = FirebaseApp.DefaultInstance != null,
+            projectId = FirebaseApp.DefaultInstance?.Options?.ProjectId,
+            message = FirebaseApp.DefaultInstance != null 
+                ? "Firebase is properly initialized" 
+                : "Firebase is not initialized"
+        };
 
-            return Ok(status);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error checking Firebase status");
-            return BadRequest(new { 
-                message = "Error checking Firebase status",
-                details = ex.Message
-            });
-        }
+        return Ok(status);
     }
 
     [HttpPost("validate")]
     public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenDto validateTokenDto)
     {
-        try
-        {
-            var isValid = await _firebaseAuthService.ValidateTokenAsync(validateTokenDto.AccessToken);
-            return Ok(new { isValid });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error validating token");
-            return BadRequest(new { message = ex.Message });
-        }
+        var isValid = await _firebaseAuthService.ValidateTokenAsync(validateTokenDto.AccessToken);
+        return Ok(new { isValid });
     }
+
+    private string GenerateJwtToken(string username, string role)
+    {
+        var jwtSecret = _configuration["Jwt:Secret"] ?? "your-super-secret-key-with-at-least-32-characters";
+        var jwtIssuer = _configuration["Jwt:Issuer"] ?? "ItConsultations";
+        var jwtAudience = _configuration["Jwt:Audience"] ?? "ItConsultationsUsers";
+
+        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, role),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: jwtIssuer,
+            audience: jwtAudience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(24),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private string GenerateJwtToken(string username)
+    {
+        return GenerateJwtToken(username, "Student");
+    }
+}
+
+public class LoginRequest
+{
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+}
+
+public class RegisterRequest
+{
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
 } 

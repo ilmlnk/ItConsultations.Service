@@ -20,7 +20,7 @@ public class ConsultationsDbContext : DbContext
     public DbSet<Student> Students { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Event> Events { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<UserEntity> Users { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<LogEntry> LogEntries { get; set; }
 

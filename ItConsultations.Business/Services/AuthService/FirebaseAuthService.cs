@@ -20,7 +20,7 @@ namespace ItConsultations.Business.Services.AuthService;
 
 public class FirebaseAuthService : IFirebaseAuthService
 {
-    private readonly IRepository<User, long> _userRepository;
+    private readonly IRepository<UserEntity, long> _userRepository;
     private readonly IRepository<RefreshToken, long> _refreshTokenRepository;
     private readonly IRepository<Coach, long> _coachRepository;
     private readonly IRepository<Student, long> _studentRepository;
@@ -30,7 +30,7 @@ public class FirebaseAuthService : IFirebaseAuthService
     private readonly string _jwtAudience;
 
     public FirebaseAuthService(
-        IRepository<User, long> userRepository,
+        IRepository<UserEntity, long> userRepository,
         IRepository<RefreshToken, long> refreshTokenRepository,
         IRepository<Coach, long> coachRepository,
         IRepository<Student, long> studentRepository,
@@ -206,7 +206,7 @@ public class FirebaseAuthService : IFirebaseAuthService
 
             var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
 
-            var user = new User
+            var user = new UserEntity
             {
                 FirebaseUid = uid,
                 Email = userRecord.Email ?? string.Empty,
@@ -481,14 +481,14 @@ public class FirebaseAuthService : IFirebaseAuthService
         return true;
     }
 
-    public async Task<User?> GetUserByFirebaseUidAsync(string firebaseUid)
+    public async Task<UserEntity?> GetUserByFirebaseUidAsync(string firebaseUid)
     {
         return _userRepository.Get(u => u.FirebaseUid == firebaseUid).FirstOrDefault();
     }
 
-    private async Task<User> CreateUserAsync(UserInfoDto userInfo)
+    private async Task<UserEntity> CreateUserAsync(UserInfoDto userInfo)
     {
-        var user = new User
+        var user = new UserEntity
         {
             FirebaseUid = userInfo.FirebaseUid,
             Email = userInfo.Email,
@@ -516,7 +516,7 @@ public class FirebaseAuthService : IFirebaseAuthService
         await _userRepository.UpdateAsync(user);
     }
 
-    private async Task<string> GenerateAccessTokenAsync(User user)
+    private async Task<string> GenerateAccessTokenAsync(UserEntity user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtSecret);
@@ -546,7 +546,7 @@ public class FirebaseAuthService : IFirebaseAuthService
         return tokenHandler.WriteToken(token);
     }
 
-    private async Task<string> GenerateRefreshTokenAsync(User user)
+    private async Task<string> GenerateRefreshTokenAsync(UserEntity user)
     {
         var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         
@@ -572,7 +572,7 @@ public class FirebaseAuthService : IFirebaseAuthService
         return $"0003{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 
-    Task<User> IFirebaseAuthService.CreateUserAsync(UserInfoDto userInfo)
+    Task<UserEntity> IFirebaseAuthService.CreateUserAsync(UserInfoDto userInfo)
     {
         throw new NotImplementedException();
     }

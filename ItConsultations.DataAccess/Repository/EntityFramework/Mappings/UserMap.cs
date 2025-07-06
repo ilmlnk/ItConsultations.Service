@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 
-public class UserMap : IEntityTypeConfiguration<User>
+public class UserMap : IEntityTypeConfiguration<UserEntity>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
         builder.ToTable("Users");
 
@@ -52,6 +52,16 @@ public class UserMap : IEntityTypeConfiguration<User>
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Student)
+            .WithOne(s => s.User)
+            .HasForeignKey<UserEntity>(u => u.StudentId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(x => x.Coach)
+            .WithOne(c => c.User)
+            .HasForeignKey<UserEntity>(u => u.CoachId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 

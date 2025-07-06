@@ -20,9 +20,9 @@ public interface IFirebaseAuthService
 
     Task<UserInfoDto?> GetUserByRoleAsync(string firebaseUid, UserRole role);
 
-    Task<User?> GetUserByFirebaseUidAsync(string firebaseUid);
+    Task<UserEntity?> GetUserByFirebaseUidAsync(string firebaseUid);
 
-    Task<User> CreateUserAsync(UserInfoDto userInfo);
+    Task<UserEntity> CreateUserAsync(UserInfoDto userInfo);
     
     Task UpdateUserLastLoginAsync(string firebaseUid);
 } 

@@ -16,7 +16,7 @@ public class ViewEventList
 
     public List<string> AssigneeEmails { get; set; }
 
-    public User.User Creator { get; set; }
+    public User.UserEntity Creator { get; set; }
 
     public DateTime BeginDateTime { get; set; }
 

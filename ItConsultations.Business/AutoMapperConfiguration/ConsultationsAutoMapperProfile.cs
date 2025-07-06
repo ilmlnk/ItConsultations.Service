@@ -72,8 +72,43 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.Coach, opt => opt.MapFrom(src => src.Coach));
 
         // Student mappings
+        CreateMap<CreateStudentDto, Student>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.StudentConsId, opt => opt.Ignore())
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.PictureUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
+            .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl))
+            .ForMember(dest => dest.Consultation, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore());
+
+        CreateMap<UpdateStudentDto, Student>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.StudentConsId, opt => opt.Ignore())
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.BirthDate, opt => opt.Ignore())
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.PictureUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
+            .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl))
+            .ForMember(dest => dest.Consultation, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore());
+
         CreateMap<Student, StudentDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.StudentConsId, opt => opt.MapFrom(src => src.StudentConsId))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.DisplayName : string.Empty))
+            .ForMember(dest => dest.Password, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
+            .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl));
 
         // Article mappings
         CreateMap<CreateArticleDto, Article>()

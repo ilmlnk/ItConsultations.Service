@@ -15,7 +15,7 @@ public class CreateEventDto
 
     public List<string> AssigneeEmails { get; set; }
 
-    public User Creator { get; set; }
+    public UserEntity Creator { get; set; }
 
     public DateTime BeginDateTime { get; set; }
 

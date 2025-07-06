@@ -3,7 +3,12 @@ using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Entities.Article;
 using ItConsultations.Business.Entities.Attachments;
+using ItConsultations.Business.Entities.User;
+using ItConsultations.Business.Entities.Consultation;
 using ItConsultations.Utilities.Guards;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Linq;
 
 namespace ItConsultations.Business.Services.ArticleService;
 
@@ -22,21 +27,12 @@ public class ArticleService : IArticleService
 
     public async Task<ArticleDto> CreateAsync(CreateArticleDto dto, string consId)
     {
-        try
-        {
-            var article = MapperManager.Map<Article>(dto);
-            article.ArticleConsId = GenerateArticleId();
-            article.CreatedAt = DateTime.UtcNow;
-            article.UpdatedAt = DateTime.UtcNow;
-            article = await _repository.CreateAsync(article);
-            return MapperManager.Map<ArticleDto>(article);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error in CreateAsync: {ex.Message}");
-            Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
-            throw;
-        }
+        var article = MapperManager.Map<Article>(dto);
+        article.ArticleConsId = GenerateArticleId();
+        article.CreatedAt = DateTime.UtcNow;
+        article.UpdatedAt = DateTime.UtcNow;
+        article = await _repository.CreateAsync(article);
+        return MapperManager.Map<ArticleDto>(article);
     }
 
     public async Task<ArticleDto> DeleteAsync(DeleteArticleDto dto)
@@ -85,6 +81,19 @@ public class ArticleService : IArticleService
 
         await _attachmentRepository.DeleteAsync(entity.Attachments);
         await _repository.DeleteAsync(entity);
+    }
+
+    public async Task<IEnumerable<ArticleDto>> GetByUserConsIdAsync(string userConsId)
+    {
+        var articles = await _repository
+            .Include(a => a.CreatedBy)
+            .Include(a => a.CreatedBy.Student)
+            .Include(a => a.CreatedBy.Coach)
+            .Where(a => (a.CreatedBy.Student != null && a.CreatedBy.Student.StudentConsId == userConsId) ||
+                  (a.CreatedBy.Coach != null && a.CreatedBy.Coach.CoachConsId == userConsId))
+            .ToListAsync();
+        
+        return MapperManager.Map<IEnumerable<ArticleDto>>(articles);
     }
 
     // to generate article id it is used 0006 prefix

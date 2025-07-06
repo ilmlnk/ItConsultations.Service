@@ -15,4 +15,6 @@ public interface IArticleService
     ArticleDto GetById(string articleConsId);
 
     Task<List<ArticleDto>> GetAllAsync();
+
+    Task<IEnumerable<ArticleDto>> GetByUserConsIdAsync(string userConsId);
 }
