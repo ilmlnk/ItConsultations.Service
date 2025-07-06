@@ -26,3 +26,27 @@ dotnet run
 2. Install Node.js if you are using [frontend](https://github.com/ilmlnk/ItConsultations.Frontend) (click to learn more).
 3. Configure `appsettings.json`.
 4. Run the project.
+
+**PROPRIETARY SOFTWARE - COMMERCIAL USE PROHIBITED**
+
+This is a proprietary consultation management system. Commercial use, distribution, or modification is strictly prohibited without written permission
+
+## Public Access
+
+For public API access, see: [ItConsultations.OpenApi](./ItConsultations.OpenApi/)
+
+## License
+
+This software is licensed under MIT License with Commercial Use Restrictions. See [LICENSE.txt](./LICENSE.txt) for details.
+
+## Commercial Licensing
+
+For commercial licensing inquiries, contact: [ilmlnkcorp@gmail.com]
+
+## Security
+
+For security guidelines, see: [SECURITY.md](./SECURITY.md)
+
+---
+
+**WARNING: This repository contains proprietary business logic and trade secrets. Unauthorized commercial use will result in legal action.**

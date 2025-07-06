@@ -467,3 +467,60 @@ backup/
 local/
 dev/
 development/
+
+# ===========================================
+# COMMERCIAL PROTECTION
+# ===========================================
+
+# Hide business logic from public access
+# Only expose OpenApi project
+ItConsultations.Business/
+ItConsultations.DataAccess/
+ItConsultations.Logger/
+ItConsultations.Translation/
+ItConsultations.Utilities/
+ItConsultations.Tests/
+
+# Keep only OpenApi project visible
+!ItConsultations.OpenApi/
+
+# Hide sensitive business logic
+**/Services/
+**/Entities/
+**/Dtos/
+**/Repository/
+**/Mappings/
+**/AutoMapperConfiguration/
+
+# Hide database migrations and schema
+**/Migrations/
+**/Database/
+
+# Hide configuration files
+**/appsettings.*.json
+!**/appsettings.example.json
+
+# Hide documentation that reveals business logic
+**/README.md
+!ItConsultations.OpenApi/README.md
+**/docs/
+**/documentation/
+
+# Hide test files that might reveal business logic
+**/Tests/
+**/test/
+**/*.test.*
+**/*.spec.*
+
+# Hide build artifacts that might contain sensitive info
+**/bin/
+**/obj/
+**/build/
+**/dist/
+
+# Hide IDE files that might contain sensitive paths
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache

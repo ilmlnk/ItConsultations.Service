@@ -1,16 +1,33 @@
-MIT License
+MIT License with Commercial Use Restrictions
 
-Copyright (c) [year] [fullname]
+Copyright (c) 2025 ItConsultations
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+in the Software for personal, educational, and non-commercial purposes only,
+subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+COMMERCIAL USE RESTRICTIONS:
+- Commercial use, distribution, or modification of this software is STRICTLY PROHIBITED
+- This includes but is not limited to:
+  * Selling the software or its derivatives
+  * Using the software in commercial applications
+  * Incorporating the software into commercial products
+  * Providing commercial services based on this software
+  * Using the software for profit-generating activities
+
+- The ItConsultations.OpenApi project is provided under separate terms
+- All other components (Business Logic, Data Access, etc.) are proprietary
+
+EXCEPTIONS:
+- Educational institutions may use this software for teaching purposes
+- Open source contributions are welcome but remain under this license
+- API usage through ItConsultations.OpenApi is governed by separate terms
+
+For commercial licensing inquiries, contact: [ilmlnkcorp@gmail.com]
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

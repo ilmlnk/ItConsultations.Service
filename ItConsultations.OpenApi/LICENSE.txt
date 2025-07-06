@@ -1,0 +1,29 @@
+ItConsultations OpenApi License
+
+Copyright (c) 2025 ItConsultations
+
+This API is provided for integration and development purposes.
+
+PERMITTED USES:
+- Integration with your applications
+- Development and testing
+- Educational purposes
+- Non-commercial projects
+
+RESTRICTIONS:
+- No redistribution of the API code
+- No reverse engineering of the backend
+- No commercial use without written permission
+- Rate limiting and usage quotas apply
+- Must comply with API terms of service
+
+API TERMS:
+- Fair use policy applies
+- Rate limits: 1000 requests per hour per API key
+- Maximum request size: 10MB
+- Authentication required for all endpoints
+- Logging and monitoring of usage
+
+For commercial API access or higher limits, contact: [ilmlnkcorp@gmail.com]
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. 
