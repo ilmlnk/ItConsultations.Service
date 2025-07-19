@@ -1,6 +1,4 @@
-﻿using ItConsultations.Business.Entities.User;
-
-namespace ItConsultations.Business.Entities.Article;
+﻿namespace ItConsultations.Business.Entities.Article;
 
 public class ViewArticleList
 {

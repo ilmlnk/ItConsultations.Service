@@ -1,5 +1,4 @@
 ﻿using ItConsultations.DataAccess.Repository.EntityFramework;
-using ItConsultations.DataAccess.Repository;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ItConsultations.DataAccess.Repository;

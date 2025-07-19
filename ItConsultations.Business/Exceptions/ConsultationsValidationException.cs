@@ -1,5 +1,4 @@
 ﻿using ItConsultations.Business.Entities.ErrorObject;
-using System.Configuration;
 
 namespace ItConsultations.Business.Exceptions;
 

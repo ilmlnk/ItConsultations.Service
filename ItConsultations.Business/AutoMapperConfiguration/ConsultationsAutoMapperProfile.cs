@@ -5,6 +5,8 @@ using ItConsultations.Business.Dtos.CoachDtos;
 using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Entities.Consultation;
 using ItConsultations.Business.Entities.Article;
+using ItConsultations.Business.Dtos.NoteDtos;
+using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
 
 
 namespace ItConsultations.Business.AutoMapperConfiguration;
@@ -134,5 +136,162 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.StudentConsId, opt => opt.MapFrom(src => 
                 src.CreatedBy != null && src.CreatedBy.Student != null ? src.CreatedBy.Student.StudentConsId : null))
             .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
+
+        // Note mappings
+        CreateMap<CreateNoteDto, Note>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority))
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.ConsultationId, opt => opt.MapFrom(src => src.ConsultationId))
+            .ForMember(dest => dest.CoachId, opt => opt.MapFrom(src => src.CoachId))
+            .ForMember(dest => dest.StudentId, opt => opt.MapFrom(src => src.StudentId))
+            .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.Source, opt => opt.MapFrom(src => src.Source))
+            //.ForMember(dest => dest.ScheduledTime, opt => opt.Ignore())
+            .ForMember(dest => dest.IsPinned, opt => opt.MapFrom(src => src.IsPinned))
+            .ForMember(dest => dest.ViewCount, opt => opt.Ignore())
+            .ForMember(dest => dest.LastViewedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Consultation, opt => opt.Ignore())
+            .ForMember(dest => dest.Coach, opt => opt.Ignore())
+            .ForMember(dest => dest.Student, opt => opt.Ignore())
+            .ForMember(dest => dest.Author, opt => opt.Ignore());
+
+        CreateMap<UpdateNoteDto, Note>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.Source, opt => opt.MapFrom(src => src.Source))
+            //.ForMember(dest => dest.ScheduledTime, opt => opt.Ignore())
+            .ForMember(dest => dest.IsPinned, opt => opt.MapFrom(src => src.IsPinned))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.ConsultationId, opt => opt.Ignore())
+            .ForMember(dest => dest.CoachId, opt => opt.Ignore())
+            .ForMember(dest => dest.StudentId, opt => opt.Ignore())
+            .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+            .ForMember(dest => dest.ViewCount, opt => opt.Ignore())
+            .ForMember(dest => dest.LastViewedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Consultation, opt => opt.Ignore())
+            .ForMember(dest => dest.Coach, opt => opt.Ignore())
+            .ForMember(dest => dest.Student, opt => opt.Ignore())
+            .ForMember(dest => dest.Author, opt => opt.Ignore());
+
+        CreateMap<Note, NoteDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.ConsultationId, opt => opt.MapFrom(src => src.ConsultationId))
+            .ForMember(dest => dest.CoachId, opt => opt.MapFrom(src => src.CoachId))
+            .ForMember(dest => dest.StudentId, opt => opt.MapFrom(src => src.StudentId))
+            .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
+            /*.ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => 
+                src.Author != null ? $"{src.Author.FirstName} {src.Author.LastName}".Trim() : string.Empty))*/
+            .ForMember(dest => dest.AuthorEmail, opt => opt.MapFrom(src => 
+                src.Author != null ? src.Author.Email : string.Empty))
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.Source, opt => opt.MapFrom(src => src.Source))
+            //.ForMember(dest => dest.ScheduledTime, opt => opt.MapFrom(src => src.ScheduledTime))
+            .ForMember(dest => dest.IsPinned, opt => opt.MapFrom(src => src.IsPinned))
+            .ForMember(dest => dest.ViewCount, opt => opt.MapFrom(src => src.ViewCount))
+            .ForMember(dest => dest.LastViewedAt, opt => opt.MapFrom(src => src.LastViewedAt))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+
+        // Conference mappings
+        CreateMap<CreateConferenceDto, Conference>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+            .ForMember(dest => dest.OrganizerId, opt => opt.Ignore())
+            .ForMember(dest => dest.ConsultationId, opt => opt.Ignore())
+            .ForMember(dest => dest.IsRecordingEnabled, opt => opt.MapFrom(src => src.IsRecordingEnabled))
+            .ForMember(dest => dest.IsChatRecordingEnabled, opt => opt.MapFrom(src => src.IsChatRecordingEnabled))
+            .ForMember(dest => dest.ConferenceUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.Participants, opt => opt.Ignore())
+            .ForMember(dest => dest.Notes, opt => opt.Ignore())
+            .ForMember(dest => dest.Recordings, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.Organizer, opt => opt.Ignore())
+            .ForMember(dest => dest.Consultation, opt => opt.Ignore());
+
+        CreateMap<UpdateConferenceDto, Conference>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+            .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
+            .ForMember(dest => dest.IsRecordingEnabled, opt => opt.MapFrom(src => src.IsRecordingEnabled))
+            .ForMember(dest => dest.IsChatRecordingEnabled, opt => opt.MapFrom(src => src.IsChatRecordingEnabled))
+            //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Participants, opt => opt.Ignore())
+            .ForMember(dest => dest.Notes, opt => opt.Ignore())
+            .ForMember(dest => dest.Recordings, opt => opt.Ignore())
+            .ForMember(dest => dest.Organizer, opt => opt.Ignore())
+            .ForMember(dest => dest.Consultation, opt => opt.Ignore())
+            .ForMember(dest => dest.ConferenceUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+        CreateMap<Conference, ConferenceDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+            .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
+            //.ForMember(dest => dest.OrganizerId, opt => opt.MapFrom(src => src.OrganizerId))
+            //.ForMember(dest => dest.OrganizerName, opt => opt.MapFrom(src => src.Organizer != null ? (src.Organizer.FirstName + " " + src.Organizer.LastName).Trim() : string.Empty))
+            //.ForMember(dest => dest.ConsultationId, opt => opt.MapFrom(src => src.ConsultationId))
+            //.ForMember(dest => dest.ConferenceUrl, opt => opt.MapFrom(src => src.ConferenceUrl))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.IsRecordingEnabled, opt => opt.MapFrom(src => src.IsRecordingEnabled))
+            .ForMember(dest => dest.IsChatRecordingEnabled, opt => opt.MapFrom(src => src.IsChatRecordingEnabled))
+            .ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.Participants))
+            //.ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+            .ForMember(dest => dest.Recordings, opt => opt.MapFrom(src => src.Recordings))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+
+        // ConferenceParticipant mappings
+        CreateMap<ConferenceParticipant, ConferenceParticipantDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            //.ForMember(dest => dest.ConferenceId, opt => opt.MapFrom(src => src.ConferenceId))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            //.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? (src.User.FirstName + " " + src.User.LastName).Trim() : string.Empty))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+            .ForMember(dest => dest.JoinedAt, opt => opt.MapFrom(src => src.JoinedAt))
+            .ForMember(dest => dest.LeftAt, opt => opt.MapFrom(src => src.LeftAt));
+
+        // ConferenceRecording mappings
+        CreateMap<ConferenceRecording, ConferenceRecordingDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            //.ForMember(dest => dest.ConferenceId, opt => opt.MapFrom(src => src.ConferenceId))
+            /*.ForMember(dest => dest.RecordingUrl, opt => opt.MapFrom(src => src.RecordingUrl))
+            .ForMember(dest => dest.ChatLogUrl, opt => opt.MapFrom(src => src.ChatLogUrl))
+            .ForMember(dest => dest.StartedAt, opt => opt.MapFrom(src => src.StartedAt))
+            .ForMember(dest => dest.EndedAt, opt => opt.MapFrom(src => src.EndedAt))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));*/
     }
 }

@@ -1,6 +1,4 @@
-﻿using ItConsultations.Business.Entities.Consultation;
-
-namespace ItConsultations.Business.Dtos.CoachDtos;
+﻿namespace ItConsultations.Business.Dtos.CoachDtos;
 
 public class CreateCoachDto
 {

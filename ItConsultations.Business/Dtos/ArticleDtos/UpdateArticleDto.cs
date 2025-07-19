@@ -1,5 +1,4 @@
-﻿using ItConsultations.Business.Entities;
-using ItConsultations.Business.Entities.User;
+﻿using ItConsultations.Business.Entities.User;
 
 namespace ItConsultations.Business.Dtos.ArticleDtos;
 

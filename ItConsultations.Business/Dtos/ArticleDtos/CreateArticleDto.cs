@@ -1,8 +1,4 @@
-﻿using ItConsultations.Business.Entities;
-using ItConsultations.Business.Entities.User;
-using System.Text.Json.Serialization;
-
-namespace ItConsultations.Business.Dtos.ArticleDtos;
+﻿namespace ItConsultations.Business.Dtos.ArticleDtos;
 
 public class CreateArticleDto
 {

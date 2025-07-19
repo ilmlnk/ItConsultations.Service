@@ -8,7 +8,7 @@ public class Review
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [MaxLength(32)]
+
     [Required]
     public long Id { get; set; }
 

@@ -9,7 +9,6 @@ public class Student : Entity<long>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [MaxLength(32)]
     [Required]
     public long Id { get; set; }
 

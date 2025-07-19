@@ -101,9 +101,9 @@ public class AuthController : ControllerBase
 
     private string GenerateJwtToken(string username, string role)
     {
-        var jwtSecret = _configuration["Jwt:Secret"] ?? "your-super-secret-key-with-at-least-32-characters";
-        var jwtIssuer = _configuration["Jwt:Issuer"] ?? "ItConsultations";
-        var jwtAudience = _configuration["Jwt:Audience"] ?? "ItConsultationsUsers";
+        var jwtSecret = _configuration["Jwt:Secret"];
+        var jwtIssuer = _configuration["Jwt:Issuer"];
+        var jwtAudience = _configuration["Jwt:Audience"];
 
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

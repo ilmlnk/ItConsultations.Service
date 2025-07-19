@@ -8,7 +8,6 @@ public class Consultation : Entity<long>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [MaxLength(32)]
     [Required]
     public long Id { get; set; }
 
@@ -21,6 +20,12 @@ public class Consultation : Entity<long>
     public string Description { get; set; }
 
     public List<ConsultationCategoryType>? Categories { get; set; }
+
+    public DateTime StartTime { get; set; }
+
+    public DateTime EndTime { get; set; }
+
+    public bool IsWishlisted { get; set; } = false;
 
     [Required]
     public decimal Price { get; set; }

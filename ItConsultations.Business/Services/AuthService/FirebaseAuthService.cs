@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using ItConsultations.Business.Entities.RefreshToken;
 
 namespace ItConsultations.Business.Services.AuthService;
 

@@ -20,6 +20,10 @@ public class ConsultationsDbContext : DbContext
     public DbSet<Student> Students { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Note> Notes { get; set; }
+    public DbSet<Conference> Conferences { get; set; }
+    public DbSet<ConferenceParticipant> ConferenceParticipants { get; set; }
+    public DbSet<ConferenceRecording> ConferenceRecordings { get; set; }
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<LogEntry> LogEntries { get; set; }
@@ -32,6 +36,10 @@ public class ConsultationsDbContext : DbContext
         modelBuilder.ApplyConfiguration(new CoachMap());
         modelBuilder.ApplyConfiguration(new ConsultationMap());
         modelBuilder.ApplyConfiguration(new StudentMap());
+        modelBuilder.ApplyConfiguration(new NoteMap());
+        modelBuilder.ApplyConfiguration(new ConferenceMap());
+        modelBuilder.ApplyConfiguration(new ConferenceParticipantMap());
+        modelBuilder.ApplyConfiguration(new ConferenceRecordingMap());
         modelBuilder.ApplyConfiguration(new UserMap());
         modelBuilder.ApplyConfiguration(new RefreshTokenMap());
         modelBuilder.ApplyConfiguration(new LogEntryMap());

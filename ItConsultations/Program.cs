@@ -17,7 +17,10 @@ using ItConsultations.Business.Services.Validation.Access.Students;
 using ItConsultations.Business.Services.Validation.Consultation;
 using ItConsultations.Business.Services.Validation.Student;
 using ItConsultations.Business.Services.Validation.Coach;
+using ItConsultations.Business.Services.FileService;
+using ItConsultations.Business.Services.EventService;
 using ItConsultations.DataAccess.Repository.EntityFramework;
+using ItConsultations.DataAccess.FileAccess;
 using ItConsultations.Logger.Configs;
 using ItConsultations.Logger.Services;
 using ItConsultations.Middleware;
@@ -27,7 +30,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
-using System.Linq;
+using ItConsultations.Business.Services.ConferenceService;
+using ItConsultations.Business.Services.NoteService;
+using ItConsultations.Business.Services.GoogleCalendarService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,6 +103,26 @@ builder.Services.AddScoped<IConsultationService, ConsultationService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 
+// Register event services
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IGoogleCalendarService, GoogleCalendarService>();
+
+// Register file services
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFileStorage>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var connectionString = configuration["AzureStorage:ConnectionString"];
+    var containerName = configuration["AzureStorage:ContainerName"] ?? "itconsultations";
+    
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Azure Storage connection string is not configured");
+    }
+    
+    return new AzureBlobStorage(connectionString, containerName);
+});
+
 // Register validation services
 builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddScoped<ICoachValidationService, CoachValidationService>();
@@ -110,6 +135,12 @@ builder.Services.AddScoped<IConsultationAccessValidationService, ConsultationAcc
 builder.Services.AddScoped<IStudentAccessValidationService, StudentAccessValidationService>();
 builder.Services.AddScoped<IArticleAccessValidationService, ArticleAccessValidationService>();
 builder.Services.AddScoped<IAttachmentAccessValidationService, AttachmentAccessValidationService>();
+
+// Register note service
+builder.Services.AddScoped<INoteService, NoteService>();
+
+// Register conference service
+builder.Services.AddScoped<IConferenceService, ConferenceService>();
 
 MapperManager.Initialize(cfg =>
 {
