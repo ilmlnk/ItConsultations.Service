@@ -29,6 +29,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\ItConsultations.Translation\ItConsultations.Translation.csproj" />
 		<ProjectReference Include="..\ItConsultations.Utilities\ItConsultations.Utilities.csproj" />
 	</ItemGroup>
 

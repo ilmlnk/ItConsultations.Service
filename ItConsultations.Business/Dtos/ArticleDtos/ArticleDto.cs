@@ -1,5 +1,5 @@
 ﻿using ItConsultations.Business.Entities.Attachments;
-using ItConsultations.Business.Entities.User;
+using ItConsultations.Business.Entities.Users;
 
 namespace ItConsultations.Business.Dtos.ArticleDtos;
 

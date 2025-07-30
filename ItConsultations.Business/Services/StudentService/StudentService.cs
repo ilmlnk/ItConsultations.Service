@@ -1,7 +1,8 @@
 ﻿using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.StudentDtos;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Students;
+using ItConsultations.Business.Exceptions;
 
 namespace ItConsultations.Business.Services.StudentService;
 
@@ -17,20 +18,10 @@ public class StudentService : IStudentService
     public async Task<StudentDto> CreateAsync(CreateStudentDto dto)
     {
         var student = MapperManager.Map<Student>(dto);
-        student.StudentConsId = GenerateStudentId();
+        student.StudentConsId = IdGeneratorService.IdGeneratorService.GenerateStudentId();
         student.PictureUrl = string.Empty;
-        await _repository.CreateAsync(student);
         var studentDto = MapperManager.Map<StudentDto>(student);
-        return studentDto;
-    }
-
-    public async Task<StudentDto> CreateAsync(CreateStudentDto dto, string id)
-    {
-        var student = MapperManager.Map<Student>(dto);
-        student.StudentConsId = id;
-        student.PictureUrl = string.Empty;
         await _repository.CreateAsync(student);
-        var studentDto = MapperManager.Map<StudentDto>(student);
         return studentDto;
     }
 
@@ -42,21 +33,21 @@ public class StudentService : IStudentService
 
         if (entity == null)
         {
-            return;
+            throw new ConsultationsNotFoundException();
         }
 
         await _repository.DeleteAsync(entity);
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string studentConsId)
     {
         var entity = _repository
-            .Get(student => student.StudentConsId == id)
+            .Get(student => student.StudentConsId == studentConsId)
             .SingleOrDefault();
 
         if (entity == null)
         {
-            return;
+            throw new ConsultationsNotFoundException();
         }
 
         await _repository.DeleteAsync(entity);
@@ -67,20 +58,20 @@ public class StudentService : IStudentService
         var students = _repository
             .Get(s => true)
             .ToList();
-        
-        return MapperManager.Map<IEnumerable<StudentDto>>(students);
+
+        return students.Select(MapperManager.Map<StudentDto>).ToList();
     }
 
-    public async Task<StudentDto> GetByIdAsync(string id)
+    public async Task<StudentDto> GetAsync(string studentConsId)
     {
         var student = _repository
-            .Get(s => s.StudentConsId == id)
+            .Get(s => s.StudentConsId == studentConsId)
             .FirstOrDefault();
         
         return student != null ? MapperManager.Map<StudentDto>(student) : null;
     }
 
-    public async Task<StudentDto> GetByIdAsync(long id)
+    public async Task<StudentDto> GetAsync(long id)
     {
         var student = _repository
             .Get(s => s.Id == id)
@@ -91,24 +82,19 @@ public class StudentService : IStudentService
 
     public async Task<StudentDto> UpdateAsync(UpdateStudentDto dto, string id)
     {
-        var existingStudent = _repository
+        var originalStudent = _repository
             .Get(s => s.StudentConsId == id)
             .FirstOrDefault();
         
-        if (existingStudent == null)
+        if (originalStudent == null)
         {
-            return null;
+            throw new ConsultationsNotFoundException(); // TODO: add parameters for the exception
         }
+
+        var updatedStudent = MapperManager.Map(dto, originalStudent);
+        await _repository.UpdateAsync(updatedStudent);
         
-        existingStudent.FirstName = dto.FirstName;
-        existingStudent.LastName = dto.LastName;
-        existingStudent.Email = dto.Email;
-        existingStudent.LinkedInUrl = dto.LinkedInUrl;
-        existingStudent.GitHubUrl = dto.GitHubUrl;
-        
-        await _repository.UpdateAsync(existingStudent);
-        
-        return MapperManager.Map<StudentDto>(existingStudent);
+        return MapperManager.Map<StudentDto>(updatedStudent);
     }
 
     public async Task<StudentDto> UpdateAsync(UpdateStudentDto dto, long id)
@@ -116,26 +102,15 @@ public class StudentService : IStudentService
         var existingStudent = _repository
             .Get(s => s.Id == id)
             .FirstOrDefault();
-        
+
         if (existingStudent == null)
         {
-            return null;
+            throw new ConsultationsNotFoundException();
         }
-        
-        existingStudent.FirstName = dto.FirstName;
-        existingStudent.LastName = dto.LastName;
-        existingStudent.Email = dto.Email;
-        existingStudent.LinkedInUrl = dto.LinkedInUrl;
-        existingStudent.GitHubUrl = dto.GitHubUrl;
-        
-        await _repository.UpdateAsync(existingStudent);
-        
-        return MapperManager.Map<StudentDto>(existingStudent);
-    }
 
-    // to generate student id it is used 0003 prefix
-    private string GenerateStudentId()
-    {
-        return $"0003{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
+        var mappedStudent = MapperManager.Map(dto, existingStudent);
+        await _repository.UpdateAsync(mappedStudent);
+        var studentDto = MapperManager.Map<StudentDto>(mappedStudent);
+        return MapperManager.Map<StudentDto>(studentDto);
     }
 }

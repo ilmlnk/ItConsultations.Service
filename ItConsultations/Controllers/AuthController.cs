@@ -1,6 +1,5 @@
 using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Services.AuthService;
-using ItConsultations.Business.SharedTypes.Enums.System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FirebaseAdmin;
@@ -8,11 +7,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ItConsultations.Business.Entities.Requests;
 
 namespace ItConsultations.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IFirebaseAuthService _firebaseAuthService;
@@ -126,24 +126,4 @@ public class AuthController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-    private string GenerateJwtToken(string username)
-    {
-        return GenerateJwtToken(username, "Student");
-    }
 }
-
-public class LoginRequest
-{
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string Role { get; set; } = string.Empty;
-}
-
-public class RegisterRequest
-{
-    public string Username { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string Role { get; set; } = string.Empty;
-} 

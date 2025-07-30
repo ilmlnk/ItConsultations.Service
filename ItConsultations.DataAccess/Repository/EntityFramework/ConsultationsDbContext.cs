@@ -1,11 +1,17 @@
-﻿using ItConsultations.Business.Entities.Article;
+﻿using ItConsultations.Business.Entities.Articles;
 using ItConsultations.Business.Entities.Attachments;
-using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.Entities.Event;
-using ItConsultations.Business.Entities.LogEntry;
-using ItConsultations.Business.Entities.User;
-using ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
+using ItConsultations.Business.Entities.Coaches;
+using ItConsultations.Business.Entities.Conferences;
+using ItConsultations.Business.Entities.Consultations;
+using ItConsultations.Business.Entities.Events;
+using ItConsultations.Business.Entities.LogEntries;
+using ItConsultations.Business.Entities.Notes;
+using ItConsultations.Business.Entities.RefreshTokens;
+using ItConsultations.Business.Entities.Reviews;
+using ItConsultations.Business.Entities.Students;
+using ItConsultations.Business.Entities.Users;
 using Microsoft.EntityFrameworkCore;
+using ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 
 namespace ItConsultations.DataAccess.Repository.EntityFramework;
 
@@ -56,7 +62,7 @@ public class ConsultationsDbContext : DbContext
             entity.Property(a => a.EntityId);
             entity.Ignore(a => a.EntityName);
         });
-
+        
         modelBuilder.Entity<Review>(entity =>
         {
             entity.ToTable("Reviews");

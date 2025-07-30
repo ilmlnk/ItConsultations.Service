@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities.Consultation;
+﻿using ItConsultations.Business.Entities.Coaches;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -35,7 +35,7 @@ public class CoachMap : IEntityTypeConfiguration<Coach>
 
         builder.HasOne(c => c.User)
                .WithOne()
-               .HasForeignKey<ItConsultations.Business.Entities.User.UserEntity>(u => u.CoachId)
+               .HasForeignKey<Business.Entities.Users.UserEntity>(u => u.CoachId)
                .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasIndex(c => c.CoachConsId).IsUnique();

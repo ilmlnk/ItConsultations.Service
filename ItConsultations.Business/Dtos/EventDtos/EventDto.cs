@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities.User;
+﻿using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.SharedTypes.Enums.Event;
 
 namespace ItConsultations.Business.Dtos.EventDtos;

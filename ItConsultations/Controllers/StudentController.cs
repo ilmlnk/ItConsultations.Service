@@ -29,14 +29,14 @@ public class StudentController : Controller
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(long id)
     {
-        var student = await _studentService.GetByIdAsync(id);
+        var student = await _studentService.GetAsync(id);
         return student == null ? NotFound() : Ok(student);
     }
 
-    [HttpGet("studentConsId/{studentConsId}")]
+    [HttpGet("cons/{studentConsId}")]
     public async Task<IActionResult> GetByConsIdAsync(string studentConsId)
     {
-        var student = await _studentService.GetByIdAsync(studentConsId);
+        var student = await _studentService.GetAsync(studentConsId);
         return student == null ? NotFound() : Ok(student);
     }
 
@@ -59,7 +59,7 @@ public class StudentController : Controller
 
     [Authorize]
     [AuthorizeRoles(UserRole.Student, UserRole.Admin)]
-    [HttpDelete("delete/studentConsId/{studentConsId}")]
+    [HttpDelete("delete/cons/{studentConsId}")]
     public async Task<IActionResult> DeleteAsync(string studentConsId)
     {
         await _studentService.DeleteAsync(studentConsId);
@@ -77,7 +77,7 @@ public class StudentController : Controller
 
     [Authorize]
     [AuthorizeRoles(UserRole.Student, UserRole.Admin)]
-    [HttpPut("update/studentConsId/{studentConsId}")]
+    [HttpPut("update/cons/{studentConsId}")]
     public async Task<IActionResult> UpdateByConsIdAsync(string studentConsId, [FromBody] UpdateStudentDto dto)
     {
         var student = await _studentService.UpdateAsync(dto, studentConsId);

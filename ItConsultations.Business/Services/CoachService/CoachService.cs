@@ -1,7 +1,8 @@
 ﻿using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.CoachDtos;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Coaches;
+using ItConsultations.Business.Exceptions;
 using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.CoachService;
@@ -25,15 +26,10 @@ public class CoachService : ICoachService
 
     public async Task<CoachDto> DeleteAsync(long id)
     {
-        var coach = await _repository.GetAsync(id);
-
-        if (coach == null)
-        {
-            return null;
-        }
-        
-        await _repository.DeleteAsync(coach);
-        return MapperManager.Map<CoachDto>(coach);
+        var coach = await GetAsync(id);
+        var originalCoach = MapperManager.Map<Coach>(coach);
+        await _repository.DeleteAsync(originalCoach);
+        return MapperManager.Map<CoachDto>(originalCoach);
     }
 
     public async Task<IEnumerable<CoachDto>> GetAllAsync()
@@ -45,13 +41,25 @@ public class CoachService : ICoachService
     public async Task<CoachDto> GetAsync(long id)
     {
         var coach = await _repository.GetAsync(id);
-        return coach != null ? MapperManager.Map<CoachDto>(coach) : null;
+
+        if (coach == null)
+        {
+            throw new ConsultationsNotFoundException();
+        }
+
+        return MapperManager.Map<CoachDto>(coach);
     }
 
-    public CoachDto GetByCoachConsId(string coachConsId)
+    public CoachDto GetCoach(string coachConsId)
     {
         var coach = _repository.Get(c => c.CoachConsId == coachConsId).FirstOrDefault();
-        return coach != null ? MapperManager.Map<CoachDto>(coach) : null;
+
+        if (coach == null)
+        {
+            throw new ConsultationsNotFoundException();
+        }
+
+        return MapperManager.Map<CoachDto>(coach);
     }
 
     public async Task<CoachDto> UpdateAsync(UpdateCoachDto dto)

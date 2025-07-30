@@ -10,6 +10,8 @@ public class CreateStudentDto
 
     public string Email { get; set; } = string.Empty;
 
+    public string? PictureUrl { get; set; }
+
     public string? LinkedInUrl { get; set; }
 
     public string? GitHubUrl { get; set; }

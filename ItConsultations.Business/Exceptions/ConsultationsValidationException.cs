@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities.ErrorObject;
+﻿using ItConsultations.Business.Entities.ErrorObjects;
 
 namespace ItConsultations.Business.Exceptions;
 

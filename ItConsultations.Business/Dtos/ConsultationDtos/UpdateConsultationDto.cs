@@ -1,4 +1,5 @@
-﻿using ItConsultations.Business.Entities.Consultation;
+﻿using ItConsultations.Business.Entities.Coaches;
+using ItConsultations.Business.Entities.Students;
 using ItConsultations.Business.SharedTypes.Enums.Consultation;
 
 namespace ItConsultations.Business.Dtos.ConsultationDtos;

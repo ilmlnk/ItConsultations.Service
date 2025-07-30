@@ -467,7 +467,7 @@ namespace ItConsultations.Database.Migrations
                     b.ToTable("LogEntries", (string)null);
                 });
 
-            modelBuilder.Entity("ItConsultations.Business.Entities.User.RefreshToken", b =>
+            modelBuilder.Entity("ItConsultations.Business.Entities.Users;.RefreshToken", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -513,7 +513,7 @@ namespace ItConsultations.Database.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ItConsultations.Business.Entities.User.User", b =>
+            modelBuilder.Entity("ItConsultations.Business.Entities.Users;.User", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -581,7 +581,7 @@ namespace ItConsultations.Database.Migrations
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Article.Article", b =>
                 {
-                    b.HasOne("ItConsultations.Business.Entities.User.User", "CreatedBy")
+                    b.HasOne("ItConsultations.Business.Entities.Users;.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -621,7 +621,7 @@ namespace ItConsultations.Database.Migrations
                         .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ItConsultations.Business.Entities.User.User", "Reviewer")
+                    b.HasOne("ItConsultations.Business.Entities.Users;.User", "Reviewer")
                         .WithMany()
                         .HasForeignKey("ReviewerId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -643,7 +643,7 @@ namespace ItConsultations.Database.Migrations
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Event.Event", b =>
                 {
-                    b.HasOne("ItConsultations.Business.Entities.User.User", "Creator")
+                    b.HasOne("ItConsultations.Business.Entities.Users;.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -652,9 +652,9 @@ namespace ItConsultations.Database.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("ItConsultations.Business.Entities.User.RefreshToken", b =>
+            modelBuilder.Entity("ItConsultations.Business.Entities.Users;.RefreshToken", b =>
                 {
-                    b.HasOne("ItConsultations.Business.Entities.User.User", "User")
+                    b.HasOne("ItConsultations.Business.Entities.Users;.User", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -663,11 +663,11 @@ namespace ItConsultations.Database.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ItConsultations.Business.Entities.User.User", b =>
+            modelBuilder.Entity("ItConsultations.Business.Entities.Users;.User", b =>
                 {
                     b.HasOne("ItConsultations.Business.Entities.Consultation.Coach", null)
                         .WithOne("User")
-                        .HasForeignKey("ItConsultations.Business.Entities.User.User", "CoachId")
+                        .HasForeignKey("ItConsultations.Business.Entities.Users;.User", "CoachId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -696,7 +696,7 @@ namespace ItConsultations.Database.Migrations
                     b.Navigation("Attachments");
                 });
 
-            modelBuilder.Entity("ItConsultations.Business.Entities.User.User", b =>
+            modelBuilder.Entity("ItConsultations.Business.Entities.Users;.User", b =>
                 {
                     b.Navigation("RefreshTokens");
                 });

@@ -1,6 +1,6 @@
 ﻿using ItConsultations.Business.Dtos.CoachDtos;
 using ItConsultations.Business.Services.CoachService;
-using ItConsultations.Business.Services.Validation.Access.Coaches;
+using ItConsultations.Business.Services.Validation.AccessValidation.Coaches;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,9 +39,9 @@ public class CoachController : Controller
 
     [Authorize]
     [HttpDelete("coach/{coachConsId}")]
-    public async Task<IActionResult> DeleteByConsIdAsync(string coachConsId)
+    public async Task<IActionResult> DeleteAsync(string coachConsId)
     {
-        var coach = _coachService.GetByCoachConsId(coachConsId);
+        var coach = _coachService.GetCoach(coachConsId);
         var deletedCoach = await _coachService.DeleteAsync(coach.Id);
         return Ok(deletedCoach);
     }
@@ -54,13 +54,13 @@ public class CoachController : Controller
     }
 
     [HttpGet("coach/{coachConsId}")]
-    public async Task<IActionResult> GetAsync(string coachConsId)
+    public async Task<IActionResult> Get(string coachConsId)
     {
-        var coach = _coachService.GetByCoachConsId(coachConsId);
+        var coach = _coachService.GetCoach(coachConsId);
         return Ok(coach);
     }
 
-    [HttpGet("coaches")]
+    [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
         var coaches = await _coachService.GetAllAsync();

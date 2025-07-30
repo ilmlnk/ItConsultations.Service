@@ -1,5 +1,5 @@
 using ItConsultations.Business.Dtos.AuthDtos;
-using ItConsultations.Business.Entities.User;
+using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.SharedTypes.Enums.System;
 
 namespace ItConsultations.Business.Services.AuthService;

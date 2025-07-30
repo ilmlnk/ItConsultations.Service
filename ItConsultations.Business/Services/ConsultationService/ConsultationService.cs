@@ -1,7 +1,8 @@
 ﻿using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ConsultationDtos;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Consultations;
+using ItConsultations.Business.Exceptions;
 
 namespace ItConsultations.Business.Services.ConsultationService;
 
@@ -17,52 +18,27 @@ public class ConsultationService : IConsultationService
     public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto)
     {
         var consultation = MapperManager.Map<Consultation>(dto);
-        consultation.ConsId = GenerateConsultationId();
-        consultation = await _repository.CreateAsync(consultation);
+        consultation.ConsId = IdGeneratorService.IdGeneratorService.GenerateConsultationId();
+        await _repository.CreateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
     public async Task<ConsultationDto> CreateAsync(CreateConsultationDto dto, string coachConsId)
     {
         var consultation = MapperManager.Map<Consultation>(dto);
+        consultation.ConsId = IdGeneratorService.IdGeneratorService.GenerateConsultationId();
         consultation.Coach.CoachConsId = coachConsId;
         consultation = await _repository.CreateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
     }
 
-    public async Task<ConsultationDto> DeleteAsync(string consId)
+    public async Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long consultationId)
     {
-        var consultation = _repository.Get(c => c.ConsId == consId).FirstOrDefault();
-
-        if (consultation == null)
-        {
-            return null;
-        }
-
-        await _repository.DeleteAsync(consultation);
-        return MapperManager.Map<ConsultationDto>(consultation);
-    }
-
-    public async Task<ConsultationDto> DeleteAsync(long id)
-    {
-        var consultation = await _repository.GetAsync(id);
+        var consultation = await _repository.GetAsync(consultationId);
         
         if (consultation == null)
         {
-            return null;
-        }
-
-        await _repository.DeleteAsync(consultation);
-        return MapperManager.Map<ConsultationDto>(consultation);
-    }
-
-    public async Task<ConsultationDto> DeleteAsync(DeleteConsultationDto dto, long id)
-    {
-        var consultation = await _repository.GetAsync(id);
-        
-        if (consultation == null)
-        {
-            return null;
+            throw new ConsultationsNotFoundException();
         }
 
         await _repository.DeleteAsync(consultation);
@@ -76,7 +52,7 @@ public class ConsultationService : IConsultationService
         return MapperManager.Map<IEnumerable<ConsultationDto>>(consultations);
     }
 
-    public async Task<ConsultationDto> GetAsync(string consId)
+    public ConsultationDto Get(string consId)
     {
         var consultation = _repository.Get(x => x.ConsId == consId).FirstOrDefault();
         return consultation != null ? MapperManager.Map<ConsultationDto>(consultation) : null;
@@ -109,7 +85,7 @@ public class ConsultationService : IConsultationService
         
         if (consultation == null)
         {
-            return null;
+            throw new ConsultationsNotFoundException();
         }
 
         await _repository.UpdateAsync(consultation);
@@ -122,16 +98,10 @@ public class ConsultationService : IConsultationService
         
         if (consultation == null)
         {
-            return null;
+            throw new ConsultationsNotFoundException();
         }
 
         await _repository.UpdateAsync(consultation);
         return MapperManager.Map<ConsultationDto>(consultation);
-    }
-
-    // to generate consultation id it is used 0002 prefix
-    private string GenerateConsultationId()
-    {
-        return $"0002{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
     }
 }

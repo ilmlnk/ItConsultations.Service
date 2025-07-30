@@ -1,7 +1,7 @@
 using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.UserDtos;
-using ItConsultations.Business.Entities.User;
+using ItConsultations.Business.Entities.Users;
 using ItConsultations.Utilities.Guards;
 
 namespace ItConsultations.Business.Services.UserService;

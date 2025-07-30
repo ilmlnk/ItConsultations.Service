@@ -1,6 +1,6 @@
 ﻿using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Services.ConsultationService;
-using ItConsultations.Business.Services.Validation.Access.Consultations;
+using ItConsultations.Business.Services.Validation.AccessValidation.Consultations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,7 +42,7 @@ public class ConsultationController : Controller
     [HttpGet("consultation/{consId}")]
     public async Task<IActionResult> GetByConsIdAsync(string consId)
     {
-        var consultation = await _consultationService.GetAsync(consId);
+        var consultation = _consultationService.Get(consId);
         // add access validator
         return Ok(consultation);
     }
@@ -72,7 +72,7 @@ public class ConsultationController : Controller
     }
 
     [Authorize]
-    [HttpDelete("consultations/coach/{coachConsId}")]
+    [HttpDelete("coach/{coachConsId}/consultation")]
     public async Task<IActionResult> DeleteAsync(string coachConsId)
     {
         //_accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
@@ -90,19 +90,11 @@ public class ConsultationController : Controller
     }*/
 
     [Authorize]
-    [HttpDelete("consultations/consId/{consId}")]
-    public async Task<IActionResult> DeleteByConsIdAsync(string consId)
+    [HttpDelete("consultation/{id}/{userConsId}")]
+    public async Task<IActionResult> DeleteAsync([FromBody] DeleteConsultationDto dto, long consultationId, string userConsId)
     {
-        //_accessValidationService.ValidateConsultationAccessAsync(id, dto.ConsId);
-        await _consultationService.DeleteAsync(consId);
-        return Ok();
-    }
-
-    [Authorize]
-    [HttpDelete("consultations/{id}")]
-    public async Task<IActionResult> DeleteAsync(long id)
-    {
-        await _consultationService.DeleteAsync(id);
+        await _consultationService.DeleteAsync(dto, consultationId);
+        // _accessValidationService.ValidationConsultationAccessAsync(consultationId, userConsId)
         return Ok();
     }
 }

@@ -3,10 +3,14 @@ using ItConsultations.Business.Dtos.ConsultationDtos;
 using ItConsultations.Business.Dtos.StudentDtos;
 using ItConsultations.Business.Dtos.CoachDtos;
 using ItConsultations.Business.Dtos.ArticleDtos;
-using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.Entities.Article;
+using ItConsultations.Business.Entities.Consultations;
+using ItConsultations.Business.Entities.Articles;
 using ItConsultations.Business.Dtos.NoteDtos;
 using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
+using ItConsultations.Business.Entities.Students;
+using ItConsultations.Business.Entities.Coaches;
+using ItConsultations.Business.Entities.Conferences;
+using ItConsultations.Business.Entities.Notes;
 
 
 namespace ItConsultations.Business.AutoMapperConfiguration;

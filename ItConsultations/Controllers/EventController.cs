@@ -1,4 +1,5 @@
 using ItConsultations.Business.Dtos.AttachmentDtos;
+using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
 using ItConsultations.Business.Dtos.EventDtos;
 using ItConsultations.Business.Services.EventService;
 using ItConsultations.Business.SharedTypes.Enums.Event;
@@ -9,7 +10,7 @@ using System.Text;
 namespace ItConsultations.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/events")]
 [Authorize]
 public class EventController : ControllerBase
 {
@@ -189,7 +190,7 @@ public class EventController : ControllerBase
     {
         try
         {
-            var result = await _eventService.AddParticipantAsync(id, addParticipantDto.UserId, addParticipantDto.Role);
+            var result = await _eventService.AddParticipantAsync(id, addParticipantDto.UserId, addParticipantDto);
             
             _logger.LogInformation("Participant {UserId} added to event {EventId}", addParticipantDto.UserId, id);
             return Ok(result);
@@ -587,11 +588,11 @@ public class EventController : ControllerBase
 }
 
 // DTO classes for specific operations
-public class AddParticipantDto
+/*public class AddParticipantDto
 {
     public long UserId { get; set; }
     public ParticipantRole Role { get; set; } = ParticipantRole.Attendee;
-}
+}*/
 
 public class UpdateParticipantStatusDto
 {

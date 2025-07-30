@@ -1,7 +1,7 @@
-using ItConsultations.Business.Entities.User;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ItConsultations.Business.Entities.RefreshTokens;
 
 namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 
@@ -48,10 +48,10 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
         builder.HasIndex(x => x.Email).IsUnique();
         builder.HasIndex(x => x.Role);
 
-        builder.HasMany(x => x.RefreshTokens)
+        /*builder.HasMany(x => x.RefreshTokens)
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade);*/
 
         builder.HasOne(x => x.Student)
             .WithOne(s => s.User)

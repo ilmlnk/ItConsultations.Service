@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities.ErrorObject;
+﻿using ItConsultations.Business.Entities.ErrorObjects;
 using ItConsultations.Business.Exceptions;
 using ItConsultations.Utilities.Guards;
 using System.Collections.ObjectModel;

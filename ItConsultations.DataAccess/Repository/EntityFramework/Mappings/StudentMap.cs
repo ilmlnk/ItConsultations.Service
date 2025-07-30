@@ -1,5 +1,5 @@
-﻿using ItConsultations.Business.Entities.Consultation;
-using ItConsultations.Business.Entities.User;
+﻿using ItConsultations.Business.Entities.Students;
+using ItConsultations.Business.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

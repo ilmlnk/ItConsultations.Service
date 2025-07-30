@@ -4,5 +4,5 @@ public class DeleteConsultationDto
 {
     public long Id { get; set; }
 
-    public string ConsId { get; set; }
+    public string UserConsId { get; set; }
 }

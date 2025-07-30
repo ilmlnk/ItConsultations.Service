@@ -1,4 +1,4 @@
-using ItConsultations.Business.Entities.LogEntry;
+using ItConsultations.Business.Entities.LogEntries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

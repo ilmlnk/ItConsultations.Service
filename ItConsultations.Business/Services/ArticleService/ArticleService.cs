@@ -1,9 +1,9 @@
 ﻿using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.ArticleDtos;
-using ItConsultations.Business.Entities.Article;
+using ItConsultations.Business.Entities.Articles;
 using ItConsultations.Business.Entities.Attachments;
-using ItConsultations.Business.Entities.User;
+using ItConsultations.Business.Entities.Users;
 using ItConsultations.Utilities.Guards;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,7 @@
 ﻿using ItConsultations.Attributes;
 using ItConsultations.Business.Dtos.ArticleDtos;
 using ItConsultations.Business.Services.ArticleService;
-using ItConsultations.Business.Services.Validation.Access.Articles;
+using ItConsultations.Business.Services.Validation.AccessValidation.Articles;
 using ItConsultations.Business.SharedTypes.Enums.System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,7 +52,7 @@ public class ArticleController : Controller
         return Ok(article);
     }
 
-    [HttpGet("articles")]
+    [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
         var list = await _articleService.GetAllAsync();

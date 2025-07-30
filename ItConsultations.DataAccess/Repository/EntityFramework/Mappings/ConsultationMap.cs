@@ -1,4 +1,4 @@
-﻿using ItConsultations.Business.Entities.Consultation;
+﻿using ItConsultations.Business.Entities.Consultations;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 

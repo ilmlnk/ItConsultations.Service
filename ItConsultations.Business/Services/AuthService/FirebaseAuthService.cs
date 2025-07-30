@@ -1,7 +1,6 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.AuthDtos;
-using ItConsultations.Business.Entities.User;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.SharedTypes.Enums.System;
 using ItConsultations.Business.Configs;
 using FirebaseAdmin;
@@ -14,7 +13,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using ItConsultations.Business.Entities.RefreshToken;
+using ItConsultations.Business.Entities.RefreshTokens;
+using ItConsultations.Business.Entities.Coaches;
+using ItConsultations.Business.Entities.Students;
 
 namespace ItConsultations.Business.Services.AuthService;
 

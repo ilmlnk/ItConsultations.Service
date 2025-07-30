@@ -1,6 +1,6 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Entities;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Consultations;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

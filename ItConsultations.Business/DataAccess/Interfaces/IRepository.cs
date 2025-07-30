@@ -1,5 +1,5 @@
 using ItConsultations.Business.Entities;
-using ItConsultations.Business.Entities.Consultation;
+using ItConsultations.Business.Entities.Consultations;
 
 namespace ItConsultations.Business.DataAccess.Interfaces;
 

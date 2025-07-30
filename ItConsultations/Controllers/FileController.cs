@@ -2,12 +2,11 @@ using ItConsultations.Business.Dtos.FileDtos;
 using ItConsultations.Business.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace ItConsultations.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/files")]
 [Authorize]
 public class FileController : ControllerBase
 {

@@ -1,6 +1,6 @@
-﻿using ItConsultations.Business.Entities.Article;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using ItConsultations.Business.Entities.Articles;
 
 namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 
