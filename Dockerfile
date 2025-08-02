@@ -8,10 +8,9 @@ COPY ItConsultations.Utilities/ItConsultations.Utilities.csproj ./ItConsultation
 COPY ItConsultations.Business/ItConsultations.Business.csproj ./ItConsultations.Business/
 COPY ItConsultations.DataAccess/ItConsultations.DataAccess.csproj ./ItConsultations.DataAccess/
 COPY ItConsultations.Tests/ItConsultations.Tests.csproj ./ItConsultations.Tests/
-RUN dotnet restore 
 
 COPY . .
-
+RUN dotnet restore 
 RUN dotnet publish ItConsultations/ItConsultations.WebApi.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
