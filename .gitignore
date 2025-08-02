@@ -468,29 +468,8 @@ local/
 dev/
 development/
 
-# ===========================================
-# COMMERCIAL PROTECTION
-# ===========================================
-
-# Hide business logic from public access
-# Only expose OpenApi project
-ItConsultations.Business/
-ItConsultations.DataAccess/
-ItConsultations.Logger/
-ItConsultations.Translation/
-ItConsultations.Utilities/
-ItConsultations.Tests/
-
 # Keep only OpenApi project visible
 !ItConsultations.OpenApi/
-
-# Hide sensitive business logic
-**/Services/
-**/Entities/
-**/Dtos/
-**/Repository/
-**/Mappings/
-**/AutoMapperConfiguration/
 
 # Hide database migrations and schema
 **/Migrations/
