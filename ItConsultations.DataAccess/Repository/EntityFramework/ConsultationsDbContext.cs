@@ -104,13 +104,4 @@ public class ConsultationsDbContext : DbContext
                   .OnDelete(DeleteBehavior.Restrict);
         });
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer("Server=VICTUS\\SQLEXPRESS;Database=ItConsultationsDb;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true",
-                b => b.MigrationsAssembly("ItConsultations.Database"));
-        }
-    }
 }
