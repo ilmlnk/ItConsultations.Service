@@ -472,8 +472,6 @@ development/
 !ItConsultations.OpenApi/
 
 # Hide database migrations and schema
-**/Migrations/
-**/Database/
 
 # Hide configuration files
 **/appsettings.*.json
@@ -484,12 +482,6 @@ development/
 !ItConsultations.OpenApi/README.md
 **/docs/
 **/documentation/
-
-# Hide test files that might reveal business logic
-**/Tests/
-**/test/
-**/*.test.*
-**/*.spec.*
 
 # Hide build artifacts that might contain sensitive info
 **/bin/
