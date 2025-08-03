@@ -10,18 +10,25 @@ public static class DatabaseInitializer
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ConsultationsDbContext>();
 
-        if (!context.Database.CanConnect())
+        try
         {
-            context.Database.EnsureCreated();
-        }
-        else
-        {
-            var pendingMigrations = context.Database.GetPendingMigrations().ToList();
-
-            if (pendingMigrations.Count > 0)
+            if (!context.Database.CanConnect())
             {
-                context.Database.Migrate();
+                context.Database.EnsureCreated();
             }
+            else
+            {
+                var pendingMigrations = context.Database.GetPendingMigrations().ToList();
+                if (pendingMigrations.Count > 0)
+                {
+                    context.Database.Migrate();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database initialization error: {ex.Message}");
+            throw;
         }
     }
 }
