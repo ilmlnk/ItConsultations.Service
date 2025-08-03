@@ -12,17 +12,10 @@ public static class DatabaseInitializer
 
         try
         {
-            if (!context.Database.CanConnect())
+            var pendingMigrations = context.Database.GetPendingMigrations().ToList();
+            if (pendingMigrations.Count > 0)
             {
-                context.Database.EnsureCreated();
-            }
-            else
-            {
-                var pendingMigrations = context.Database.GetPendingMigrations().ToList();
-                if (pendingMigrations.Count > 0)
-                {
-                    context.Database.Migrate();
-                }
+                context.Database.Migrate();
             }
         }
         catch (Exception ex)
