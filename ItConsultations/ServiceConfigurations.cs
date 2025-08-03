@@ -47,7 +47,7 @@ public static class ServiceConfigurations
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ConsultationsDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")),
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")),
             ServiceLifetime.Scoped);
 
         return services;
