@@ -1,6 +1,6 @@
 using ItConsultations.Logger.Configs;
 using ItConsultations.Logger.Models;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using System.Data;
 
 namespace ItConsultations.Logger.Providers;
@@ -23,14 +23,14 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
 
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
             var sql = @"
                 INSERT INTO LogEntries (Timestamp, LogLevel, Message, Exception, Source, StackTrace, UserId, SessionId, RequestId)
                 VALUES (@Timestamp, @LogLevel, @Message, @Exception, @Source, @StackTrace, @UserId, @SessionId, @RequestId)";
 
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             command.Parameters.AddWithValue("@Timestamp", logEntry.Timestamp);
             command.Parameters.AddWithValue("@LogLevel", logEntry.LogLevel.ToString());
             command.Parameters.AddWithValue("@Message", logEntry.Message ?? "");
@@ -83,7 +83,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
 
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
             var sql = @"
@@ -92,7 +92,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
                 WHERE Timestamp BETWEEN @From AND @To
                 ORDER BY Timestamp DESC";
 
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             command.Parameters.AddWithValue("@From", from);
             command.Parameters.AddWithValue("@To", to);
 
@@ -127,7 +127,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
 
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
             var sql = @"
@@ -136,7 +136,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
                 WHERE LogLevel = @LogLevel
                 ORDER BY Timestamp DESC";
 
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             command.Parameters.AddWithValue("@LogLevel", level.ToString());
 
             using var reader = await command.ExecuteReaderAsync();
@@ -170,7 +170,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
 
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
             var sql = @"
@@ -179,7 +179,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
                 WHERE Source = @Source
                 ORDER BY Timestamp DESC";
 
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             command.Parameters.AddWithValue("@Source", source);
 
             using var reader = await command.ExecuteReaderAsync();
@@ -211,11 +211,11 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
     {
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
             var sql = "DELETE FROM LogEntries WHERE Timestamp < @Before";
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             command.Parameters.AddWithValue("@Before", before);
 
             await command.ExecuteNonQueryAsync();
@@ -230,7 +230,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
     {
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             
             // Проверяем, существует ли таблица
@@ -239,7 +239,7 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
                 FROM INFORMATION_SCHEMA.TABLES 
                 WHERE TABLE_NAME = 'LogEntries'";
 
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             var result = await command.ExecuteScalarAsync();
             
             return result != null && Convert.ToInt32(result) > 0;
@@ -254,11 +254,11 @@ public class DatabaseLoggerProvider : IDatabaseLoggerProvider
     {
         try
         {
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
             var sql = "SELECT COUNT(*) FROM LogEntries";
-            using var command = new SqlCommand(sql, connection);
+            using var command = new NpgsqlCommand(sql, connection);
             var result = await command.ExecuteScalarAsync();
             
             return result != null ? Convert.ToInt32(result) : 0;
