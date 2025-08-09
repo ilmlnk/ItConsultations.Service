@@ -2,7 +2,7 @@
 
 namespace ItConsultations.Business.Services.DocumentFormattingService;
 
-public class DocumentFormattingService
+public class DocumentFormattingService : IDocumentFormattingService
 {
     private readonly ITranslationService _translationService;
 

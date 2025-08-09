@@ -7,8 +7,7 @@ builder.Services
     .AddDatabase(builder.Configuration)
     .AddConsultationConfiguration(builder.Configuration)
     .AddConsultationAuthentication(builder.Configuration)
-    .AddRepositories()
-    .AddBusinessServices()
+    .ConfigureDependencyInjection()
     .AddFileServices(builder.Configuration)
     .AddValidationServices()
     .AddLoggingServices()
@@ -18,3 +17,11 @@ builder.Services
 var app = builder.Build();
 
 DatabaseInitializer.Initialize(app.Services);
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseAuthorization();
+app.UseAuthentication();
+
+app.MapControllers();
+app.Run();
