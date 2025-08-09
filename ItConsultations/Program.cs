@@ -16,6 +16,10 @@ builder.Services
 
 var app = builder.Build();
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Clear();
+app.Urls.Add($"http://*:{port}");
+
 DatabaseInitializer.Initialize(app.Services);
 app.UseSwagger();
 app.UseSwaggerUI();
