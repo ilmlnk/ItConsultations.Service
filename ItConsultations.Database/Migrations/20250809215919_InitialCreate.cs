@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ItConsultations.DataAccess.Migrations
+namespace ItConsultations.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -193,8 +193,8 @@ namespace ItConsultations.DataAccess.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     IsRecordingEnabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     IsChatRecordingEnabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },
                 constraints: table =>
                 {
@@ -358,7 +358,7 @@ namespace ItConsultations.DataAccess.Migrations
                     StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     EndedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },
                 constraints: table =>
                 {

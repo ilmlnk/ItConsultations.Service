@@ -17,7 +17,7 @@ public class ConsultationsDbContextFactory : IDesignTimeDbContextFactory<Consult
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseNpgsql(connectionString, b => b.MigrationsAssembly("ItConsultations.Database"));
 
         return new ConsultationsDbContext(optionsBuilder.Options);
     }

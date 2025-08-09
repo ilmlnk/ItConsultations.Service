@@ -37,6 +37,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ItConsultations.DataAccess.Repository;
+using Microsoft.EntityFrameworkCore.Migrations.Internal;
 
 namespace ItConsultations.Configuration;
 
@@ -62,7 +63,8 @@ public static class ServiceConfigurations
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ConsultationsDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")),
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+            b => b.MigrationsAssembly("ItConsultations.Database")),
             ServiceLifetime.Scoped);
 
         return services;
@@ -240,5 +242,14 @@ public static class ServiceConfigurations
         });
 
         return services;
+    }
+
+    public static WebApplicationBuilder ConfigureHosting(this WebApplicationBuilder builder)
+    {
+        var port = Environment.GetEnvironmentVariable("PORT") 
+            ?? builder.Configuration["ServerSettings:Port"] 
+            ?? "5000";
+        builder.WebHost.UseUrls($"http://*:{port}");
+        return builder;
     }
 }
