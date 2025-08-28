@@ -23,7 +23,7 @@ public class ConsultationController : Controller
     }
 
     [Authorize]
-    [HttpPost("consultation/{coachConsId}")]
+    [HttpPost("{coachConsId}")]
     public async Task<IActionResult> CreateAsync([FromBody] CreateConsultationDto dto, string coachConsId)
     {
         var consultation = await _consultationService.CreateAsync(dto, coachConsId);
@@ -63,7 +63,7 @@ public class ConsultationController : Controller
         return Ok(consultation);
     }
 
-    [HttpGet("consultations")]
+    [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
         var consultations = await _consultationService.GetAllAsync();

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ItConsultations.Database.Migrations
 {
     [DbContext(typeof(ConsultationsDbContext))]
-    [Migration("20250809215919_InitialCreate")]
+    [Migration("20250820071102_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -59,14 +59,7 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArticleConsId")
-                        .IsUnique();
-
-                    b.HasIndex("CreatedAt");
-
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("Title");
 
                     b.ToTable("Articles", (string)null);
                 });
@@ -176,12 +169,6 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoachConsId")
-                        .IsUnique();
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Coaches", (string)null);
                 });
 
@@ -212,7 +199,7 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
@@ -248,7 +235,7 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.HasKey("Id");
 
@@ -258,10 +245,6 @@ namespace ItConsultations.Database.Migrations
                     b.HasIndex("ConsultationId");
 
                     b.HasIndex("OrganizerId");
-
-                    b.HasIndex("StartTime");
-
-                    b.HasIndex("Status");
 
                     b.ToTable("Conferences", (string)null);
                 });
@@ -303,9 +286,6 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("ConferenceConsId", "UserId")
-                        .IsUnique();
-
                     b.ToTable("ConferenceParticipants", (string)null);
                 });
 
@@ -328,7 +308,7 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<DateTime?>("EndedAt")
                         .HasColumnType("timestamp with time zone");
@@ -350,8 +330,6 @@ namespace ItConsultations.Database.Migrations
                     b.HasIndex("ConferenceRecordingConsId");
 
                     b.HasIndex("CreatedAt");
-
-                    b.HasIndex("IsActive");
 
                     b.ToTable("ConferenceRecordings", (string)null);
                 });
@@ -413,12 +391,7 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasIndex("CoachId");
 
-                    b.HasIndex("ConsId")
-                        .IsUnique();
-
                     b.HasIndex("Price");
-
-                    b.HasIndex("Title");
 
                     b.ToTable("Consultations", (string)null);
                 });
@@ -797,30 +770,7 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasIndex("ConsultationId");
 
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("DeletedAt");
-
-                    b.HasIndex("IsPinned");
-
-                    b.HasIndex("NoteConsId")
-                        .IsUnique();
-
-                    b.HasIndex("Priority");
-
-                    b.HasIndex("ScheduledFor");
-
-                    b.HasIndex("Status");
-
                     b.HasIndex("StudentId");
-
-                    b.HasIndex("Title");
-
-                    b.HasIndex("Type");
-
-                    b.HasIndex("UpdatedAt");
-
-                    b.HasIndex("Visibility");
 
                     b.ToTable("Notes", (string)null);
                 });
@@ -966,12 +916,6 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasIndex("ConsultationId");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("StudentConsId")
-                        .IsUnique();
-
                     b.ToTable("Students", (string)null);
                 });
 
@@ -982,6 +926,9 @@ namespace ItConsultations.Database.Migrations
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CoachConsId")
+                        .HasColumnType("text");
 
                     b.Property<long?>("CoachId")
                         .HasColumnType("bigint");
@@ -1020,6 +967,9 @@ namespace ItConsultations.Database.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
+
+                    b.Property<string>("StudentConsId")
+                        .HasColumnType("text");
 
                     b.Property<long?>("StudentId")
                         .HasColumnType("bigint");

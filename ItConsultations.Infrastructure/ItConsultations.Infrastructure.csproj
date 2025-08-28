@@ -15,5 +15,9 @@
     <PackageReference Include="Npgsql" Version="8.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\ItConsultations.Business\ItConsultations.Business.csproj" />
+	<ProjectReference Include="..\ItConsultations.DataAccess\ItConsultations.DataAccess.csproj" />
+	<ProjectReference Include="..\ItConsultations.Logger\ItConsultations.Logger.csproj" />
+  </ItemGroup>
 </Project>

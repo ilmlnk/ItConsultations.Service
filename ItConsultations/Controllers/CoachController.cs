@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/coaches")]
 public class CoachController : Controller
@@ -21,7 +22,6 @@ public class CoachController : Controller
         _validationAccessService = validationAccessService;
     }
 
-    [Authorize]
     [HttpPost("coach")]
     public async Task<IActionResult> CreateAsync([FromBody] CreateCoachDto dto)
     {
@@ -29,7 +29,6 @@ public class CoachController : Controller
         return Ok(createdCoach);
     }
 
-    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(long id)
     {
@@ -37,7 +36,6 @@ public class CoachController : Controller
         return Ok(deletedCoach);
     }
 
-    [Authorize]
     [HttpDelete("coach/{coachConsId}")]
     public async Task<IActionResult> DeleteAsync(string coachConsId)
     {

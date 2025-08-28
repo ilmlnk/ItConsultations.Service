@@ -43,6 +43,6 @@ public class ConferenceParticipantMap : IEntityTypeConfiguration<ConferenceParti
         builder.HasIndex(cp => cp.JoinedAt);
 
         // Unique index to prevent duplicate participants
-        builder.HasIndex(cp => new { cp.ConferenceConsId, cp.UserId }).IsUnique();
+        //builder.HasIndex(cp => new { cp.ConferenceConsId, cp.UserId }).IsUnique();
     }
 }

@@ -1,4 +1,3 @@
-using ItConsultations.Business.Entities;
 using ItConsultations.Business.Entities.Conferences;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -33,7 +32,7 @@ namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings
 
             builder.Property(cr => cr.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("NOW()");
 
             builder.HasOne(cr => cr.Conference)
                 .WithMany(c => c.Recordings)
@@ -41,8 +40,8 @@ namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings
                 .HasPrincipalKey(cr => cr.ConferenceConsId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasIndex(cr => cr.ConferenceRecordingConsId);
-            builder.HasIndex(cr => cr.IsActive);
+            /*builder.HasIndex(cr => cr.ConferenceRecordingConsId);
+            builder.HasIndex(cr => cr.IsActive);*/
             builder.HasIndex(cr => cr.CreatedAt);
         }
     }

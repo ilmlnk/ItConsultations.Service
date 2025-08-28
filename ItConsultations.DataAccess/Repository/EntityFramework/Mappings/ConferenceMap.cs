@@ -48,11 +48,11 @@ public class ConferenceMap : IEntityTypeConfiguration<Conference>
 
         builder.Property(c => c.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("NOW()");
 
         builder.Property(c => c.UpdatedAt)
             .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValueSql("NOW()");
 
         builder.HasOne(c => c.Organizer)
             .WithMany()
@@ -80,10 +80,10 @@ public class ConferenceMap : IEntityTypeConfiguration<Conference>
             .HasForeignKey(r => r.ConferenceRecordingConsId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(c => c.OrganizerId);
+        /*builder.HasIndex(c => c.OrganizerId);
         builder.HasIndex(c => c.ConsultationId);
         builder.HasIndex(c => c.Status);
-        builder.HasIndex(c => c.StartTime);
+        builder.HasIndex(c => c.StartTime);*/
         builder.HasIndex(c => c.ConferenceUrl).IsUnique();
     }
 }

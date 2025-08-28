@@ -29,8 +29,8 @@ public class ConsultationMap : IEntityTypeConfiguration<Consultation>
                      .HasForeignKey("ConsultationId")
                      .OnDelete(DeleteBehavior.Restrict);
         
-        entityBuilder.HasIndex(c => c.ConsId).IsUnique();
-        entityBuilder.HasIndex(c => c.Title);
+        /*entityBuilder.HasIndex(c => c.ConsId).IsUnique();
+        entityBuilder.HasIndex(c => c.Title);*/
         entityBuilder.HasIndex(c => c.Price);
     }
 }

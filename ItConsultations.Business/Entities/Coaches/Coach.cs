@@ -22,6 +22,8 @@ public class Coach : Entity<long>
 
     public DateTime? BirthDate { get; set; }
 
+    public string Username { get; set; }
+
     public string Description { get; set; }
 
     [Required]

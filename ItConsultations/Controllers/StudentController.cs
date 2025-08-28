@@ -40,7 +40,7 @@ public class StudentController : Controller
         return student == null ? NotFound() : Ok(student);
     }
 
-    [HttpGet("get/students")]
+    [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
         var students = await _studentService.GetAllAsync();

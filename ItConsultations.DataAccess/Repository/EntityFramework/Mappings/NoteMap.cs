@@ -57,7 +57,7 @@ public class NoteMap : IEntityTypeConfiguration<Note>
                      .HasForeignKey(n => n.AuthorId)
                      .OnDelete(DeleteBehavior.Restrict);
         
-        entityBuilder.HasIndex(n => n.NoteConsId).IsUnique();
+        /*entityBuilder.HasIndex(n => n.NoteConsId).IsUnique();
         entityBuilder.HasIndex(n => n.Title);
         entityBuilder.HasIndex(n => n.Type);
         entityBuilder.HasIndex(n => n.Visibility);
@@ -71,6 +71,6 @@ public class NoteMap : IEntityTypeConfiguration<Note>
         entityBuilder.HasIndex(n => n.UpdatedAt);
         entityBuilder.HasIndex(n => n.IsPinned);
         entityBuilder.HasIndex(n => n.ScheduledFor);
-        entityBuilder.HasIndex(n => n.DeletedAt);
+        entityBuilder.HasIndex(n => n.DeletedAt);*/
     }
 } 

@@ -51,7 +51,7 @@ public class StudentMap : IEntityTypeConfiguration<Student>
             .HasForeignKey<UserEntity>(u => u.StudentId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasIndex(s => s.StudentConsId).IsUnique();
-        builder.HasIndex(s => s.Email).IsUnique();
+        /*builder.HasIndex(s => s.StudentConsId).IsUnique();
+        builder.HasIndex(s => s.Email).IsUnique();*/
     }
 }

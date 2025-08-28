@@ -11,6 +11,8 @@ using ItConsultations.Business.Entities.Students;
 using ItConsultations.Business.Entities.Coaches;
 using ItConsultations.Business.Entities.Conferences;
 using ItConsultations.Business.Entities.Notes;
+using ItConsultations.Business.Dtos.AuthDtos;
+using ItConsultations.Business.Entities.Users;
 
 
 namespace ItConsultations.Business.AutoMapperConfiguration;
@@ -46,7 +48,7 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.DisplayName))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
             .ForMember(dest => dest.Password, opt => opt.Ignore())
             .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
             .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl))
@@ -111,8 +113,7 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.DisplayName : string.Empty))
-            .ForMember(dest => dest.Password, opt => opt.Ignore())
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
             .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
             .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl));
 
@@ -134,12 +135,7 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
-            .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
-            .ForMember(dest => dest.CoachConsId, opt => opt.MapFrom(src => 
-                src.CreatedBy != null && src.CreatedBy.Coach != null ? src.CreatedBy.Coach.CoachConsId : null))
-            .ForMember(dest => dest.StudentConsId, opt => opt.MapFrom(src => 
-                src.CreatedBy != null && src.CreatedBy.Student != null ? src.CreatedBy.Student.StudentConsId : null))
-            .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
+            .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy));
 
         // Note mappings
         CreateMap<CreateNoteDto, Note>()
@@ -290,12 +286,44 @@ public class ConsultationsAutoMapperProfile : Profile
         // ConferenceRecording mappings
         CreateMap<ConferenceRecording, ConferenceRecordingDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-            //.ForMember(dest => dest.ConferenceId, opt => opt.MapFrom(src => src.ConferenceId))
-            /*.ForMember(dest => dest.RecordingUrl, opt => opt.MapFrom(src => src.RecordingUrl))
-            .ForMember(dest => dest.ChatLogUrl, opt => opt.MapFrom(src => src.ChatLogUrl))
-            .ForMember(dest => dest.StartedAt, opt => opt.MapFrom(src => src.StartedAt))
-            .ForMember(dest => dest.EndedAt, opt => opt.MapFrom(src => src.EndedAt))
-            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));*/
+        //.ForMember(dest => dest.ConferenceId, opt => opt.MapFrom(src => src.ConferenceId))
+        /*.ForMember(dest => dest.RecordingUrl, opt => opt.MapFrom(src => src.RecordingUrl))
+        .ForMember(dest => dest.ChatLogUrl, opt => opt.MapFrom(src => src.ChatLogUrl))
+        .ForMember(dest => dest.StartedAt, opt => opt.MapFrom(src => src.StartedAt))
+        .ForMember(dest => dest.EndedAt, opt => opt.MapFrom(src => src.EndedAt))
+        .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+        .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));*/
+
+        // *** FIREBASE AUTH ***
+        CreateMap<RegisterDto, UserEntity>()
+            .ForMember(dest => dest.FirebaseUid, opt => opt.MapFrom(src => src.IdToken))
+            .ForMember(dest => dest.ConsId, opt => opt.MapFrom(src => src.ConsId))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.PictureUrl))
+            .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
+            .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
+        CreateMap<UserInfoDto, UserEntity>()
+            .ForMember(dest => dest.FirebaseUid, opt => opt.MapFrom(src => src.FirebaseUid))
+            .ForMember(dest => dest.ConsId, opt => opt.MapFrom(src => src.ConsId))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.PhotoUrl))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+            .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+            .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
+            .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
+        CreateMap<UserEntity, LoginResponseDto>();
     }
 }

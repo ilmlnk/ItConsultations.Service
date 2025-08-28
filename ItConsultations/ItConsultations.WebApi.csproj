@@ -39,6 +39,7 @@
     <ProjectReference Include="..\ItConsultations.DataAccess\ItConsultations.DataAccess.csproj" />
     <ProjectReference Include="..\ItConsultations.Database\ItConsultations.Database.csproj" />
     <ProjectReference Include="..\ItConsultations.Logger\ItConsultations.Logger.csproj" />
+	<ProjectReference Include="..\ItConsultations.Infrastructure\ItConsultations.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

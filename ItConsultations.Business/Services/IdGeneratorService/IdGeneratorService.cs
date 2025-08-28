@@ -28,7 +28,7 @@ public static class IdGeneratorService
 
     public static bool IsValidId(string id)
     {
-        if (string.IsNullOrEmpty(id) || id.Length != 32)
+        if (string.IsNullOrEmpty(id) || id.Length != 36)
         {
             return false;
         }

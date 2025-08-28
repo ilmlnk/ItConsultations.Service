@@ -1,7 +1,6 @@
 using ItConsultations.Business.DataAccess.Interfaces;
 using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Entities.Users;
-using ItConsultations.Business.SharedTypes.Enums.System;
 using ItConsultations.Business.Configs;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
@@ -16,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using ItConsultations.Business.Entities.RefreshTokens;
 using ItConsultations.Business.Entities.Coaches;
 using ItConsultations.Business.Entities.Students;
+using ItConsultations.Business.AutoMapperConfiguration;
 
 namespace ItConsultations.Business.Services.AuthService;
 
@@ -50,315 +50,38 @@ public class FirebaseAuthService : IFirebaseAuthService
         InitializeFirebase();
     }
 
-    private void InitializeFirebase()
-    {
-        try
-        {
-            if (FirebaseApp.DefaultInstance != null)
-            {
-                return;
-            }
-
-            var serviceAccountJson = GetFirebaseServiceAccountJson();
-            
-            if (string.IsNullOrEmpty(serviceAccountJson))
-            {
-                throw new InvalidOperationException("Failed to generate Firebase service account JSON");
-            }
-
-            var credential = GoogleCredential.FromJson(serviceAccountJson);
-            FirebaseApp.Create(new AppOptions
-            {
-                Credential = credential,
-                ProjectId = _firebaseConfig.ProjectId
-            });
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Failed to initialize Firebase: {ex.Message}", ex);
-        }
-    }
-
-    private string GetFirebaseServiceAccountJson()
-    {
-        if (string.IsNullOrEmpty(_firebaseConfig.ProjectId)) 
-        {
-            throw new InvalidOperationException("Firebase ProjectId is not configured");
-        }
-        
-        if (string.IsNullOrEmpty(_firebaseConfig.PrivateKey)) 
-        {
-            throw new InvalidOperationException("Firebase PrivateKey is not configured");
-        }
-        
-        if (string.IsNullOrEmpty(_firebaseConfig.ClientEmail)) 
-        {
-            throw new InvalidOperationException("Firebase ClientEmail is not configured");
-        }
-        
-        if (string.IsNullOrEmpty(_firebaseConfig.PrivateKeyId)) 
-        {
-            throw new InvalidOperationException("Firebase PrivateKeyId is not configured");
-        }
-
-        if (_firebaseConfig.PrivateKey.Contains("YOUR_PRIVATE_KEY_HERE"))
-        {
-            throw new InvalidOperationException("Firebase PrivateKey is not properly configured. Please replace 'YOUR_PRIVATE_KEY_HERE' with actual private key");
-        }
-
-        var escapedPrivateKey = _firebaseConfig.PrivateKey
-            .Replace("\n", "\\n")
-            .Replace("\r", "\\r")
-            .Replace("\"", "\\\"");
-        
-        return $@"{{
-            ""type"": ""{_firebaseConfig.Type}"",
-            ""project_id"": ""{_firebaseConfig.ProjectId}"",
-            ""private_key_id"": ""{_firebaseConfig.PrivateKeyId}"",
-            ""private_key"": ""{escapedPrivateKey}"",
-            ""client_email"": ""{_firebaseConfig.ClientEmail}"",
-            ""client_id"": ""{_firebaseConfig.ClientId}"",
-            ""auth_uri"": ""{_firebaseConfig.AuthUri}"",
-            ""token_uri"": ""{_firebaseConfig.TokenUri}"",
-            ""auth_provider_x509_cert_url"": ""{_firebaseConfig.AuthProviderX509CertUrl}"",
-            ""client_x509_cert_url"": ""{_firebaseConfig.ClientX509CertUrl}""
-        }}";
-    }
-
     public async Task<LoginResponseDto> LoginAsync(string idToken)
     {
-        try
+        var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
+        var uid = decodedToken.Uid;
+
+        var user = await GetUserByFirebaseUidAsync(uid);
+
+        await UpdateUserLastLoginAsync(uid);
+
+        var accessToken = await GenerateAccessTokenAsync(user);
+        var refreshToken = await GenerateRefreshTokenAsync(user);
+
+        var userInfo = await GetUserInfoAsync(uid);
+
+        return new LoginResponseDto
         {
-            // Проверяем формат токена
-            if (string.IsNullOrEmpty(idToken))
-            {
-                throw new ArgumentException("ID token cannot be null or empty");
-            }
-
-            var tokenParts = idToken.Split('.');
-            if (tokenParts.Length != 3)
-            {
-                throw new ArgumentException($"Invalid ID token format. Expected 3 segments, got {tokenParts.Length}. Token should be in format: header.payload.signature");
-            }
-
-            var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
-            var uid = decodedToken.Uid;
-
-            var user = await GetUserByFirebaseUidAsync(uid);
-            if (user == null)
-            {
-                throw new InvalidOperationException($"User with Firebase UID {uid} not found");
-            }
-
-            await UpdateUserLastLoginAsync(uid);
-
-            var accessToken = await GenerateAccessTokenAsync(user);
-            var refreshToken = await GenerateRefreshTokenAsync(user);
-
-            var userInfo = await GetUserInfoAsync(uid);
-
-            return new LoginResponseDto
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                ExpiresAt = DateTime.UtcNow.AddHours(1),
-                User = userInfo
-            };
-        }
-        catch (ArgumentException ex)
-        {
-            throw new InvalidOperationException($"Invalid ID token: {ex.Message}", ex);
-        }
-        catch (FirebaseAuthException ex)
-        {
-            throw new InvalidOperationException($"Firebase authentication failed: {ex.Message}", ex);
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Authentication failed: {ex.Message}", ex);
-        }
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddHours(1),
+            User = userInfo
+        };
     }
 
     public async Task<UserInfoDto> RegisterAsync(RegisterDto registerDto)
     {
-        try
-        {
-            // Проверяем формат токена
-            if (string.IsNullOrEmpty(registerDto.IdToken))
-            {
-                throw new ArgumentException("ID token cannot be null or empty");
-            }
+        var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(registerDto.IdToken);
+        var uid = decodedToken.Uid;
+        var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+        var user = MapperManager.Map<UserEntity>(registerDto);
+        await _userRepository.CreateAsync(user);
 
-            var tokenParts = registerDto.IdToken.Split('.');
-            if (tokenParts.Length != 3)
-            {
-                throw new ArgumentException($"Invalid ID token format. Expected 3 segments, got {tokenParts.Length}. Token should be in format: header.payload.signature");
-            }
-
-            var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(registerDto.IdToken);
-            var uid = decodedToken.Uid;
-
-            var existingUser = await GetUserByFirebaseUidAsync(uid);
-            if (existingUser != null)
-            {
-                throw new InvalidOperationException($"User with Firebase UID {uid} already exists");
-            }
-
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
-
-            var user = new UserEntity
-            {
-                FirebaseUid = uid,
-                Email = userRecord.Email ?? string.Empty,
-                DisplayName = userRecord.DisplayName ?? string.Empty,
-                PhotoUrl = userRecord.PhotoUrl ?? string.Empty,
-                EmailVerified = false, // TODO: change this verification
-                Role = registerDto.Role,
-                LastLoginAt = DateTime.UtcNow,
-                IsActive = true
-            };
-
-            try
-            {
-                await _userRepository.CreateAsync(user);
-
-                if (registerDto.Role == UserRole.Coach)
-                {
-                    var coach = new Coach
-                    {
-                        CoachConsId = GenerateCoachId(),
-                        FirstName = registerDto.FirstName ?? string.Empty,
-                        LastName = registerDto.LastName ?? string.Empty,
-                        BirthDate = registerDto.BirthDate,
-                        Description = registerDto.Description ?? string.Empty,
-                        Email = user.Email,
-                        PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
-                        LinkedInUrl = registerDto.LinkedInUrl,
-                        GitHubUrl = registerDto.GitHubUrl,
-                        AverageRating = 0,
-                        User = user
-                    };
-
-                    await _coachRepository.CreateAsync(coach);
-                    user.CoachId = coach.Id;
-                }
-                else if (registerDto.Role == UserRole.Student)
-                {
-                    var student = new Student
-                    {
-                        StudentConsId = GenerateStudentId(),
-                        FirstName = registerDto.FirstName ?? string.Empty,
-                        LastName = registerDto.LastName ?? string.Empty,
-                        BirthDate = registerDto.BirthDate,
-                        Email = user.Email,
-                        PictureUrl = registerDto.PictureUrl ?? user.PhotoUrl,
-                        LinkedInUrl = registerDto.LinkedInUrl,
-                        GitHubUrl = registerDto.GitHubUrl
-                    };
-
-                    
-                    await _studentRepository.CreateAsync(student);
-                    user.StudentId = student.Id;
-                }
-
-                await _userRepository.UpdateAsync(user);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Failed to create user in database: {ex.Message}", ex);
-            }
-
-            return await GetUserInfoAsync(uid);
-        }
-        catch (ArgumentException ex)
-        {
-            throw new InvalidOperationException($"Invalid ID token: {ex.Message}", ex);
-        }
-        catch (FirebaseAuthException ex)
-        {
-            throw new InvalidOperationException($"Firebase authentication failed: {ex.Message}", ex);
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Registration failed: {ex.Message}", ex);
-        }
-    }
-
-    public async Task<UserInfoDto?> GetUserInfoAsync(string firebaseUid)
-    {
-        try
-        {
-            var user = await GetUserByFirebaseUidAsync(firebaseUid);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            var userInfo = new UserInfoDto
-            {
-                Id = user.Id,
-                FirebaseUid = user.FirebaseUid,
-                Email = user.Email,
-                DisplayName = user.DisplayName,
-                PhotoUrl = user.PhotoUrl,
-                EmailVerified = user.EmailVerified,
-                Role = user.Role,
-                LastLoginAt = user.LastLoginAt,
-                IsActive = user.IsActive,
-                CoachId = user.CoachId,
-                StudentId = user.StudentId
-            };
-
-            if (user.Role == UserRole.Coach && user.CoachId.HasValue)
-            {
-                var coach = await _coachRepository.GetAsync(user.CoachId.Value);
-                if (coach != null)
-                {
-                    userInfo.FirstName = coach.FirstName;
-                    userInfo.LastName = coach.LastName;
-                    userInfo.BirthDate = coach.BirthDate;
-                    userInfo.Description = coach.Description;
-                    userInfo.LinkedInUrl = coach.LinkedInUrl;
-                    userInfo.GitHubUrl = coach.GitHubUrl;
-                }
-            }
-            else if (user.Role == UserRole.Student && user.StudentId.HasValue)
-            {
-                var student = await _studentRepository.GetAsync(user.StudentId.Value);
-                if (student != null)
-                {
-                    userInfo.FirstName = student.FirstName;
-                    userInfo.LastName = student.LastName;
-                    userInfo.BirthDate = student.BirthDate;
-                    userInfo.LinkedInUrl = student.LinkedInUrl;
-                    userInfo.GitHubUrl = student.GitHubUrl;
-                }
-            }
-
-            return userInfo;
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Failed to get user info: {ex.Message}", ex);
-        }
-    }
-
-    public async Task<UserInfoDto?> GetUserByRoleAsync(string firebaseUid, UserRole role)
-    {
-        var user = await GetUserByFirebaseUidAsync(firebaseUid);
-
-        if (user == null)
-        {
-            return null;
-        }
-        
-        if (user.Role != role)
-        {
-            throw new InvalidOperationException($"User role {user.Role} does not match expected role {role}");
-        }
-        
-        return await GetUserInfoAsync(firebaseUid);
+        return MapperManager.Map<UserInfoDto>(user);
     }
 
     public async Task<bool> ValidateTokenAsync(string accessToken)
@@ -456,20 +179,9 @@ public class FirebaseAuthService : IFirebaseAuthService
         return _userRepository.Get(u => u.FirebaseUid == firebaseUid).FirstOrDefault();
     }
 
-    private async Task<UserEntity> CreateUserAsync(UserInfoDto userInfo)
+    private async Task<UserEntity> CreateUserAsync(RegisterDto registerDto)
     {
-        var user = new UserEntity
-        {
-            FirebaseUid = userInfo.FirebaseUid,
-            Email = userInfo.Email,
-            DisplayName = userInfo.DisplayName,
-            PhotoUrl = userInfo.PhotoUrl,
-            EmailVerified = userInfo.EmailVerified,
-            Role = UserRole.Student, // По умолчанию студент
-            LastLoginAt = DateTime.UtcNow,
-            IsActive = true
-        };
-
+        var user = MapperManager.Map<UserEntity>(registerDto);
         await _userRepository.CreateAsync(user);
         return user;
     }
@@ -532,14 +244,79 @@ public class FirebaseAuthService : IFirebaseAuthService
         return refreshToken;
     }
 
-    private string GenerateCoachId()
+    private void InitializeFirebase()
     {
-        return $"0001{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
+        try
+        {
+            if (FirebaseApp.DefaultInstance != null)
+            {
+                return;
+            }
+
+            var serviceAccountJson = GetFirebaseServiceAccountJson();
+
+            if (string.IsNullOrEmpty(serviceAccountJson))
+            {
+                throw new InvalidOperationException("Failed to generate Firebase service account JSON");
+            }
+
+            var credential = GoogleCredential.FromJson(serviceAccountJson);
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = credential,
+                ProjectId = _firebaseConfig.ProjectId
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to initialize Firebase: {ex.Message}", ex);
+        }
     }
 
-    private string GenerateStudentId()
+    private string GetFirebaseServiceAccountJson()
     {
-        return $"0003{DateTime.UtcNow:yyyyMMddHHmmssfff}{Random.Shared.NextInt64(0, 1_000_000_000_000_000):D15}";
+        if (string.IsNullOrEmpty(_firebaseConfig.ProjectId))
+        {
+            throw new InvalidOperationException("Firebase ProjectId is not configured");
+        }
+
+        if (string.IsNullOrEmpty(_firebaseConfig.PrivateKey))
+        {
+            throw new InvalidOperationException("Firebase PrivateKey is not configured");
+        }
+
+        if (string.IsNullOrEmpty(_firebaseConfig.ClientEmail))
+        {
+            throw new InvalidOperationException("Firebase ClientEmail is not configured");
+        }
+
+        if (string.IsNullOrEmpty(_firebaseConfig.PrivateKeyId))
+        {
+            throw new InvalidOperationException("Firebase PrivateKeyId is not configured");
+        }
+
+        if (_firebaseConfig.PrivateKey.Contains("YOUR_PRIVATE_KEY_HERE"))
+        {
+            throw new InvalidOperationException("Firebase PrivateKey is not properly configured. Please replace 'YOUR_PRIVATE_KEY_HERE' with actual private key");
+        }
+
+        var escapedPrivateKey = _firebaseConfig.PrivateKey
+            .Replace("\n", "\\n")
+            .Replace("\r", "\\r")
+            .Replace("\"", "\\\"");
+
+        return $@"{{
+            ""type"": ""{_firebaseConfig.Type}"",
+            ""project_id"": ""{_firebaseConfig.ProjectId}"",
+            ""private_key_id"": ""{_firebaseConfig.PrivateKeyId}"",
+            ""private_key"": ""{escapedPrivateKey}"",
+            ""client_email"": ""{_firebaseConfig.ClientEmail}"",
+            ""client_id"": ""{_firebaseConfig.ClientId}"",
+            ""auth_uri"": ""{_firebaseConfig.AuthUri}"",
+            ""token_uri"": ""{_firebaseConfig.TokenUri}"",
+            ""auth_provider_x509_cert_url"": ""{_firebaseConfig.AuthProviderX509CertUrl}"",
+            ""client_x509_cert_url"": ""{_firebaseConfig.ClientX509CertUrl}""
+        }}";
     }
 
     Task<UserEntity> IFirebaseAuthService.CreateUserAsync(UserInfoDto userInfo)

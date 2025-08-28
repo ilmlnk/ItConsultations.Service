@@ -38,7 +38,7 @@ public class CoachMap : IEntityTypeConfiguration<Coach>
                .HasForeignKey<Business.Entities.Users.UserEntity>(u => u.CoachId)
                .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasIndex(c => c.CoachConsId).IsUnique();
-        builder.HasIndex(c => c.Email).IsUnique();
+        /*builder.HasIndex(c => c.CoachConsId).IsUnique();
+        builder.HasIndex(c => c.Email).IsUnique();*/
     }
 }

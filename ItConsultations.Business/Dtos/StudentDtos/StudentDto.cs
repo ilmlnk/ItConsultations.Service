@@ -16,8 +16,6 @@ public class StudentDto
 
     public string Username { get; set; }
 
-    public string Password { get; set; }
-
     public string? LinkedInUrl { get; set; }
 
     public string? GitHubUrl { get; set; }

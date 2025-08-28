@@ -44,8 +44,8 @@ public class ArticleMap : IEntityTypeConfiguration<Article>
                      .HasForeignKey("ArticleId")
                      .OnDelete(DeleteBehavior.Cascade);
                      
-        entityBuilder.HasIndex(a => a.ArticleConsId).IsUnique();
+        /*entityBuilder.HasIndex(a => a.ArticleConsId).IsUnique();
         entityBuilder.HasIndex(a => a.Title);
-        entityBuilder.HasIndex(a => a.CreatedAt);
+        entityBuilder.HasIndex(a => a.CreatedAt);*/
     }
 }

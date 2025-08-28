@@ -130,6 +130,8 @@ namespace ItConsultations.Database.Migrations
                     Role = table.Column<int>(type: "integer", nullable: false),
                     LastLoginAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CoachConsId = table.Column<string>(type: "text", nullable: true),
+                    StudentConsId = table.Column<string>(type: "text", nullable: true),
                     CoachId = table.Column<long>(type: "bigint", nullable: true),
                     StudentId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -538,25 +540,9 @@ namespace ItConsultations.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Articles_ArticleConsId",
-                table: "Articles",
-                column: "ArticleConsId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Articles_CreatedAt",
-                table: "Articles",
-                column: "CreatedAt");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Articles_CreatedById",
                 table: "Articles",
                 column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Articles_Title",
-                table: "Articles",
-                column: "Title");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attachments_ArticleId",
@@ -569,27 +555,9 @@ namespace ItConsultations.Database.Migrations
                 column: "ReviewId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Coaches_CoachConsId",
-                table: "Coaches",
-                column: "CoachConsId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Coaches_Email",
-                table: "Coaches",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ConferenceParticipants_ConferenceConsId",
                 table: "ConferenceParticipants",
                 column: "ConferenceConsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ConferenceParticipants_ConferenceConsId_UserId",
-                table: "ConferenceParticipants",
-                columns: new[] { "ConferenceConsId", "UserId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConferenceParticipants_JoinedAt",
@@ -617,11 +585,6 @@ namespace ItConsultations.Database.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConferenceRecordings_IsActive",
-                table: "ConferenceRecordings",
-                column: "IsActive");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Conferences_ConferenceUrl",
                 table: "Conferences",
                 column: "ConferenceUrl",
@@ -638,35 +601,14 @@ namespace ItConsultations.Database.Migrations
                 column: "OrganizerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Conferences_StartTime",
-                table: "Conferences",
-                column: "StartTime");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Conferences_Status",
-                table: "Conferences",
-                column: "Status");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Consultations_CoachId",
                 table: "Consultations",
                 column: "CoachId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Consultations_ConsId",
-                table: "Consultations",
-                column: "ConsId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Consultations_Price",
                 table: "Consultations",
                 column: "Price");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Consultations_Title",
-                table: "Consultations",
-                column: "Title");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventAttachment_AttachmentId",
@@ -734,65 +676,9 @@ namespace ItConsultations.Database.Migrations
                 column: "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notes_CreatedAt",
-                table: "Notes",
-                column: "CreatedAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_DeletedAt",
-                table: "Notes",
-                column: "DeletedAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_IsPinned",
-                table: "Notes",
-                column: "IsPinned");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_NoteConsId",
-                table: "Notes",
-                column: "NoteConsId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_Priority",
-                table: "Notes",
-                column: "Priority");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_ScheduledFor",
-                table: "Notes",
-                column: "ScheduledFor");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_Status",
-                table: "Notes",
-                column: "Status");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Notes_StudentId",
                 table: "Notes",
                 column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_Title",
-                table: "Notes",
-                column: "Title");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_Type",
-                table: "Notes",
-                column: "Type");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_UpdatedAt",
-                table: "Notes",
-                column: "UpdatedAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notes_Visibility",
-                table: "Notes",
-                column: "Visibility");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_ExpiresAt",
@@ -829,18 +715,6 @@ namespace ItConsultations.Database.Migrations
                 name: "IX_Students_ConsultationId",
                 table: "Students",
                 column: "ConsultationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_Email",
-                table: "Students",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_StudentConsId",
-                table: "Students",
-                column: "StudentConsId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CoachId",
