@@ -27,7 +27,7 @@ public class Consultation : Entity<long>
 
     public DateTime EndTime { get; set; }
 
-    public bool IsWishlisted { get; set; } = false;
+    public bool IsFavorite { get; set; } = false;
 
     [Required]
     public decimal Price { get; set; }

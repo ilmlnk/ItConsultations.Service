@@ -421,17 +421,17 @@ public class GoogleCalendarService : IGoogleCalendarService
             }
 
             // Add attendees
-            if (eventEntity.Participants?.Any() == true)
+            /*if (eventEntity.Participants?.Any() == true)
             {
                 foreach (var participant in eventEntity.Participants)
                 {
                     var attendeeLine = $"ATTENDEE;CUTYPE=INDIVIDUAL;ROLE={GetParticipantRoleString(participant.Role)};PARTSTAT={GetParticipantStatusString(participant.Status)};CN={EscapeICalText(participant.User.DisplayName)}:mailto:{participant.User.Email}";
                     icalContent.AppendLine(attendeeLine);
                 }
-            }
+            }*/
 
             // Add organizer
-            icalContent.AppendLine($"ORGANIZER;CN={EscapeICalText(eventEntity.Creator.DisplayName)}:mailto:{eventEntity.Creator.Email}");
+            //icalContent.AppendLine($"ORGANIZER;CN={EscapeICalText(eventEntity.Creator.DisplayName)}:mailto:{eventEntity.Creator.Email}");
 
             // Add reminder
             if (eventEntity.ReminderMinutes.HasValue)
@@ -510,13 +510,13 @@ public class GoogleCalendarService : IGoogleCalendarService
                 {
                     foreach (var participant in eventEntity.Participants)
                     {
-                        var attendeeLine = $"ATTENDEE;CUTYPE=INDIVIDUAL;ROLE={GetParticipantRoleString(participant.Role)};PARTSTAT={GetParticipantStatusString(participant.Status)};CN={EscapeICalText(participant.User.DisplayName)}:mailto:{participant.User.Email}";
-                        icalContent.AppendLine(attendeeLine);
+                        /*var attendeeLine = $"ATTENDEE;CUTYPE=INDIVIDUAL;ROLE={GetParticipantRoleString(participant.Role)};PARTSTAT={GetParticipantStatusString(participant.Status)};CN={EscapeICalText(participant.User.DisplayName)}:mailto:{participant.User.Email}";
+                        icalContent.AppendLine(attendeeLine);*/
                     }
                 }
 
                 // Add organizer
-                icalContent.AppendLine($"ORGANIZER;CN={EscapeICalText(eventEntity.Creator.DisplayName)}:mailto:{eventEntity.Creator.Email}");
+                //icalContent.AppendLine($"ORGANIZER;CN={EscapeICalText(eventEntity.Creator.DisplayName)}:mailto:{eventEntity.Creator.Email}");
 
                 // Add reminder
                 if (eventEntity.ReminderMinutes.HasValue)

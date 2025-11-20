@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.Entities.Reviews;
+using ItConsultations.Business.Entities.Consultations;
+using ItConsultations.Business.SharedTypes.Enums.Coach;
 
 namespace ItConsultations.Business.Entities.Coaches;
 
@@ -35,10 +37,13 @@ public class Coach : Entity<long>
 
     public string? GitHubUrl { get; set; }
 
-    public List<Consultations.Consultation> Consultations { get; set; }
+    public CoachApplicationStatus ApplicationStatus { get; set; }
+
+    public List<Consultation> Consultations { get; set; }
 
     public List<Review> Reviews { get; set; }
 
+    [NotMapped]
     public decimal AverageRating { get; set; }
 
     public UserEntity User { get; set; } = null!;

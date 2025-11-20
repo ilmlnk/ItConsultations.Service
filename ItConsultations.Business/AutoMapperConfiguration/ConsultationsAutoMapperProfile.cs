@@ -13,6 +13,8 @@ using ItConsultations.Business.Entities.Conferences;
 using ItConsultations.Business.Entities.Notes;
 using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Entities.Users;
+using ItConsultations.Business.Entities.Events;
+using ItConsultations.Business.Dtos.EventDtos;
 
 
 namespace ItConsultations.Business.AutoMapperConfiguration;
@@ -324,6 +326,126 @@ public class ConsultationsAutoMapperProfile : Profile
             .ForMember(dest => dest.LinkedInUrl, opt => opt.MapFrom(src => src.LinkedInUrl))
             .ForMember(dest => dest.GitHubUrl, opt => opt.MapFrom(src => src.GitHubUrl))
             .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
+        
         CreateMap<UserEntity, LoginResponseDto>();
+
+        CreateMap<Event, CreateEventDto>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.MeetingUrl, opt => opt.MapFrom(src => src.MeetingUrl))
+            .ForMember(dest => dest.MeetingProvider, opt => opt.MapFrom(src => src.MeetingProvider))
+            .ForMember(dest => dest.AssigneeEmails, opt => opt.MapFrom(src => src.AssigneeEmails))
+            .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.Creator))
+            .ForMember(dest => dest.BeginDateTime, opt => opt.MapFrom(src => src.BeginDateTime))
+            .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.EndDateTime))
+            .ForMember(dest => dest.ReminderTime, opt => opt.MapFrom(src => src.ReminderTime))
+            .ForMember(dest => dest.ReminderMinutes, opt => opt.MapFrom(src => src.ReminderMinutes))
+            .ForMember(dest => dest.RecurrenceType, opt => opt.MapFrom(src => src.RecurrenceType))
+            .ForMember(dest => dest.RecurrenceInterval, opt => opt.MapFrom(src => src.RecurrenceInterval))
+            .ForMember(dest => dest.RecurrenceDayOfWeek, opt => opt.MapFrom(src => src.RecurrenceDayOfWeek))
+            .ForMember(dest => dest.RecurrenceDayOfMonth, opt => opt.MapFrom(src => src.RecurrenceDayOfMonth))
+            .ForMember(dest => dest.RecurrenceEndDate, opt => opt.MapFrom(src => src.RecurrenceEndDate))
+            .ForMember(dest => dest.RecurrenceCount, opt => opt.MapFrom(src => src.RecurrenceCount))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.IsAllDay, opt => opt.MapFrom(src => src.IsAllDay))
+            .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color));
+
+        CreateMap<EventDto, CreateEventDto>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.MeetingUrl, opt => opt.MapFrom(src => src.MeetingUrl))
+            .ForMember(dest => dest.MeetingProvider, opt => opt.MapFrom(src => src.MeetingProvider))
+            .ForMember(dest => dest.AssigneeEmails, opt => opt.MapFrom(src => src.AssigneeEmails))
+            .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.Creator))
+            .ForMember(dest => dest.BeginDateTime, opt => opt.MapFrom(src => src.BeginDateTime))
+            .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.EndDateTime))
+            .ForMember(dest => dest.ReminderTime, opt => opt.MapFrom(src => src.ReminderTime))
+            .ForMember(dest => dest.ReminderMinutes, opt => opt.MapFrom(src => src.ReminderMinutes))
+            .ForMember(dest => dest.RecurrenceType, opt => opt.MapFrom(src => src.RecurrenceType))
+            .ForMember(dest => dest.RecurrenceInterval, opt => opt.MapFrom(src => src.RecurrenceInterval))
+            .ForMember(dest => dest.RecurrenceDayOfWeek, opt => opt.MapFrom(src => src.RecurrenceDayOfWeek))
+            .ForMember(dest => dest.RecurrenceDayOfMonth, opt => opt.MapFrom(src => src.RecurrenceDayOfMonth))
+            .ForMember(dest => dest.RecurrenceEndDate, opt => opt.MapFrom(src => src.RecurrenceEndDate))
+            .ForMember(dest => dest.RecurrenceCount, opt => opt.MapFrom(src => src.RecurrenceCount))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.IsAllDay, opt => opt.MapFrom(src => src.IsAllDay))
+            .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color));
+
+        CreateMap<EventDto, Event>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.MeetingUrl, opt => opt.MapFrom(src => src.MeetingUrl))
+            .ForMember(dest => dest.MeetingProvider, opt => opt.MapFrom(src => src.MeetingProvider))
+            .ForMember(dest => dest.AssigneeEmails, opt => opt.MapFrom(src => src.AssigneeEmails))
+            .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.Creator))
+            .ForMember(dest => dest.BeginDateTime, opt => opt.MapFrom(src => src.BeginDateTime))
+            .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.EndDateTime))
+            .ForMember(dest => dest.ReminderTime, opt => opt.MapFrom(src => src.ReminderTime))
+            .ForMember(dest => dest.ReminderMinutes, opt => opt.MapFrom(src => src.ReminderMinutes))
+            .ForMember(dest => dest.RecurrenceType, opt => opt.MapFrom(src => src.RecurrenceType))
+            .ForMember(dest => dest.RecurrenceInterval, opt => opt.MapFrom(src => src.RecurrenceInterval))
+            .ForMember(dest => dest.RecurrenceDayOfWeek, opt => opt.MapFrom(src => src.RecurrenceDayOfWeek))
+            .ForMember(dest => dest.RecurrenceDayOfMonth, opt => opt.MapFrom(src => src.RecurrenceDayOfMonth))
+            .ForMember(dest => dest.RecurrenceEndDate, opt => opt.MapFrom(src => src.RecurrenceEndDate))
+            .ForMember(dest => dest.RecurrenceCount, opt => opt.MapFrom(src => src.RecurrenceCount))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.IsAllDay, opt => opt.MapFrom(src => src.IsAllDay))
+            .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color));
+
+        CreateMap<UpdateEventDto, Event>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.MeetingUrl, opt => opt.MapFrom(src => src.MeetingUrl))
+            .ForMember(dest => dest.MeetingProvider, opt => opt.MapFrom(src => src.MeetingProvider))
+            .ForMember(dest => dest.AssigneeEmails, opt => opt.MapFrom(src => src.AssigneeEmails))
+            .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.Creator))
+            .ForMember(dest => dest.BeginDateTime, opt => opt.MapFrom(src => src.BeginDateTime))
+            .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.EndDateTime))
+            .ForMember(dest => dest.ReminderTime, opt => opt.MapFrom(src => src.ReminderTime))
+            .ForMember(dest => dest.ReminderMinutes, opt => opt.MapFrom(src => src.ReminderMinutes))
+            .ForMember(dest => dest.RecurrenceType, opt => opt.MapFrom(src => src.RecurrenceType))
+            .ForMember(dest => dest.RecurrenceInterval, opt => opt.MapFrom(src => src.RecurrenceInterval))
+            .ForMember(dest => dest.RecurrenceDayOfWeek, opt => opt.MapFrom(src => src.RecurrenceDayOfWeek))
+            .ForMember(dest => dest.RecurrenceDayOfMonth, opt => opt.MapFrom(src => src.RecurrenceDayOfMonth))
+            .ForMember(dest => dest.RecurrenceEndDate, opt => opt.MapFrom(src => src.RecurrenceEndDate))
+            .ForMember(dest => dest.RecurrenceCount, opt => opt.MapFrom(src => src.RecurrenceCount))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.IsAllDay, opt => opt.MapFrom(src => src.IsAllDay))
+            .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color));
+
+        CreateMap<UpdateEventDto, EventDto>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+            .ForMember(dest => dest.MeetingUrl, opt => opt.MapFrom(src => src.MeetingUrl))
+            .ForMember(dest => dest.MeetingProvider, opt => opt.MapFrom(src => src.MeetingProvider))
+            .ForMember(dest => dest.AssigneeEmails, opt => opt.MapFrom(src => src.AssigneeEmails))
+            .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.Creator))
+            .ForMember(dest => dest.BeginDateTime, opt => opt.MapFrom(src => src.BeginDateTime))
+            .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.EndDateTime))
+            .ForMember(dest => dest.ReminderTime, opt => opt.MapFrom(src => src.ReminderTime))
+            .ForMember(dest => dest.ReminderMinutes, opt => opt.MapFrom(src => src.ReminderMinutes))
+            .ForMember(dest => dest.RecurrenceType, opt => opt.MapFrom(src => src.RecurrenceType))
+            .ForMember(dest => dest.RecurrenceInterval, opt => opt.MapFrom(src => src.RecurrenceInterval))
+            .ForMember(dest => dest.RecurrenceDayOfWeek, opt => opt.MapFrom(src => src.RecurrenceDayOfWeek))
+            .ForMember(dest => dest.RecurrenceDayOfMonth, opt => opt.MapFrom(src => src.RecurrenceDayOfMonth))
+            .ForMember(dest => dest.RecurrenceEndDate, opt => opt.MapFrom(src => src.RecurrenceEndDate))
+            .ForMember(dest => dest.RecurrenceCount, opt => opt.MapFrom(src => src.RecurrenceCount))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.Visibility, opt => opt.MapFrom(src => src.Visibility))
+            .ForMember(dest => dest.IsAllDay, opt => opt.MapFrom(src => src.IsAllDay))
+            .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color));
+
+        CreateMap<GoogleCalendarEventDto, EventDto>();
+
+        CreateMap<GoogleCalendarEventDto, Event>();
     }
 }

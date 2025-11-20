@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.WebApi.Controllers;
 
-[ApiController]
 [Route("api/articles")]
 public class ArticleController : Controller
 {

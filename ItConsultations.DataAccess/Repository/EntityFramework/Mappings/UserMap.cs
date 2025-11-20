@@ -22,14 +22,8 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(x => x.DisplayName)
-            .HasMaxLength(100);
-
         builder.Property(x => x.PhotoUrl)
             .HasMaxLength(500);
-
-        builder.Property(x => x.EmailVerified)
-            .IsRequired();
 
         builder.Property(x => x.Role)
             .IsRequired()
@@ -37,12 +31,6 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
 
         builder.Property(x => x.LastLoginAt)
             .IsRequired();
-
-        builder.Property(x => x.IsActive)
-            .IsRequired();
-
-        builder.Property(x => x.CoachId);
-        builder.Property(x => x.StudentId);
 
         builder.HasIndex(x => x.FirebaseUid).IsUnique();
         builder.HasIndex(x => x.Email).IsUnique();
@@ -53,7 +41,7 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);*/
 
-        builder.HasOne(x => x.Student)
+        /*builder.HasOne(x => x.Student)
             .WithOne(s => s.User)
             .HasForeignKey<UserEntity>(u => u.StudentId)
             .OnDelete(DeleteBehavior.SetNull);
@@ -61,7 +49,7 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
         builder.HasOne(x => x.Coach)
             .WithOne(c => c.User)
             .HasForeignKey<UserEntity>(u => u.CoachId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.SetNull);*/
     }
 }
 

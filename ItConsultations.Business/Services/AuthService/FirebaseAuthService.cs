@@ -13,9 +13,11 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using ItConsultations.Business.Entities.RefreshTokens;
-using ItConsultations.Business.Entities.Coaches;
-using ItConsultations.Business.Entities.Students;
 using ItConsultations.Business.AutoMapperConfiguration;
+using ItConsultations.Business.SharedTypes.Enums.System;
+using ItConsultations.Business.Entities.Students;
+using ItConsultations.Business.Entities.Coaches;
+using ItConsultations.Business.Entities.Admins;
 
 namespace ItConsultations.Business.Services.AuthService;
 
@@ -23,8 +25,9 @@ public class FirebaseAuthService : IFirebaseAuthService
 {
     private readonly IRepository<UserEntity, long> _userRepository;
     private readonly IRepository<RefreshToken, long> _refreshTokenRepository;
-    private readonly IRepository<Coach, long> _coachRepository;
     private readonly IRepository<Student, long> _studentRepository;
+    private readonly IRepository<Coach, long> _coachRepository;
+    private readonly IRepository<Admin, long> _adminRepository;
     private readonly FirebaseConfig _firebaseConfig;
     private readonly string _jwtSecret;
     private readonly string _jwtIssuer;
@@ -33,19 +36,21 @@ public class FirebaseAuthService : IFirebaseAuthService
     public FirebaseAuthService(
         IRepository<UserEntity, long> userRepository,
         IRepository<RefreshToken, long> refreshTokenRepository,
-        IRepository<Coach, long> coachRepository,
         IRepository<Student, long> studentRepository,
+        IRepository<Coach, long> coachRepository,
+        IRepository<Admin, long> adminRepository,
         IOptions<FirebaseConfig> firebaseConfig,
         IConfiguration configuration)
     {
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
-        _coachRepository = coachRepository;
-        _studentRepository = studentRepository;
         _firebaseConfig = firebaseConfig.Value;
-        _jwtSecret = configuration["Jwt:Secret"] ?? "your-super-secret-key-with-at-least-32-characters";
-        _jwtIssuer = configuration["Jwt:Issuer"] ?? "ItConsultations";
-        _jwtAudience = configuration["Jwt:Audience"] ?? "ItConsultationsUsers";
+        _studentRepository = studentRepository;
+        _coachRepository = coachRepository;
+        _adminRepository = adminRepository;
+        _jwtSecret = configuration["Jwt:Secret"];
+        _jwtIssuer = configuration["Jwt:Issuer"];
+        _jwtAudience = configuration["Jwt:Audience"];
         
         InitializeFirebase();
     }
@@ -78,10 +83,14 @@ public class FirebaseAuthService : IFirebaseAuthService
         var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(registerDto.IdToken);
         var uid = decodedToken.Uid;
         var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
-        var user = MapperManager.Map<UserEntity>(registerDto);
-        await _userRepository.CreateAsync(user);
 
-        return MapperManager.Map<UserInfoDto>(user);
+        return registerDto.Role switch
+        {
+            UserRole.Student => MapperManager.Map<UserInfoDto>(await CreateStudentAsync(userRecord)),
+            UserRole.Coach => MapperManager.Map<UserInfoDto>(await CreateCoachAsync(userRecord)),
+            UserRole.Admin => MapperManager.Map<UserInfoDto>(await CreateAdminAsync(userRecord)),
+            _ => MapperManager.Map<UserInfoDto>(await CreateUserAsync(userRecord))
+        };
     }
 
     public async Task<bool> ValidateTokenAsync(string accessToken)
@@ -177,13 +186,6 @@ public class FirebaseAuthService : IFirebaseAuthService
     public async Task<UserEntity?> GetUserByFirebaseUidAsync(string firebaseUid)
     {
         return _userRepository.Get(u => u.FirebaseUid == firebaseUid).FirstOrDefault();
-    }
-
-    private async Task<UserEntity> CreateUserAsync(RegisterDto registerDto)
-    {
-        var user = MapperManager.Map<UserEntity>(registerDto);
-        await _userRepository.CreateAsync(user);
-        return user;
     }
 
     private async Task UpdateUserLastLoginAsync(string firebaseUid)
@@ -327,5 +329,30 @@ public class FirebaseAuthService : IFirebaseAuthService
     Task IFirebaseAuthService.UpdateUserLastLoginAsync(string firebaseUid)
     {
         throw new NotImplementedException();
+    }
+
+    public Task<UserInfoDto?> GetUserInfoAsync(string firebaseUid)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task<UserEntity> CreateUserAsync(UserRecord userRecord)
+    {
+        return await _userRepository.CreateAsync(MapperManager.Map<UserEntity>(userRecord));
+    }
+
+    private async Task<Student> CreateStudentAsync(UserRecord userRecord)
+    {
+        return await _studentRepository.CreateAsync(MapperManager.Map<Student>(userRecord));
+    }
+
+    private async Task<Coach> CreateCoachAsync(UserRecord userRecord)
+    {
+        return await _coachRepository.CreateAsync(MapperManager.Map<Coach>(userRecord));
+    }
+
+    private async Task<Admin> CreateAdminAsync(UserRecord userRecord)
+    {
+        return await _adminRepository.CreateAsync(MapperManager.Map<Admin>(userRecord));
     }
 } 

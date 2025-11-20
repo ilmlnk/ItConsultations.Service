@@ -53,11 +53,6 @@ public class NoteController : ControllerBase
     {
         var note = await _noteService.GetAsync(consId);
 
-        if (note == null)
-        {
-            return NotFound("Note not found");
-        }
-
         // TODO: add another method for accessing note
         return Ok(note);
     }

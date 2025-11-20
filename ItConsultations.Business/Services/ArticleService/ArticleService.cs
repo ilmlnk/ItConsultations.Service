@@ -28,16 +28,8 @@ public class ArticleService : IArticleService
     public async Task<ArticleDto> CreateAsync(CreateArticleDto dto, string userConsId)
     {
         var user = _userRepository
-            .Get(u => (u.Coach != null && u.Coach.CoachConsId == userConsId) ||
-                      (u.Student != null && u.Student.StudentConsId == userConsId))
-            .Include(u => u.Coach)
-            .Include(u => u.Student)
+            .Get(u => u.ConsId == userConsId)
             .FirstOrDefault();
-
-        if (user == null)
-        {
-            throw new ArgumentException($"User with consId {userConsId} not found");
-        }
 
         var article = MapperManager.Map<Article>(dto);
         article.ArticleConsId = GenerateArticleId();
@@ -59,8 +51,6 @@ public class ArticleService : IArticleService
     {
         var articles = await _repository
             .Include(a => a.CreatedBy)
-            .Include(a => a.CreatedBy.Coach)
-            .Include(a => a.CreatedBy.Student)
             .Include(a => a.Attachments)
             .ToListAsync();
 
@@ -71,8 +61,6 @@ public class ArticleService : IArticleService
     {
         var article = await _repository
             .Include(a => a.CreatedBy)
-            .Include(a => a.CreatedBy.Coach)
-            .Include(a => a.CreatedBy.Student)
             .Include(a => a.Attachments)
             .FirstOrDefaultAsync(a => a.Id == id);
 
@@ -83,8 +71,6 @@ public class ArticleService : IArticleService
     {
         var article = _repository
             .Include(a => a.CreatedBy)
-            .Include(a => a.CreatedBy.Coach)
-            .Include(a => a.CreatedBy.Student)
             .Include(a => a.Attachments)
             .FirstOrDefault(c => c.ArticleConsId.Equals(articleConsId));
 
@@ -93,22 +79,24 @@ public class ArticleService : IArticleService
 
     public async Task DeleteAsync(long id)
     {
-        var entity = _repository.Include(article => article.Attachments)
+        var entity = _repository
+            .Include(article => article.Attachments)
             .SingleOrDefault(article => article.Id == id);
 
-        Guard.NotNull(entity, nameof(entity));
-        Guard.NotNull(entity.Attachments, nameof(entity.Attachments));
+        /*Guard.NotNull(entity, nameof(entity));
+        Guard.NotNull(entity.Attachments, nameof(entity.Attachments));*/
 
         await _attachmentRepository.DeleteAsync(entity.Attachments);
     }
 
     public async Task DeleteAsync(string articleConsId) 
     {
-        var entity = _repository.Include(article => article.Attachments)
+        var entity = _repository
+            .Include(article => article.Attachments)
             .SingleOrDefault(article => article.ArticleConsId.Equals(articleConsId));
 
-        Guard.NotNull(entity, nameof(entity));
-        Guard.NotNull(entity.Attachments, nameof(entity.Attachments));
+        /*Guard.NotNull(entity, nameof(entity));
+        Guard.NotNull(entity.Attachments, nameof(entity.Attachments));*/
 
         await _attachmentRepository.DeleteAsync(entity.Attachments);
         await _repository.DeleteAsync(entity);
@@ -118,10 +106,7 @@ public class ArticleService : IArticleService
     {
         var articles = await _repository
             .Include(a => a.CreatedBy)
-            .Include(a => a.CreatedBy.Student)
-            .Include(a => a.CreatedBy.Coach)
-            .Where(a => (a.CreatedBy.Student != null && a.CreatedBy.Student.StudentConsId == userConsId) ||
-                  (a.CreatedBy.Coach != null && a.CreatedBy.Coach.CoachConsId == userConsId))
+            .Where(a => a.CreatedBy.ConsId == userConsId)
             .ToListAsync();
         
         return MapperManager.Map<IEnumerable<ArticleDto>>(articles);

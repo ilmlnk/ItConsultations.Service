@@ -11,7 +11,6 @@ using ItConsultations.Business.Entities.Requests;
 
 namespace ItConsultations.Controllers;
 
-[ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {

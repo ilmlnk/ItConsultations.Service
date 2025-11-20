@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ItConsultations.Controllers;
 
-
-[ApiController]
 [Route("api/consultations")]
 public class ConsultationController : Controller
 {

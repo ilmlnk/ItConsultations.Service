@@ -46,10 +46,10 @@ public class StudentMap : IEntityTypeConfiguration<Student>
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(s => s.User)
+        /*builder.HasOne(s => s.User)
             .WithOne()
             .HasForeignKey<UserEntity>(u => u.StudentId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.SetNull);*/
 
         /*builder.HasIndex(s => s.StudentConsId).IsUnique();
         builder.HasIndex(s => s.Email).IsUnique();*/

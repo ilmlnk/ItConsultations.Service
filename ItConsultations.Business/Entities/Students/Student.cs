@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using ItConsultations.Business.Entities.Consultations;
 using ItConsultations.Business.Entities.Users;
 
@@ -32,9 +31,7 @@ public class Student : Entity<long>
 
     public string? LinkedInUrl { get; set; }
 
-    [JsonIgnore]
     public Consultation? Consultation { get; set; }
 
-    [JsonIgnore]
     public UserEntity User { get; set; } = null!;
 }

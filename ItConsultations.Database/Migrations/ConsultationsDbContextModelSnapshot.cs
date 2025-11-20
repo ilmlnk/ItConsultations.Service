@@ -164,7 +164,16 @@ namespace ItConsultations.Database.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Coaches", (string)null);
                 });
@@ -364,7 +373,7 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsWishlisted")
+                    b.Property<bool>("IsFavorite")
                         .HasColumnType("boolean");
 
                     b.Property<decimal>("Price")
@@ -909,9 +918,14 @@ namespace ItConsultations.Database.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ConsultationId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Students", (string)null);
                 });
@@ -924,38 +938,45 @@ namespace ItConsultations.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("CoachConsId")
-                        .HasColumnType("text");
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("CoachId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ConsId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<bool>("EmailVerified")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("FirebaseUid")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GitHubUrl")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("LastLoginAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -965,16 +986,17 @@ namespace ItConsultations.Database.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
-                    b.Property<string>("StudentConsId")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("StudentId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.HasIndex("CoachId")
-                        .IsUnique();
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -983,9 +1005,6 @@ namespace ItConsultations.Database.Migrations
                         .IsUnique();
 
                     b.HasIndex("Role");
-
-                    b.HasIndex("StudentId")
-                        .IsUnique();
 
                     b.ToTable("Users", (string)null);
                 });
@@ -1011,6 +1030,17 @@ namespace ItConsultations.Database.Migrations
                         .WithMany("Attachments")
                         .HasForeignKey("ReviewId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ItConsultations.Business.Entities.Coaches.Coach", b =>
+                {
+                    b.HasOne("ItConsultations.Business.Entities.Users.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Conferences.Conference", b =>
@@ -1194,24 +1224,15 @@ namespace ItConsultations.Database.Migrations
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("ItConsultations.Business.Entities.Users.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Consultation");
-                });
 
-            modelBuilder.Entity("ItConsultations.Business.Entities.Users.UserEntity", b =>
-                {
-                    b.HasOne("ItConsultations.Business.Entities.Coaches.Coach", "Coach")
-                        .WithOne("User")
-                        .HasForeignKey("ItConsultations.Business.Entities.Users.UserEntity", "CoachId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ItConsultations.Business.Entities.Students.Student", "Student")
-                        .WithOne("User")
-                        .HasForeignKey("ItConsultations.Business.Entities.Users.UserEntity", "StudentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Coach");
-
-                    b.Navigation("Student");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Articles.Article", b =>
@@ -1224,9 +1245,6 @@ namespace ItConsultations.Database.Migrations
                     b.Navigation("Consultations");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Conferences.Conference", b =>
@@ -1253,12 +1271,6 @@ namespace ItConsultations.Database.Migrations
             modelBuilder.Entity("ItConsultations.Business.Entities.Reviews.Review", b =>
                 {
                     b.Navigation("Attachments");
-                });
-
-            modelBuilder.Entity("ItConsultations.Business.Entities.Students.Student", b =>
-                {
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Users.UserEntity", b =>

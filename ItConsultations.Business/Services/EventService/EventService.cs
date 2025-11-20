@@ -1,11 +1,14 @@
+using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
+using ItConsultations.Business.Dtos.AttachmentDtos;
 using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
 using ItConsultations.Business.Dtos.EventDtos;
+using ItConsultations.Business.Entities.Attachments;
 using ItConsultations.Business.Entities.Events;
 using ItConsultations.Business.Entities.Users;
-using ItConsultations.Utilities.Guards;
 using ItConsultations.Business.Services.GoogleCalendarService;
 using ItConsultations.Business.SharedTypes.Enums.Event;
+using ItConsultations.Utilities.Guards;
 using Microsoft.Extensions.Logging;
 
 namespace ItConsultations.Business.Services.EventService;
@@ -14,7 +17,7 @@ public class EventService : IEventService
 {
     private readonly IRepository<Event, long> _eventRepository;
     private readonly IRepository<EventParticipant, long> _participantRepository;
-    private readonly IRepository<EventAttachment, long> _attachmentRepository;
+    private readonly IRepository<Attachment, long> _attachmentRepository;
     private readonly IRepository<UserEntity, long> _userRepository;
     private readonly IGoogleCalendarService _googleCalendarService;
     private readonly ILogger<EventService> _logger;
@@ -22,148 +25,80 @@ public class EventService : IEventService
     public EventService(
         IRepository<Event, long> eventRepository,
         IRepository<EventParticipant, long> participantRepository,
-        IRepository<EventAttachment, long> attachmentRepository,
+        IRepository<Attachment, long> attachmentRepository,
         IRepository<UserEntity, long> userRepository,
         IGoogleCalendarService googleCalendarService,
         ILogger<EventService> logger)
     {
-        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
-        _participantRepository = participantRepository ?? throw new ArgumentNullException(nameof(participantRepository));
-        _attachmentRepository = attachmentRepository ?? throw new ArgumentNullException(nameof(attachmentRepository));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _googleCalendarService = googleCalendarService ?? throw new ArgumentNullException(nameof(googleCalendarService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _eventRepository = eventRepository;
+        _participantRepository = participantRepository;
+        _attachmentRepository = attachmentRepository;
+        _userRepository = userRepository;
+        _googleCalendarService = googleCalendarService;
+        _logger = logger;
     }
 
-    public async Task<EventDto> CreateAsync(CreateEventDto createDto, string eventConsId)
+    public async Task<EventDto> CreateAsync(CreateEventDto createDto, string creatorConsId)
     {
-        throw new NotImplementedException();
-    }
+        /*Guard.NotNull(createDto);
+        Guard.NotNullOrEmpty(createDto.Title);*/
 
-    public async Task<EventDto> CreateAsync(CreateEventDto createDto, long creatorId)
-    {
-        Guard.NotNull(createDto);
-        Guard.NotNullOrEmpty(createDto.Title);
+        var creator = _userRepository.Get(x => x.ConsId == creatorConsId).FirstOrDefault();
+        //Guard.NotNull(creator, "Creator not found");
 
-        var creator = _userRepository.Get(x => x.CoachId == creatorId).FirstOrDefault();
-        Guard.NotNull(creator, "Creator not found");
+        var dto = MapperManager.Map<EventDto>(createDto);
+        dto.CreatedAt = DateTime.UtcNow;
+        dto.UpdatedAt = DateTime.UtcNow;
 
-        var eventEntity = new Event
-        {
-            EventConsId = GenerateEventConsId(),
-            Title = createDto.Title,
-            Description = createDto.Description,
-            Location = createDto.Location,
-            MeetingUrl = createDto.MeetingUrl,
-            MeetingProvider = createDto.MeetingProvider,
-            AssigneeEmails = createDto.AssigneeEmails ?? new(),
-            Creator = creator,
-            BeginDateTime = createDto.BeginDateTime,
-            EndDateTime = createDto.EndDateTime,
-            ReminderTime = createDto.ReminderTime,
-            ReminderMinutes = createDto.ReminderMinutes,
-            RecurrenceType = createDto.RecurrenceType,
-            RecurrenceInterval = createDto.RecurrenceInterval,
-            RecurrenceDayOfWeek = createDto.RecurrenceDayOfWeek,
-            RecurrenceDayOfMonth = createDto.RecurrenceDayOfMonth,
-            RecurrenceEndDate = createDto.RecurrenceEndDate,
-            RecurrenceCount = createDto.RecurrenceCount,
-            Status = createDto.Status,
-            Visibility = createDto.Visibility,
-            IsAllDay = createDto.IsAllDay,
-            Color = createDto.Color,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        var eventEntity = MapperManager.Map<Event>(dto);
 
-        await _eventRepository.CreateAsync(eventEntity);
-
-        // Add participants
-        if (createDto.ParticipantUserIds?.Any() == true)
-        {
-            foreach (var userId in createDto.ParticipantUserIds)
-            {
-                await AddParticipantAsync(eventEntity.EventConsId, userId);
-            }
-        }
-
-        // Add attachments
-        if (createDto.AttachmentIds?.Any() == true)
-        {
-            foreach (var attachmentId in createDto.AttachmentIds)
-            {
-                await AddAttachmentAsync(eventEntity.EventConsId, attachmentId);
-            }
-        }
+        await AddParticipantsAsync();
+        await AddAttachmentsAsync();
 
         // Sync with Google Calendar if needed
         if (ShouldSyncWithGoogleCalendar(eventEntity))
         {
-            try
-            {
-                await SyncWithGoogleCalendarAsync(eventEntity.EventConsId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to sync event {EventId} with Google Calendar", eventEntity.Id);
-            }
+            await SyncWithGoogleCalendarAsync(eventEntity.EventConsId);
         }
 
-        return await MapToDtoAsync(eventEntity);
+        await _eventRepository.CreateAsync(eventEntity);
+
+        return dto;
     }
 
-    public async Task<EventDto> UpdateAsync(UpdateEventDto updateDto)
+    /*public async Task<EventDto> UpdateAsync(UpdateEventDto updateDto, string eventConsId)
     {
-        Guard.NotNull(updateDto);
+        /*Guard.NotNull(updateDto);
         Guard.NotNullOrEmpty(updateDto.Title);
 
-        var eventEntity = await _eventRepository.GetAsync(updateDto.Id);
-        Guard.NotNull(eventEntity, "Event not found");
+        var originalEvent = _eventRepository
+            .Get(x => x.EventConsId == eventConsId)
+            .FirstOrDefault();
+        //Guard.NotNull(eventEntity, "Event not found");
 
-        eventEntity.Title = updateDto.Title;
-        eventEntity.Description = updateDto.Description;
-        eventEntity.Location = updateDto.Location;
-        eventEntity.MeetingUrl = updateDto.MeetingUrl;
-        eventEntity.MeetingProvider = updateDto.MeetingProvider;
-        eventEntity.AssigneeEmails = updateDto.AssigneeEmails ?? new();
-        eventEntity.BeginDateTime = updateDto.BeginDateTime;
-        eventEntity.EndDateTime = updateDto.EndDateTime;
-        eventEntity.ReminderTime = updateDto.ReminderTime;
-        eventEntity.ReminderMinutes = updateDto.ReminderMinutes;
-        eventEntity.RecurrenceType = updateDto.RecurrenceType;
-        eventEntity.RecurrenceInterval = updateDto.RecurrenceInterval;
-        eventEntity.RecurrenceDayOfWeek = updateDto.RecurrenceDayOfWeek;
-        eventEntity.RecurrenceDayOfMonth = updateDto.RecurrenceDayOfMonth;
-        eventEntity.RecurrenceEndDate = updateDto.RecurrenceEndDate;
-        eventEntity.RecurrenceCount = updateDto.RecurrenceCount;
-        eventEntity.Status = updateDto.Status;
-        eventEntity.Visibility = updateDto.Visibility;
-        eventEntity.IsAllDay = updateDto.IsAllDay;
-        eventEntity.Color = updateDto.Color;
-        eventEntity.UpdatedAt = DateTime.UtcNow;
+        var dto = MapperManager.Map<EventDto>(originalEvent);
+        dto.UpdatedAt = DateTime.UtcNow;
+        var eventEntity = MapperManager.Map<Event>(dto);
 
         await _eventRepository.UpdateAsync(eventEntity);
 
         // Update participants
-        if (updateDto.ParticipantUserIds != null)
+        var currentParticipants = _participantRepository.Get(p => p.EventConsId == eventEntity.EventConsId).ToList();
+        var currentUserIds = currentParticipants.Select(p => p.UserId).ToList();
+        var newUserIds = updateDto.ParticipantUserIds;
+
+        // Remove participants not in new list
+        var participantsToRemove = currentParticipants.Where(p => !newUserIds.Contains(p.UserId));
+        foreach (var participant in participantsToRemove)
         {
-            var currentParticipants = _participantRepository.Get(p => p.EventConsId == eventEntity.EventConsId).ToList();
-            var currentUserIds = currentParticipants.Select(p => p.UserId).ToList();
-            var newUserIds = updateDto.ParticipantUserIds;
+            await _participantRepository.DeleteAsync(participant);
+        }
 
-            // Remove participants not in new list
-            var participantsToRemove = currentParticipants.Where(p => !newUserIds.Contains(p.UserId));
-            foreach (var participant in participantsToRemove)
-            {
-                await _participantRepository.DeleteAsync(participant);
-            }
-
-            // Add new participants
-            var participantsToAdd = newUserIds.Where(id => !currentUserIds.Contains(id));
-            foreach (var userId in participantsToAdd)
-            {
-                await AddParticipantAsync(eventEntity.EventConsId, userId);
-            }
+        // Add new participants
+        var participantsToAdd = newUserIds.Where(id => !currentUserIds.Contains(id));
+        foreach (var userId in participantsToAdd)
+        {
+            await AddParticipantAsync(eventEntity.EventConsId, userId);
         }
 
         // Update attachments
@@ -202,50 +137,37 @@ public class EventService : IEventService
         }
 
         return await MapToDtoAsync(eventEntity);
-    }
+    }*/
 
     public async Task<bool> DeleteAsync(long eventId)
     {
         var eventEntity = await _eventRepository.GetAsync(eventId);
-        if (eventEntity == null)
-            return false;
 
-        // Delete from Google Calendar if synced
         if (!string.IsNullOrEmpty(eventEntity.GoogleCalendarEventId))
         {
-            try
-            {
-                await _googleCalendarService.DeleteEventAsync(eventEntity.GoogleCalendarEventId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to delete event {EventId} from Google Calendar", eventId);
-            }
+            await _googleCalendarService.DeleteEventAsync(eventEntity.GoogleCalendarEventId);
         }
 
-        // Soft delete
-        eventEntity.DeletedAt = DateTime.UtcNow;
-        eventEntity.Status = EventStatus.Cancelled;
-        await _eventRepository.UpdateAsync(eventEntity);
+        await _eventRepository.DeleteAsync(eventEntity);
 
         return true;
     }
 
-    public async Task<EventDto?> GetByIdAsync(long eventId)
+    public async Task<EventDto> GetByIdAsync(long eventId)
     {
         var eventEntity = await _eventRepository.GetAsync(eventId);
-        return eventEntity != null ? await MapToDtoAsync(eventEntity) : null;
+        return eventEntity != null ? MapperManager.Map<EventDto>(eventEntity) : null;
     }
 
-    public async Task<EventDto?> GetByConsIdAsync(string eventConsId)
+    public async Task<EventDto> GetByConsIdAsync(string eventConsId)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventConsId).FirstOrDefault();
-        return eventEntity != null ? await MapToDtoAsync(eventEntity) : null;
+        return eventEntity != null ? MapperManager.Map<EventDto>(eventEntity) : null;
     }
 
-    public async Task<IEnumerable<EventDto>> SearchAsync(EventSearchDto searchDto)
+    /*public async Task<IEnumerable<EventDto>> SearchAsync(EventSearchDto searchDto)
     {
-        Guard.NotNull(searchDto);
+        //Guard.NotNull(searchDto);
 
         var query = _eventRepository.Get(e => e.DeletedAt == null);
 
@@ -322,14 +244,14 @@ public class EventService : IEventService
         {
             query = searchDto.SortBy.ToLower() switch
             {
-                "title" => searchDto.SortDirection == "desc" 
-                    ? query.OrderByDescending(e => e.Title) 
+                "title" => searchDto.SortDirection == "desc"
+                    ? query.OrderByDescending(e => e.Title)
                     : query.OrderBy(e => e.Title),
-                "begindatetime" => searchDto.SortDirection == "desc" 
-                    ? query.OrderByDescending(e => e.BeginDateTime) 
+                "begindatetime" => searchDto.SortDirection == "desc"
+                    ? query.OrderByDescending(e => e.BeginDateTime)
                     : query.OrderBy(e => e.BeginDateTime),
-                "createdat" => searchDto.SortDirection == "desc" 
-                    ? query.OrderByDescending(e => e.CreatedAt) 
+                "createdat" => searchDto.SortDirection == "desc"
+                    ? query.OrderByDescending(e => e.CreatedAt)
                     : query.OrderBy(e => e.CreatedAt),
                 _ => query.OrderBy(e => e.BeginDateTime)
             };
@@ -346,26 +268,20 @@ public class EventService : IEventService
         var result = new List<EventDto>();
         foreach (var eventEntity in events)
         {
-            result.Add(await MapToDtoAsync(eventEntity));
+            result.Add(MapperManager.Map<EventDto>(eventEntity));
         }
 
         return result;
-    }
+    }*/
 
-    public async Task<IEnumerable<EventDto>> GetUserEventsAsync(long userId, DateTime? fromDate = null, DateTime? toDate = null)
+    public async Task<IEnumerable<EventDto>> GetUserEventsAsync(long userId, DateTime fromDate, DateTime toDate)
     {
         var query = _participantRepository
             .Get(p => p.UserId == userId && p.Event.DeletedAt == null);
 
-        if (fromDate.HasValue)
-        {
-            query = query.Where(p => p.Event.BeginDateTime >= fromDate.Value);
-        }
+        query = query.Where(p => p.Event.BeginDateTime >= fromDate);
 
-        if (toDate.HasValue)
-        {
-            query = query.Where(p => p.Event.BeginDateTime <= toDate.Value);
-        }
+        query = query.Where(p => p.Event.BeginDateTime <= toDate);
 
         var participants = query.ToList();
         var events = participants.Select(p => p.Event).OrderBy(e => e.BeginDateTime);
@@ -373,7 +289,7 @@ public class EventService : IEventService
         var result = new List<EventDto>();
         foreach (var eventEntity in events)
         {
-            result.Add(await MapToDtoAsync(eventEntity));
+            result.Add(MapperManager.Map<EventDto>(eventEntity));
         }
 
         return result;
@@ -385,50 +301,34 @@ public class EventService : IEventService
         var toDate = fromDate.AddDays(days);
 
         var events = _eventRepository
-            .Get(e => e.DeletedAt == null && 
-            e.BeginDateTime >= fromDate && 
+            .Get(e => e.DeletedAt == null &&
+            e.BeginDateTime >= fromDate &&
             e.BeginDateTime <= toDate).ToList();
 
         var result = new List<EventDto>();
         foreach (var eventEntity in events.OrderBy(e => e.BeginDateTime))
         {
-            result.Add(await MapToDtoAsync(eventEntity));
+            result.Add(MapperManager.Map<EventDto>(eventEntity));
         }
 
         return result;
     }
 
-    public async Task<EventDto> AddParticipantAsync(string eventId, long userId, ParticipantRole role = ParticipantRole.Attendee)
+    public async Task<EventDto> AddParticipantAsync(AddParticipantDto dto, string eventId, long userId, ParticipantRole role = ParticipantRole.Attendee)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(eventEntity, "Event not found");
+        //Guard.NotNull(eventEntity, "Event not found");
 
         var user = await _userRepository.GetAsync(userId);
-        Guard.NotNull(user, "User not found");
+        //Guard.NotNull(user, "User not found");
 
         var existingParticipant = _participantRepository.Get(p => p.EventConsId == eventId && p.UserId == userId).FirstOrDefault();
 
-        if (existingParticipant != null)
-        {
-            throw new InvalidOperationException("User is already a participant of this event");
-        }
-
-        var participant = new EventParticipant
-        {
-            ParticipantConsId = GenerateParticipantConsId(),
-            EventConsId = eventId,
-            Event = eventEntity,
-            UserId = userId,
-            User = user,
-            Role = role,
-            Status = ParticipantStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        var participant = MapperManager.Map<EventParticipant>(dto);
 
         await _participantRepository.CreateAsync(participant);
 
-        return await MapToDtoAsync(eventEntity);
+        return MapperManager.Map<EventDto>(eventEntity);
     }
 
     public async Task<bool> RemoveParticipantAsync(string eventId, long userId)
@@ -445,8 +345,10 @@ public class EventService : IEventService
 
     public async Task<EventDto> UpdateParticipantStatusAsync(string eventId, long userId, ParticipantStatus status, string? comment = null)
     {
-        var participant = _participantRepository.Get(p => p.EventConsId == eventId && p.UserId == userId).FirstOrDefault();
-        Guard.NotNull(participant, "Participant not found");
+        var participant = _participantRepository
+            .Get(p => p.EventConsId == eventId && p.UserId == userId)
+            .FirstOrDefault();
+        //Guard.NotNull(participant, "Participant not found");
 
         participant.Status = status;
         participant.ResponseDate = DateTime.UtcNow;
@@ -455,36 +357,26 @@ public class EventService : IEventService
 
         await _participantRepository.UpdateAsync(participant);
 
-        var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        return await MapToDtoAsync(eventEntity);
+        var eventEntity = _eventRepository
+            .Get(e => e.EventConsId == eventId)
+            .FirstOrDefault();
+        return MapperManager.Map<EventDto>(eventEntity);
     }
 
-    public async Task<EventDto> AddAttachmentAsync(string eventId, long attachmentId, string? description = null)
+    /*public async Task<EventDto> AddAttachmentAsync(AddAttachmentDto attachmentDto, string eventId)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(eventEntity, "Event not found");
+        //Guard.NotNull(eventEntity, "Event not found");
 
-        var existingAttachment = _attachmentRepository.Get(a => a.EventId == eventId && a.AttachmentId == attachmentId).FirstOrDefault();
+        var existingAttachment = _attachmentRepository
+            .Get(a => a.EventId == eventId && a.AttachmentId == attachmentDto.AttachmentId)
+            .FirstOrDefault();
 
-        if (existingAttachment != null)
-        {
-            throw new InvalidOperationException("Attachment is already added to this event");
-        }
-
-        var eventAttachment = new EventAttachment
-        {
-            AttachmentConsId = GenerateAttachmentConsId(),
-            EventId = eventId,
-            Event = eventEntity,
-            AttachmentId = attachmentId,
-            Description = description,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        var eventAttachment = MapperManager.Map<Attachment>(attachmentDto);
 
         await _attachmentRepository.CreateAsync(eventAttachment);
 
-        return await MapToDtoAsync(eventEntity);
+        return MapperManager.Map<EventDto>(eventEntity);
     }
 
     public async Task<bool> RemoveAttachmentAsync(string eventId, long attachmentId)
@@ -498,9 +390,9 @@ public class EventService : IEventService
 
         await _attachmentRepository.DeleteAsync(attachment);
         return true;
-    }
+    }*/
 
-    public async Task<EventDto> UpdateRecurrenceAsync(string eventId, RecurrenceType recurrenceType, int? interval = null, DateTime? endDate = null)
+    /*public async Task<EventDto> UpdateRecurrenceAsync(string eventId, RecurrenceType recurrenceType, int? interval = null, DateTime? endDate = null)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
         Guard.NotNull(eventEntity, "Event not found");
@@ -513,17 +405,19 @@ public class EventService : IEventService
         await _eventRepository.UpdateAsync(eventEntity);
 
         return await MapToDtoAsync(eventEntity);
-    }
+    }*/
 
     public async Task<IEnumerable<EventDto>> GetRecurringEventsAsync(string eventId)
     {
-        var baseEvent = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(baseEvent, "Event not found");
+        var originEvent = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
+        //Guard.NotNull(baseEvent, "Event not found");
 
-        if (baseEvent.RecurrenceType == RecurrenceType.None)
+        if (originEvent.RecurrenceType == RecurrenceType.None)
         {
-            return new List<EventDto> { await MapToDtoAsync(baseEvent) };
+            return new List<EventDto> { MapperManager.Map<EventDto>(originEvent) };
         }
+
+        var baseEvent = MapperManager.Map<EventDto>(originEvent);
 
         // Generate recurring events based on recurrence rules
         var events = new List<EventDto>();
@@ -532,30 +426,7 @@ public class EventService : IEventService
 
         while (currentDate <= endDate)
         {
-            var recurringEvent = new Event
-            {
-                EventConsId = $"{baseEvent.EventConsId}_recur_{currentDate:yyyyMMdd}",
-                Title = baseEvent.Title,
-                Description = baseEvent.Description,
-                Location = baseEvent.Location,
-                MeetingUrl = baseEvent.MeetingUrl,
-                MeetingProvider = baseEvent.MeetingProvider,
-                AssigneeEmails = baseEvent.AssigneeEmails,
-                Creator = baseEvent.Creator,
-                BeginDateTime = currentDate,
-                EndDateTime = currentDate.Add(baseEvent.EndDateTime - baseEvent.BeginDateTime),
-                ReminderTime = baseEvent.ReminderTime,
-                ReminderMinutes = baseEvent.ReminderMinutes,
-                RecurrenceType = RecurrenceType.None, // Individual instance
-                Status = baseEvent.Status,
-                Visibility = baseEvent.Visibility,
-                IsAllDay = baseEvent.IsAllDay,
-                Color = baseEvent.Color,
-                CreatedAt = baseEvent.CreatedAt,
-                UpdatedAt = DateTime.UtcNow
-            };
-
-            events.Add(await MapToDtoAsync(recurringEvent));
+            events.Add(baseEvent);
 
             // Calculate next occurrence
             currentDate = CalculateNextOccurrence(currentDate, baseEvent.RecurrenceType, baseEvent.RecurrenceInterval, baseEvent.RecurrenceDayOfWeek, baseEvent.RecurrenceDayOfMonth);
@@ -567,7 +438,7 @@ public class EventService : IEventService
     public async Task<EventDto> CancelEventAsync(string eventId, string? reason = null)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(eventEntity, "Event not found");
+        //Guard.NotNull(eventEntity, "Event not found");
 
         eventEntity.Status = EventStatus.Cancelled;
         eventEntity.UpdatedAt = DateTime.UtcNow;
@@ -582,23 +453,16 @@ public class EventService : IEventService
         // Update Google Calendar if synced
         if (!string.IsNullOrEmpty(eventEntity.GoogleCalendarEventId))
         {
-            try
-            {
-                await _googleCalendarService.UpdateEventAsync(eventEntity);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to update cancelled event {EventId} in Google Calendar", eventId);
-            }
+            await _googleCalendarService.UpdateEventAsync(eventEntity);
         }
 
-        return await MapToDtoAsync(eventEntity);
+        return MapperManager.Map<EventDto>(eventEntity);
     }
 
     public async Task<EventDto> RescheduleEventAsync(string eventId, DateTime newBeginDateTime, DateTime newEndDateTime)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(eventEntity, "Event not found");
+        //Guard.NotNull(eventEntity, "Event not found");
 
         eventEntity.BeginDateTime = newBeginDateTime;
         eventEntity.EndDateTime = newEndDateTime;
@@ -609,31 +473,19 @@ public class EventService : IEventService
         // Update Google Calendar if synced
         if (!string.IsNullOrEmpty(eventEntity.GoogleCalendarEventId))
         {
-            try
-            {
-                await _googleCalendarService.UpdateEventAsync(eventEntity);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to update rescheduled event {EventId} in Google Calendar", eventId);
-            }
+            await _googleCalendarService.UpdateEventAsync(eventEntity);
         }
 
-        return await MapToDtoAsync(eventEntity);
+        return MapperManager.Map<EventDto>(eventEntity);
     }
 
     public async Task<bool> SendInvitationsAsync(string eventId)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
 
-        if (eventEntity == null)
-        {
-            return false;
-        }
-
         // Send invitations to participants
         var participants = _participantRepository.Get(p => p.EventConsId == eventId).ToList();
-        
+
         foreach (var participant in participants)
         {
             // TODO: Implement email sending logic
@@ -647,18 +499,12 @@ public class EventService : IEventService
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
 
-        if (eventEntity == null)
-        {
-            return false;
-        }
-
         // Send reminders to participants
         var participants = _participantRepository.Get(p => p.EventConsId == eventId && p.SendReminders).ToList();
-        
+
         foreach (var participant in participants)
         {
             // TODO: Implement reminder sending logic
-            _logger.LogInformation("Sending reminder to {Email} for event {EventId}", participant.User.Email, eventId);
         }
 
         return true;
@@ -666,60 +512,38 @@ public class EventService : IEventService
 
     public async Task<EventDto> SyncWithGoogleCalendarAsync(string eventId)
     {
-        var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(eventEntity, "Event not found");
+        var eventEntity = _eventRepository
+            .Get(e => e.EventConsId == eventId)
+            .FirstOrDefault();
+        //Guard.NotNull(eventEntity, "Event not found");
 
-        try
+        if (string.IsNullOrEmpty(eventEntity.GoogleCalendarEventId))
         {
-            if (string.IsNullOrEmpty(eventEntity.GoogleCalendarEventId))
-            {
-                // Create new event in Google Calendar
-                var googleEventId = await _googleCalendarService.CreateEventAsync(eventEntity);
-                eventEntity.GoogleCalendarEventId = googleEventId;
-                eventEntity.LastGoogleSync = DateTime.UtcNow;
-            }
-            else
-            {
-                // Update existing event in Google Calendar
-                await _googleCalendarService.UpdateEventAsync(eventEntity);
-                eventEntity.LastGoogleSync = DateTime.UtcNow;
-            }
-
-            await _eventRepository.UpdateAsync(eventEntity);
+            // Create new event in Google Calendar
+            var googleEventId = await _googleCalendarService.CreateEventAsync(eventEntity);
+            eventEntity.GoogleCalendarEventId = googleEventId;
+            eventEntity.LastGoogleSync = DateTime.UtcNow;
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Failed to sync event {EventId} with Google Calendar", eventId);
-            throw;
+            // Update existing event in Google Calendar
+            await _googleCalendarService.UpdateEventAsync(eventEntity);
+            eventEntity.LastGoogleSync = DateTime.UtcNow;
         }
 
-        return await MapToDtoAsync(eventEntity);
+        await _eventRepository.UpdateAsync(eventEntity);
+
+        return MapperManager.Map<EventDto>(eventEntity);
     }
 
-    public async Task<EventDto> CreateFromGoogleCalendarAsync(GoogleCalendarEventDto googleEvent, long creatorId)
+    /*public async Task<EventDto> CreateFromGoogleCalendarAsync(GoogleCalendarEventDto googleEvent, long creatorId)
     {
-        Guard.NotNull(googleEvent);
+        //Guard.NotNull(googleEvent);
 
         var creator = await _userRepository.GetAsync(creatorId);
-        Guard.NotNull(creator, "Creator not found");
+        //Guard.NotNull(creator, "Creator not found");
 
-        var eventEntity = new Event
-        {
-            EventConsId = GenerateEventConsId(),
-            Title = googleEvent.Summary,
-            Description = googleEvent.Description,
-            Location = googleEvent.Location,
-            MeetingUrl = googleEvent.HangoutLink,
-            Creator = creator,
-            BeginDateTime = googleEvent.Start,
-            EndDateTime = googleEvent.End,
-            IsAllDay = googleEvent.IsAllDay,
-            Color = googleEvent.ColorId,
-            GoogleCalendarEventId = googleEvent.Id,
-            LastGoogleSync = DateTime.UtcNow,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        var eventEntity = MapperManager.Map<EventDto>(googleEvent);
 
         await _eventRepository.CreateAsync(eventEntity);
 
@@ -731,14 +555,14 @@ public class EventService : IEventService
                 var user = _userRepository.Get(u => u.Email == attendee.Email).FirstOrDefault();
                 if (user != null)
                 {
-                    await AddParticipantAsync(eventEntity.EventConsId, user.Id, 
+                    await AddParticipantAsync(eventEntity.EventConsId, user.Id,
                         attendee.Optional == true ? ParticipantRole.Optional : ParticipantRole.Attendee);
                 }
             }
         }
 
-        return await MapToDtoAsync(eventEntity);
-    }
+        return eventEntity;
+    }*/
 
     public async Task<bool> UpdateGoogleCalendarEventAsync(string eventId)
     {
@@ -799,15 +623,15 @@ public class EventService : IEventService
     {
         var participants = _participantRepository.Get(p => p.UserId == userId).ToList();
         var eventIds = participants.Select(p => p.EventConsId).ToList();
-        
+
         var events = _eventRepository.Get(e => eventIds.Contains(e.EventConsId) && e.DeletedAt == null).ToList();
-        
+
         // Apply date filters
         if (fromDate.HasValue)
         {
             events = events.Where(e => e.BeginDateTime >= fromDate.Value).ToList();
         }
-        
+
         if (toDate.HasValue)
         {
             events = events.Where(e => e.BeginDateTime <= toDate.Value).ToList();
@@ -826,15 +650,15 @@ public class EventService : IEventService
     {
         var participants = _participantRepository.Get(p => p.UserId == userId).ToList();
         var eventIds = participants.Select(p => p.EventConsId).ToList();
-        
+
         var events = _eventRepository.Get(e => eventIds.Contains(e.EventConsId) && e.DeletedAt == null).ToList();
-        
+
         // Apply date filters
         if (fromDate.HasValue)
         {
             events = events.Where(e => e.BeginDateTime >= fromDate.Value).ToList();
         }
-        
+
         if (toDate.HasValue)
         {
             events = events.Where(e => e.BeginDateTime <= toDate.Value).ToList();
@@ -852,7 +676,7 @@ public class EventService : IEventService
     public async Task<bool> ExportEventToGoogleCalendarAsync(string eventId, string userAccessToken)
     {
         var eventEntity = _eventRepository.Get(e => e.EventConsId == eventId).FirstOrDefault();
-        Guard.NotNull(eventEntity, "Event not found");
+        //Guard.NotNull(eventEntity, "Event not found");
 
         return await _googleCalendarService.ExportEventAsync(eventEntity, userAccessToken);
     }
@@ -861,15 +685,15 @@ public class EventService : IEventService
     {
         var participants = _participantRepository.Get(p => p.ParticipantConsId == userId).ToList();
         var eventIds = participants.Select(p => p.EventConsId).ToList();
-        
+
         var events = _eventRepository.Get(e => eventIds.Contains(e.EventConsId) && e.DeletedAt == null).ToList();
-        
+
         // Apply date filters
         if (fromDate.HasValue)
         {
             events = events.Where(e => e.BeginDateTime >= fromDate.Value).ToList();
         }
-        
+
         if (toDate.HasValue)
         {
             events = events.Where(e => e.BeginDateTime <= toDate.Value).ToList();
@@ -913,92 +737,29 @@ public class EventService : IEventService
         throw new NotImplementedException();
     }
 
-    private async Task<EventDto> MapToDtoAsync(Event eventEntity)
+    public Task<EventDto> UpdateAsync(UpdateEventDto updateDto)
     {
-        var participants = _participantRepository.Get(p => p.EventConsId == eventEntity.EventConsId).ToList();
-        var attachments = _attachmentRepository.Get(a => a.EventId == eventEntity.EventConsId).ToList();
-
-        return new EventDto
-        {
-            Id = eventEntity.Id,
-            EventConsId = eventEntity.EventConsId,
-            Title = eventEntity.Title,
-            Description = eventEntity.Description,
-            Location = eventEntity.Location,
-            MeetingUrl = eventEntity.MeetingUrl,
-            MeetingProvider = eventEntity.MeetingProvider,
-            AssigneeEmails = eventEntity.AssigneeEmails,
-            Participants = participants.Select(p => new EventParticipantDto
-            {
-                Id = p.Id,
-                ParticipantConsId = p.ParticipantConsId,
-                EventConsId = p.EventConsId,
-                UserId = p.UserId,
-                User = p.User,
-                Role = p.Role,
-                Status = p.Status,
-                ResponseDate = p.ResponseDate,
-                ResponseComment = p.ResponseComment,
-                IsRequired = p.IsRequired,
-                SendReminders = p.SendReminders,
-                CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt
-            }).ToList(),
-            Creator = eventEntity.Creator,
-            BeginDateTime = eventEntity.BeginDateTime,
-            EndDateTime = eventEntity.EndDateTime,
-            ReminderTime = eventEntity.ReminderTime,
-            ReminderMinutes = eventEntity.ReminderMinutes,
-            RecurrenceType = eventEntity.RecurrenceType,
-            RecurrenceInterval = eventEntity.RecurrenceInterval,
-            RecurrenceDayOfWeek = eventEntity.RecurrenceDayOfWeek,
-            RecurrenceDayOfMonth = eventEntity.RecurrenceDayOfMonth,
-            RecurrenceEndDate = eventEntity.RecurrenceEndDate,
-            RecurrenceCount = eventEntity.RecurrenceCount,
-            Status = eventEntity.Status,
-            Visibility = eventEntity.Visibility,
-            IsAllDay = eventEntity.IsAllDay,
-            GoogleCalendarEventId = eventEntity.GoogleCalendarEventId,
-            GoogleCalendarId = eventEntity.GoogleCalendarId,
-            LastGoogleSync = eventEntity.LastGoogleSync,
-            Color = eventEntity.Color,
-            Attachments = attachments.Select(a => new EventAttachmentDto
-            {
-                Id = a.Id,
-                AttachmentConsId = a.AttachmentConsId,
-                EventId = a.EventId,
-                AttachmentId = a.AttachmentId,
-                Attachment = a.Attachment,
-                Description = a.Description,
-                IsRequired = a.IsRequired,
-                CreatedAt = a.CreatedAt,
-                UpdatedAt = a.UpdatedAt
-            }).ToList(),
-            CreatedAt = eventEntity.CreatedAt,
-            UpdatedAt = eventEntity.UpdatedAt,
-            DeletedAt = eventEntity.DeletedAt
-        };
+        throw new NotImplementedException();
     }
 
-    private string GenerateEventConsId()
+    public Task<IEnumerable<EventDto>> SearchAsync(EventSearchDto searchDto)
     {
-        return ""; // $"0007{DateTime.UtcNow:yyyyMMddHHmmssfff}{GetRandomSequenceNumber():D15}";
+        throw new NotImplementedException();
     }
 
-    private string GenerateParticipantConsId()
+    private async Task AddParticipantsAsync()
     {
-        return ""; // $"0008{DateTime.UtcNow:yyyyMMddHHmmssfff}{GetRandomSequenceNumber():D15}";
+
     }
 
-    private string GenerateAttachmentConsId()
+    private async Task AddAttachmentsAsync()
     {
-        return ""; // $"0009{DateTime.UtcNow:yyyyMMddHHmmssfff}{GetRandomSequenceNumber():D15}";
+
     }
 
     private bool ShouldSyncWithGoogleCalendar(Event eventEntity)
     {
-        return eventEntity.Status == EventStatus.Scheduled && 
-               eventEntity.Visibility != EventVisibility.Private;
+        return eventEntity.Status == EventStatus.Scheduled && eventEntity.Visibility != EventVisibility.Private;
     }
 
     private DateTime CalculateNextOccurrence(DateTime currentDate, RecurrenceType recurrenceType, int? interval, DayOfWeek? dayOfWeek, int? dayOfMonth)
@@ -1012,4 +773,59 @@ public class EventService : IEventService
             _ => currentDate.AddDays(1)
         };
     }
-} 
+
+    public Task<IEnumerable<EventDto>> GetUserEventsAsync(GetUserEventsDto dto, string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EventDto> AddParticipantAsync(AddParticipantDto dto, string eventId, long userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EventDto> UpdateParticipantStatusAsync(string eventId, long userId, ParticipantStatus status)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EventDto> AddAttachmentAsync(AddAttachmentDto dto, string eventId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> RemoveAttachmentAsync(string eventId, long attachmentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EventDto> UpdateRecurrenceAsync(UpdateRecurrenceDto dto, string eventId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EventDto> CancelEventAsync(CancelEventDto dto, string eventId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EventDto> RescheduleEventAsync(RescheduleEventDto dto, string eventId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> ExportUserEventsToICalendarAsync(ExportEventsToICalendarDto dto, string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> GetGoogleCalendarImportUrlAsync(string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> ExportUserEventsToGoogleCalendarAsync(ExportEventsToGoogleCalendarDto dto, string userId, string userAccessToken)
+    {
+        throw new NotImplementedException();
+    }
+}

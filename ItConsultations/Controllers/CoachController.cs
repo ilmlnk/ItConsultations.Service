@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace ItConsultations.Controllers;
 
 [Authorize]
-[ApiController]
 [Route("api/coaches")]
 public class CoachController : Controller
 {

@@ -1,13 +1,12 @@
+using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
+using ItConsultations.Business.Dtos.ConferenceDtos.RecordingDtos;
+using ItConsultations.Business.Services.ConferenceService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ItConsultations.Business.Dtos.ConferenceDtos.RecordingDtos;
 using System.Security.Claims;
-using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
-using ItConsultations.Business.Services.ConferenceService;
 
 namespace ItConsultations.Controllers;
 
-[ApiController]
 [Route("api/conferences")]
 [Authorize]
 public class ConferenceController : ControllerBase
@@ -26,63 +25,23 @@ public class ConferenceController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateConference([FromBody] CreateConferenceDto dto)
     {
-        try
-        {
-            var userId = GetCurrentUserId();
-            var conference = await _conferenceService.CreateConferenceAsync(dto);
-            
-            _logger.LogInformation("Conference {ConferenceId} created by user {UserId}", conference.Id, userId);
-            return CreatedAtAction(nameof(GetConference), new { id = conference.Id }, conference);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating conference");
-            return StatusCode(500, "Internal server error when creating conference");
-        }
+        var userId = GetCurrentUserId();
+        var conference = await _conferenceService.CreateConferenceAsync(dto);
+        return CreatedAtAction(nameof(GetConference), new { id = conference.Id }, conference);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateConference(long id, [FromBody] UpdateConferenceDto dto)
     {
-        try
-        {
-            var conference = await _conferenceService.UpdateConferenceAsync(id, dto);
-
-            if (conference == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Conference {ConferenceId} updated", id);
-            return Ok(conference);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when updating conference");
-        }
+        var conference = await _conferenceService.UpdateConferenceAsync(id, dto);
+        return Ok(conference);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteConference(long id)
     {
-        try
-        {
-            var result = await _conferenceService.DeleteConferenceAsync(id);
-
-            if (!result)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Conference {ConferenceId} deleted", id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when deleting conference");
-        }
+        var result = await _conferenceService.DeleteConferenceAsync(id);
+        return NoContent();
     }
 
     [HttpGet("{id}")]
@@ -347,90 +306,33 @@ public class ConferenceController : ControllerBase
     [HttpPost("{id}/chat/upload")]
     public async Task<IActionResult> UploadChatLog(string id, IFormFile file)
     {
-        try
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest("File is required");
-            }
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        var fileBytes = memoryStream.ToArray();
 
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-            var fileBytes = memoryStream.ToArray();
-
-            var recording = await _conferenceService.UploadChatLogAsync(id, fileBytes, file.FileName);
-
-            if (recording == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Chat log uploaded for conference {ConferenceId}", id);
-            return Ok(recording);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error uploading chat log for conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when uploading chat log");
-        }
+        var recording = await _conferenceService.UploadChatLogAsync(id, fileBytes, file.FileName);
+        return Ok(recording);
     }
 
     [HttpGet("recording/{recordingId}/download")]
     public async Task<IActionResult> DownloadRecording(long recordingId)
     {
-        try
-        {
-            var fileBytes = await _conferenceService.DownloadRecordingAsync(recordingId);
-
-            if (fileBytes == null)
-            {
-                return NotFound("Recording not found");
-            }
-
-            return File(fileBytes, "application/octet-stream", "recording.mp4");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error downloading recording {RecordingId}", recordingId);
-            return StatusCode(500, "Internal server error when downloading recording");
-        }
+        var fileBytes = await _conferenceService.DownloadRecordingAsync(recordingId);
+        return File(fileBytes, "application/octet-stream", "recording.mp4");
     }
 
     [HttpGet("chat/{recordingId}/download")]
     public async Task<IActionResult> DownloadChatLog(long recordingId)
     {
-        try
-        {
-            var fileBytes = await _conferenceService.DownloadChatLogAsync(recordingId);
-
-            if (fileBytes == null)
-            {
-                return NotFound("Chat log not found");
-            }
-
-            return File(fileBytes, "application/octet-stream", "chatlog.txt");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error downloading chat log {RecordingId}", recordingId);
-            return StatusCode(500, "Internal server error when downloading chat log");
-        }
+        var fileBytes = await _conferenceService.DownloadChatLogAsync(recordingId);
+        return File(fileBytes, "application/octet-stream", "chatlog.txt");
     }
 
     [HttpDelete("recording/{recordingId}")]
     public async Task<IActionResult> DeleteRecording(long recordingId)
     {
-        try
-        {
-            var result = await _conferenceService.DeleteRecordingAsync(recordingId);
-            _logger.LogInformation("Recording {RecordingId} deleted", recordingId);
-            return Ok(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting recording {RecordingId}", recordingId);
-            return StatusCode(500, "Internal server error when deleting recording");
-        }
+        var result = await _conferenceService.DeleteRecordingAsync(recordingId);
+        return Ok(new { success = true });
     }
 
     #endregion
@@ -440,89 +342,29 @@ public class ConferenceController : ControllerBase
     [HttpPost("{id}/start")]
     public async Task<IActionResult> StartConference(string id)
     {
-        try
-        {
-            var result = await _conferenceService.StartConferenceAsync(id);
-
-            if (result == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Conference {ConferenceId} started", id);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error starting conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when starting conference");
-        }
+        var result = await _conferenceService.StartConferenceAsync(id);
+        return Ok(result);
     }
 
     [HttpPost("{id}/end")]
     public async Task<IActionResult> EndConference(string id)
     {
-        try
-        {
-            var result = await _conferenceService.EndConferenceAsync(id);
-
-            if (result == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Conference {ConferenceId} ended", id);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error ending conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when ending conference");
-        }
+        var result = await _conferenceService.EndConferenceAsync(id);
+        return Ok(result);
     }
 
     [HttpPost("{id}/pause")]
     public async Task<IActionResult> PauseConference(string id)
     {
-        try
-        {
-            var result = await _conferenceService.PauseConferenceAsync(id);
-
-            if (result == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Conference {ConferenceId} paused", id);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error pausing conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when pausing conference");
-        }
+        var result = await _conferenceService.PauseConferenceAsync(id);
+        return Ok(result);
     }
 
     [HttpPost("{id}/resume")]
     public async Task<IActionResult> ResumeConference(string id)
     {
-        try
-        {
-            var result = await _conferenceService.ResumeConferenceAsync(id);
-
-            if (result == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            _logger.LogInformation("Conference {ConferenceId} resumed", id);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error resuming conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when resuming conference");
-        }
+        var result = await _conferenceService.ResumeConferenceAsync(id);
+        return Ok(result);
     }
 
     #endregion
@@ -532,22 +374,8 @@ public class ConferenceController : ControllerBase
     [HttpGet("{id}/statistics")]
     public async Task<IActionResult> GetConferenceStatistics(string id)
     {
-        try
-        {
-            var statistics = await _conferenceService.GetConferenceStatisticsAsync(id);
-
-            if (statistics == null)
-            {
-                return NotFound("Conference not found");
-            }
-
-            return Ok(statistics);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting statistics for conference {ConferenceId}", id);
-            return StatusCode(500, "Internal server error when getting conference statistics");
-        }
+        var statistics = await _conferenceService.GetConferenceStatisticsAsync(id);
+        return Ok(statistics);
     }
 
     #endregion
@@ -560,7 +388,7 @@ public class ConferenceController : ControllerBase
         {
             return userId;
         }*/
-        
+
         // Fallback to a default user ID for development
         return "";
     }

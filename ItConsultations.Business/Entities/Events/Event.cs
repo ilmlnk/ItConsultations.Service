@@ -46,11 +46,11 @@ public class Event : Entity<long>
 
     public DateTime? ReminderTime { get; set; }
 
-    public int? ReminderMinutes { get; set; } = 15; // Default 15 minutes before
+    public int? ReminderMinutes { get; set; }
 
-    public RecurrenceType RecurrenceType { get; set; } = RecurrenceType.None;
+    public RecurrenceType RecurrenceType { get; set; }
 
-    public int? RecurrenceInterval { get; set; } = 1;
+    public int? RecurrenceInterval { get; set; }
 
     public DayOfWeek? RecurrenceDayOfWeek { get; set; }
 
@@ -60,9 +60,9 @@ public class Event : Entity<long>
 
     public int? RecurrenceCount { get; set; }
 
-    public EventStatus Status { get; set; } = EventStatus.Scheduled;
+    public EventStatus Status { get; set; }
 
-    public EventVisibility Visibility { get; set; } = EventVisibility.Private;
+    public EventVisibility Visibility { get; set; }
 
     public bool IsAllDay { get; set; } = false;
 
@@ -72,13 +72,13 @@ public class Event : Entity<long>
 
     public DateTime? LastGoogleSync { get; set; }
 
-    public string? Color { get; set; } // Calendar color
+    public string? Color { get; set; }
 
     public List<EventAttachment> Attachments { get; set; } = new();
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
 }

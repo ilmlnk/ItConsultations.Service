@@ -24,6 +24,7 @@ public class Review
     public DateTime UpdatedAt { get; set; }
 
     [Required]
+    [Range(1, 5)]
     public int Rating { get; set; }
 
     [Required]

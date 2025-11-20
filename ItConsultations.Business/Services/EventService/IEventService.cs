@@ -1,3 +1,4 @@
+using ItConsultations.Business.Dtos.AttachmentDtos;
 using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
 using ItConsultations.Business.Dtos.EventDtos;
 using ItConsultations.Business.SharedTypes.Enums.Event;
@@ -18,27 +19,27 @@ public interface IEventService
     
     Task<IEnumerable<EventDto>> SearchAsync(EventSearchDto searchDto);
     
-    Task<IEnumerable<EventDto>> GetUserEventsAsync(string userId, DateTime? fromDate = null, DateTime? toDate = null);
+    Task<IEnumerable<EventDto>> GetUserEventsAsync(GetUserEventsDto dto, string userId);
     
-    Task<IEnumerable<EventDto>> GetUpcomingEventsAsync(int days = 7);
+    Task<IEnumerable<EventDto>> GetUpcomingEventsAsync(int days);
     
-    Task<EventDto> AddParticipantAsync(string eventId, long userId, AddParticipantDto dto);
+    Task<EventDto> AddParticipantAsync(AddParticipantDto dto, string eventId, long userId);
     
     Task<bool> RemoveParticipantAsync(string eventId, long userId);
     
-    Task<EventDto> UpdateParticipantStatusAsync(string eventId, long userId, ParticipantStatus status, string? comment = null);
+    Task<EventDto> UpdateParticipantStatusAsync(string eventId, long userId, ParticipantStatus status);
     
-    Task<EventDto> AddAttachmentAsync(string eventId, long attachmentId, string? description = null);
+    Task<EventDto> AddAttachmentAsync(AddAttachmentDto dto, string eventId);
     
     Task<bool> RemoveAttachmentAsync(string eventId, long attachmentId);
     
-    Task<EventDto> UpdateRecurrenceAsync(string eventId, RecurrenceType recurrenceType, int? interval = null, DateTime? endDate = null);
+    Task<EventDto> UpdateRecurrenceAsync(UpdateRecurrenceDto dto, string eventId);
     
     Task<IEnumerable<EventDto>> GetRecurringEventsAsync(string eventId);
     
-    Task<EventDto> CancelEventAsync(string eventId, string? reason = null);
+    Task<EventDto> CancelEventAsync(CancelEventDto dto, string eventId);
     
-    Task<EventDto> RescheduleEventAsync(string eventId, DateTime newBeginDateTime, DateTime newEndDateTime);
+    Task<EventDto> RescheduleEventAsync(RescheduleEventDto dto, string eventId);
     
     Task<bool> SendInvitationsAsync(string eventId);
     
@@ -55,15 +56,15 @@ public interface IEventService
     // Export functionality
     Task<string> ExportEventToICalendarAsync(string eventId);
     
-    Task<string> ExportUserEventsToICalendarAsync(string userId, DateTime? fromDate = null, DateTime? toDate = null);
+    Task<string> ExportUserEventsToICalendarAsync(ExportEventsToICalendarDto dto, string userId);
     
     Task<string> ExportEventsToICalendarAsync(IEnumerable<long> eventIds);
     
-    Task<string> GetGoogleCalendarImportUrlAsync(string userId, DateTime? fromDate = null, DateTime? toDate = null);
+    Task<string> GetGoogleCalendarImportUrlAsync(string userId);
     
     Task<string> GetGoogleCalendarImportUrlAsync(IEnumerable<long> eventIds);
     
     Task<bool> ExportEventToGoogleCalendarAsync(string eventId, string userAccessToken);
     
-    Task<bool> ExportUserEventsToGoogleCalendarAsync(string userId, string userAccessToken, DateTime? fromDate = null, DateTime? toDate = null);
+    Task<bool> ExportUserEventsToGoogleCalendarAsync(ExportEventsToGoogleCalendarDto dto, string userId, string userAccessToken);
 } 

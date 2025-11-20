@@ -33,10 +33,10 @@ public class CoachMap : IEntityTypeConfiguration<Coach>
                .HasForeignKey("CoachId")
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(c => c.User)
+        /*builder.HasOne(c => c.User)
                .WithOne()
                .HasForeignKey<Business.Entities.Users.UserEntity>(u => u.CoachId)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Cascade);*/
         
         /*builder.HasIndex(c => c.CoachConsId).IsUnique();
         builder.HasIndex(c => c.Email).IsUnique();*/

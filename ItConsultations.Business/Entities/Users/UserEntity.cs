@@ -41,6 +41,8 @@ public class UserEntity : Entity<long>
 
     public DateTime UpdatedAt { get; set; }
 
+    public DateTime LastLoginAt { get; set; }
+
     [JsonIgnore]
     public List<RefreshToken> RefreshTokens { get; set; } = new();
 

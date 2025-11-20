@@ -1,12 +1,11 @@
-﻿using ItConsultations.Business.SharedTypes.Enums.Event;
+﻿using ItConsultations.Business.Entities.Users;
+using ItConsultations.Business.SharedTypes.Enums.Event;
 
 namespace ItConsultations.Business.Dtos.EventDtos;
 
 public class UpdateEventDto
 {
-    public long Id { get; set; }
-
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; }
 
     public string? Description { get; set; }
 
@@ -16,9 +15,9 @@ public class UpdateEventDto
 
     public string? MeetingProvider { get; set; }
 
-    public List<string> AssigneeEmails { get; set; } = new();
+    public List<string> AssigneeEmails { get; set; }
 
-    public List<long> ParticipantUserIds { get; set; } = new();
+    public List<long> ParticipantUserIds { get; set; }
 
     public DateTime BeginDateTime { get; set; }
 
@@ -26,9 +25,11 @@ public class UpdateEventDto
 
     public DateTime? ReminderTime { get; set; }
 
-    public int? ReminderMinutes { get; set; } = 15;
+    public UserEntity Creator { get; set; }
 
-    public RecurrenceType RecurrenceType { get; set; } = RecurrenceType.None;
+    public int? ReminderMinutes { get; set; }
+
+    public RecurrenceType RecurrenceType { get; set; }
 
     public int? RecurrenceInterval { get; set; } = 1;
 
@@ -40,13 +41,13 @@ public class UpdateEventDto
 
     public int? RecurrenceCount { get; set; }
 
-    public EventStatus Status { get; set; } = EventStatus.Scheduled;
+    public EventStatus Status { get; set; }
 
-    public EventVisibility Visibility { get; set; } = EventVisibility.Private;
+    public EventVisibility Visibility { get; set; }
 
-    public bool IsAllDay { get; set; } = false;
+    public bool IsAllDay { get; set; }
 
     public string? Color { get; set; }
 
-    public List<long> AttachmentIds { get; set; } = new();
+    public List<long> AttachmentIds { get; set; }
 }

@@ -5,8 +5,6 @@ namespace ItConsultations.Business.Dtos.EventDtos;
 
 public class EventDto
 {
-    public long Id { get; set; }
-
     public string EventConsId { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;

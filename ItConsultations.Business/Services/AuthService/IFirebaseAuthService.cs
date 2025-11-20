@@ -18,8 +18,6 @@ public interface IFirebaseAuthService
 
     Task<UserInfoDto> RegisterAsync(RegisterDto registerDto);
 
-    Task<UserInfoDto?> GetUserByRoleAsync(string firebaseUid, UserRole role);
-
     Task<UserEntity?> GetUserByFirebaseUidAsync(string firebaseUid);
 
     Task<UserEntity> CreateUserAsync(UserInfoDto userInfo);

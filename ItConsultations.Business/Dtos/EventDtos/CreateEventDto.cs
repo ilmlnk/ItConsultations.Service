@@ -1,4 +1,5 @@
-﻿using ItConsultations.Business.SharedTypes.Enums.Event;
+﻿using ItConsultations.Business.Entities.Users;
+using ItConsultations.Business.SharedTypes.Enums.Event;
 
 namespace ItConsultations.Business.Dtos.EventDtos;
 
@@ -15,6 +16,8 @@ public class CreateEventDto
     public string? MeetingProvider { get; set; }
 
     public List<string> AssigneeEmails { get; set; } = new();
+
+    public UserEntity Creator { get; set; }
 
     public List<long> ParticipantUserIds { get; set; } = new();
 
