@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,8 +38,10 @@ using ItConsultations.DataAccess.Repository;
 using ItConsultations.DataAccess.FileAccess;
 using ItConsultations.Business.Services.Validation.AccessValidation.Coaches;
 using ItConsultations.Logger.Services;
+using ItConsultations.Business.Services.MetaService;
+using ItConsultations.Logger.Providers;
 
-namespace ItConsultations.Configuration;
+namespace ItConsultations.Infrastructure;
 
 public static class ServiceConfigurations
 {
@@ -87,27 +88,24 @@ public static class ServiceConfigurations
 
     public static IServiceCollection AddConsultationAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSecret = configuration["Jwt:Secret"];
-        var jwtIssuer = configuration["Jwt:Issuer"];
-        var jwtAudience = configuration["Jwt:Audience"];
+        var firebaseProjectId = configuration["Firebase:ProjectId"];
+        var authority = $"https://securetoken.google.com/{firebaseProjectId}";
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                options.Authority = authority;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
+                    ValidIssuer = authority,
                     ValidateAudience = true,
+                    ValidAudience = firebaseProjectId,
                     ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtIssuer,
-                    ValidAudience = jwtAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret))
                 };
             });
 
         services.AddAuthorization();
-
         return services;
     }
 
@@ -130,6 +128,8 @@ public static class ServiceConfigurations
         services.AddScoped<IConferenceService, ConferenceService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IMetaService, MetaService>();
+        
         return services;
     }
 
@@ -171,6 +171,7 @@ public static class ServiceConfigurations
 
     public static IServiceCollection AddLoggingServices(this IServiceCollection services)
     {
+        services.AddSingleton<IDatabaseLoggerProvider, DatabaseLoggerProvider>();
         services.AddSingleton<ILoggingService, LoggingService>();
         return services;
     }
@@ -251,5 +252,21 @@ public static class ServiceConfigurations
             ?? "5000";
         builder.WebHost.UseUrls($"http://*:{port}");
         return builder;
+    }
+
+    public static IServiceCollection AddConsultationCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
+
+        return services;
     }
 }

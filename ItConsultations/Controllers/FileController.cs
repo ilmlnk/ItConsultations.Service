@@ -3,7 +3,7 @@ using ItConsultations.Business.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [Route("api/files")]
 [Authorize]

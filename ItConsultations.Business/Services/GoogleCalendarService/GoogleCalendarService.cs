@@ -4,6 +4,7 @@ using ItConsultations.Business.SharedTypes.Enums.Event;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text;
+using ItConsultations.Business.AutoMapperConfiguration;
 
 namespace ItConsultations.Business.Services.GoogleCalendarService;
 
@@ -202,37 +203,17 @@ public class GoogleCalendarService : IGoogleCalendarService
         }
     }
 
-    public async Task<Event> SyncEventFromGoogleCalendarAsync(string googleEventId, long creatorId)
+    public async Task<Event?> SyncEventFromGoogleCalendarAsync(string googleEventId, long creatorId)
     {
         try
         {
             var googleEvent = await GetEventAsync(googleEventId);
-            if (googleEvent == null)
-            {
-                _logger.LogWarning("Google Calendar event {GoogleEventId} not found", googleEventId);
-                return null;
-            }
 
             // TODO: Implement mapping from Google Calendar event to Event entity
             _logger.LogInformation("Syncing Google Calendar event {GoogleEventId} to local event", googleEventId);
 
             // This is a placeholder implementation
-            return new Event
-            {
-                EventConsId = GenerateEventConsId(),
-                Title = googleEvent.Summary,
-                Description = googleEvent.Description,
-                Location = googleEvent.Location,
-                MeetingUrl = googleEvent.HangoutLink,
-                BeginDateTime = googleEvent.Start,
-                EndDateTime = googleEvent.End,
-                IsAllDay = googleEvent.IsAllDay,
-                Color = googleEvent.ColorId,
-                GoogleCalendarEventId = googleEventId,
-                LastGoogleSync = DateTime.UtcNow,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
+            return MapperManager.Map<Event>(googleEvent);
         }
         catch (Exception ex)
         {
@@ -391,7 +372,7 @@ public class GoogleCalendarService : IGoogleCalendarService
             icalContent.AppendLine("BEGIN:VEVENT");
             icalContent.AppendLine($"UID:{eventEntity.EventConsId}@itconsultations.com");
             icalContent.AppendLine($"DTSTAMP:{DateTime.UtcNow:yyyyMMddTHHmmssZ}");
-            icalContent.AppendLine($"DTSTART:{eventEntity.BeginDateTime:yyyyMMddTHHmmssZ}");
+            icalContent.AppendLine($"DTSTART:{eventEntity.StartDateTime:yyyyMMddTHHmmssZ}");
             icalContent.AppendLine($"DTEND:{eventEntity.EndDateTime:yyyyMMddTHHmmssZ}");
             icalContent.AppendLine($"SUMMARY:{EscapeICalText(eventEntity.Title)}");
 
@@ -399,17 +380,7 @@ public class GoogleCalendarService : IGoogleCalendarService
             {
                 icalContent.AppendLine($"DESCRIPTION:{EscapeICalText(eventEntity.Description)}");
             }
-
-            if (!string.IsNullOrEmpty(eventEntity.Location))
-            {
-                icalContent.AppendLine($"LOCATION:{EscapeICalText(eventEntity.Location)}");
-            }
-
-            if (!string.IsNullOrEmpty(eventEntity.MeetingUrl))
-            {
-                icalContent.AppendLine($"URL:{eventEntity.MeetingUrl}");
-            }
-
+            
             // Add recurrence rule if applicable
             if (eventEntity.RecurrenceType != RecurrenceType.None)
             {
@@ -475,23 +446,13 @@ public class GoogleCalendarService : IGoogleCalendarService
                 icalContent.AppendLine("BEGIN:VEVENT");
                 icalContent.AppendLine($"UID:{eventEntity.EventConsId}@itconsultations.com");
                 icalContent.AppendLine($"DTSTAMP:{DateTime.UtcNow:yyyyMMddTHHmmssZ}");
-                icalContent.AppendLine($"DTSTART:{eventEntity.BeginDateTime:yyyyMMddTHHmmssZ}");
+                icalContent.AppendLine($"DTSTART:{eventEntity.StartDateTime:yyyyMMddTHHmmssZ}");
                 icalContent.AppendLine($"DTEND:{eventEntity.EndDateTime:yyyyMMddTHHmmssZ}");
                 icalContent.AppendLine($"SUMMARY:{EscapeICalText(eventEntity.Title)}");
 
                 if (!string.IsNullOrEmpty(eventEntity.Description))
                 {
                     icalContent.AppendLine($"DESCRIPTION:{EscapeICalText(eventEntity.Description)}");
-                }
-
-                if (!string.IsNullOrEmpty(eventEntity.Location))
-                {
-                    icalContent.AppendLine($"LOCATION:{EscapeICalText(eventEntity.Location)}");
-                }
-
-                if (!string.IsNullOrEmpty(eventEntity.MeetingUrl))
-                {
-                    icalContent.AppendLine($"URL:{eventEntity.MeetingUrl}");
                 }
 
                 // Add recurrence rule if applicable
@@ -608,10 +569,10 @@ public class GoogleCalendarService : IGoogleCalendarService
             return false;
         }
     }
-
-    private string GenerateEventConsId()
+    
+    public Task<bool> ExportEventAsync(Event? eventEntity, string userAccessToken)
     {
-        return "";//$"0007{DateTime.UtcNow:yyyyMMddHHmmssfff}{GetRandomSequenceNumber():D15}";
+        throw new NotImplementedException();
     }
 
     private string BuildRecurrenceRule(Event eventEntity)
@@ -690,33 +651,5 @@ public class GoogleCalendarService : IGoogleCalendarService
             .Replace(",", "\\,")
             .Replace("\n", "\\n")
             .Replace("\r", "\\r");
-    }
-
-    private string GetParticipantRoleString(ParticipantRole role)
-    {
-        return role switch
-        {
-            ParticipantRole.Organizer => "CHAIR",
-            ParticipantRole.Presenter => "REQ-PARTICIPANT",
-            ParticipantRole.Optional => "OPT-PARTICIPANT",
-            _ => "REQ-PARTICIPANT"
-        };
-    }
-
-    private string GetParticipantStatusString(ParticipantStatus status)
-    {
-        return status switch
-        {
-            ParticipantStatus.Accepted => "ACCEPTED",
-            ParticipantStatus.Declined => "DECLINED",
-            ParticipantStatus.Tentative => "TENTATIVE",
-            ParticipantStatus.NoResponse => "NEEDS-ACTION",
-            _ => "NEEDS-ACTION"
-        };
-    }
-
-    public Task<bool> ExportEventAsync(Event? eventEntity, string userAccessToken)
-    {
-        throw new NotImplementedException();
     }
 }

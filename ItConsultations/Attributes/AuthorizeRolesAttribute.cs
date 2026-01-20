@@ -1,9 +1,9 @@
+using System.Security.Claims;
 using ItConsultations.Business.SharedTypes.Enums.System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Claims;
 
-namespace ItConsultations.Attributes;
+namespace ItConsultations.WebApi.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeRolesAttribute : Attribute, IAuthorizationFilter

@@ -1,3 +1,4 @@
+using System.Text;
 using ItConsultations.Business.Dtos.AttachmentDtos;
 using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
 using ItConsultations.Business.Dtos.EventDtos;
@@ -5,9 +6,8 @@ using ItConsultations.Business.Services.EventService;
 using ItConsultations.Business.SharedTypes.Enums.Event;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [Route("api/events")]
 [Authorize]

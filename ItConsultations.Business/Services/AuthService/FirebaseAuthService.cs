@@ -62,6 +62,11 @@ public class FirebaseAuthService : IFirebaseAuthService
 
         var user = await GetUserByFirebaseUidAsync(uid);
 
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not registered in the system.");
+        }
+
         await UpdateUserLastLoginAsync(uid);
 
         var accessToken = await GenerateAccessTokenAsync(user);
@@ -74,23 +79,36 @@ public class FirebaseAuthService : IFirebaseAuthService
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             ExpiresAt = DateTime.UtcNow.AddHours(1),
-            User = userInfo
+            User = userInfo!
         };
     }
 
     public async Task<UserInfoDto> RegisterAsync(RegisterDto registerDto)
     {
-        var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(registerDto.IdToken);
+        var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(registerDto.AccessToken);
         var uid = decodedToken.Uid;
+        
         var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
 
-        return registerDto.Role switch
+        string consId = registerDto.Role switch
         {
-            UserRole.Student => MapperManager.Map<UserInfoDto>(await CreateStudentAsync(userRecord)),
-            UserRole.Coach => MapperManager.Map<UserInfoDto>(await CreateCoachAsync(userRecord)),
-            UserRole.Admin => MapperManager.Map<UserInfoDto>(await CreateAdminAsync(userRecord)),
-            _ => MapperManager.Map<UserInfoDto>(await CreateUserAsync(userRecord))
+            UserRole.Student => IdGeneratorService.IdGeneratorService.GenerateStudentId(),
+            UserRole.Coach => IdGeneratorService.IdGeneratorService.GenerateCoachId(),
+            _ => IdGeneratorService.IdGeneratorService.GenerateUserId()
         };
+
+        var newUser = MapperManager.Map<UserEntity>(registerDto);
+        newUser.FirebaseUid = uid;
+        newUser.Email = userRecord.Email;
+        newUser.PhotoUrl = userRecord.PhotoUrl;
+        newUser.ConsId = consId;
+        newUser.CreatedAt = DateTime.UtcNow;
+        newUser.UpdatedAt = DateTime.UtcNow;
+        newUser.LastLoginAt = DateTime.UtcNow;
+
+        var createdUser = await _userRepository.CreateAsync(newUser);
+        
+        return MapperManager.Map<UserInfoDto>(createdUser);
     }
 
     public async Task<bool> ValidateTokenAsync(string accessToken)
@@ -155,7 +173,7 @@ public class FirebaseAuthService : IFirebaseAuthService
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken,
             ExpiresAt = DateTime.UtcNow.AddHours(1),
-            User = userInfo
+            User = userInfo!
         };
     }
 
@@ -188,7 +206,7 @@ public class FirebaseAuthService : IFirebaseAuthService
         return _userRepository.Get(u => u.FirebaseUid == firebaseUid).FirstOrDefault();
     }
 
-    private async Task UpdateUserLastLoginAsync(string firebaseUid)
+    public async Task UpdateUserLastLoginAsync(string firebaseUid)
     {
         var user = await GetUserByFirebaseUidAsync(firebaseUid);
         
@@ -198,6 +216,19 @@ public class FirebaseAuthService : IFirebaseAuthService
         }
         user.LastLoginAt = DateTime.UtcNow;
         await _userRepository.UpdateAsync(user);
+    }
+
+    public async Task<UserInfoDto?> GetUserInfoAsync(string firebaseUid)
+    {
+        var user = await GetUserByFirebaseUidAsync(firebaseUid);
+        if (user == null) return null;
+
+        return MapperManager.Map<UserInfoDto>(user);
+    }
+
+    public async Task<UserEntity> CreateUserAsync(UserInfoDto userInfo)
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<string> GenerateAccessTokenAsync(UserEntity user)
@@ -320,39 +351,4 @@ public class FirebaseAuthService : IFirebaseAuthService
             ""client_x509_cert_url"": ""{_firebaseConfig.ClientX509CertUrl}""
         }}";
     }
-
-    Task<UserEntity> IFirebaseAuthService.CreateUserAsync(UserInfoDto userInfo)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task IFirebaseAuthService.UpdateUserLastLoginAsync(string firebaseUid)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<UserInfoDto?> GetUserInfoAsync(string firebaseUid)
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task<UserEntity> CreateUserAsync(UserRecord userRecord)
-    {
-        return await _userRepository.CreateAsync(MapperManager.Map<UserEntity>(userRecord));
-    }
-
-    private async Task<Student> CreateStudentAsync(UserRecord userRecord)
-    {
-        return await _studentRepository.CreateAsync(MapperManager.Map<Student>(userRecord));
-    }
-
-    private async Task<Coach> CreateCoachAsync(UserRecord userRecord)
-    {
-        return await _coachRepository.CreateAsync(MapperManager.Map<Coach>(userRecord));
-    }
-
-    private async Task<Admin> CreateAdminAsync(UserRecord userRecord)
-    {
-        return await _adminRepository.CreateAsync(MapperManager.Map<Admin>(userRecord));
-    }
-} 
+}

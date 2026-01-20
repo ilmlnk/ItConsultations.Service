@@ -1,33 +1,40 @@
-using ItConsultations.Business.Dtos.AuthDtos;
-using ItConsultations.Business.Services.AuthService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using FirebaseAdmin;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using FirebaseAdmin;
+using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Entities.Requests;
+using ItConsultations.Business.Services.AuthService;
+using ItConsultations.Business.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
+[ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IFirebaseAuthService _firebaseAuthService;
     private readonly IConfiguration _configuration;
+    private readonly IUserService _userService;
 
-    public AuthController(IFirebaseAuthService firebaseAuthService, IConfiguration configuration)
+    public AuthController(
+        IFirebaseAuthService firebaseAuthService, 
+        IConfiguration configuration,
+        IUserService userService)
     {
         _firebaseAuthService = firebaseAuthService;
         _configuration = configuration;
+        _userService = userService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
-        var userInfo = await _firebaseAuthService.RegisterAsync(registerDto);
-        return Ok(userInfo);
+        var user = await _firebaseAuthService.RegisterAsync(registerDto);
+        return Ok(user);
     }
 
     [HttpPost("register-simple")]
@@ -38,7 +45,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    {
+        var result = await _firebaseAuthService.LoginAsync(loginDto.IdToken);
+        return Ok(result);
+    }
+
+    [HttpPost("login-test")]
+    public IActionResult LoginTest([FromBody] LoginRequest request)
     {
         var token = GenerateJwtToken(request.Username, request.Role);
         return Ok(new { token });

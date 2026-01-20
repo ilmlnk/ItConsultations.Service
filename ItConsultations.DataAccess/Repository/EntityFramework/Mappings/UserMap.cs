@@ -14,6 +14,8 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
+        builder.Ignore("UserId");
+
         builder.Property(x => x.FirebaseUid)
             .IsRequired()
             .HasMaxLength(128);
@@ -25,6 +27,9 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
         builder.Property(x => x.PhotoUrl)
             .HasMaxLength(500);
 
+        builder.Property(x => x.TelegramUrl)
+            .HasMaxLength(255);
+
         builder.Property(x => x.Role)
             .IsRequired()
             .HasConversion<int>();
@@ -32,8 +37,8 @@ public class UserMap : IEntityTypeConfiguration<UserEntity>
         builder.Property(x => x.LastLoginAt)
             .IsRequired();
 
-        builder.HasIndex(x => x.FirebaseUid).IsUnique();
-        builder.HasIndex(x => x.Email).IsUnique();
+        // builder.HasIndex(x => x.FirebaseUid).IsUnique();
+        // builder.HasIndex(x => x.Email).IsUnique();
         builder.HasIndex(x => x.Role);
 
         /*builder.HasMany(x => x.RefreshTokens)
@@ -65,10 +70,7 @@ public class RefreshTokenMap : IEntityTypeConfiguration<RefreshToken>
         builder.Property(x => x.Token)
             .IsRequired()
             .HasMaxLength(500);
-
-        builder.Property(x => x.UserId)
-            .IsRequired();
-
+        
         builder.Property(x => x.ExpiresAt)
             .IsRequired();
 
@@ -79,13 +81,12 @@ public class RefreshTokenMap : IEntityTypeConfiguration<RefreshToken>
         builder.Property(x => x.RevokedBy).HasMaxLength(50);
 
         builder.HasIndex(x => x.Token).IsUnique();
-        builder.HasIndex(x => x.UserId);
         builder.HasIndex(x => x.ExpiresAt);
         builder.HasIndex(x => x.IsRevoked);
 
         builder.HasOne(x => x.User)
             .WithMany(x => x.RefreshTokens)
-            .HasForeignKey(x => x.UserId)
+            .HasForeignKey(x => x.Id)
             .OnDelete(DeleteBehavior.Cascade);
     }
-} 
+}

@@ -1,10 +1,10 @@
+using System.Text;
 using ItConsultations.Business.Dtos.NoteDtos;
 using ItConsultations.Business.Services.NoteService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [ApiController]
 [Route("api/notes")]

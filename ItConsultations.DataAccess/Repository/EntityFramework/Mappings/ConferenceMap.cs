@@ -25,11 +25,6 @@ public class ConferenceMap : IEntityTypeConfiguration<Conference>
 
         builder.Property(c => c.EndTime);
 
-        builder.Property(c => c.OrganizerId)
-            .IsRequired();
-
-        builder.Property(c => c.ConsultationId);
-
         builder.Property(c => c.ConferenceUrl)
             .IsRequired()
             .HasMaxLength(300);
@@ -61,7 +56,8 @@ public class ConferenceMap : IEntityTypeConfiguration<Conference>
 
         builder.HasOne(c => c.Consultation)
             .WithMany()
-            .HasForeignKey(c => c.ConsultationId)
+            .HasForeignKey(c => c.ConsultationConsId)
+            .HasPrincipalKey(cons => cons.ConsId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(c => c.Participants)

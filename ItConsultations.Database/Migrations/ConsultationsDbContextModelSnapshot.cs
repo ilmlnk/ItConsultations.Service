@@ -18,7 +18,7 @@ namespace ItConsultations.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -72,14 +72,10 @@ namespace ItConsultations.Database.Migrations
                     b.Property<long?>("ArticleId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("AttachmentConsId")
+                    b.Property<string>("AttachmentId")
                         .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)");
-
-                    b.Property<string>("AttachmentId")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -98,6 +94,9 @@ namespace ItConsultations.Database.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<long?>("ReviewId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -124,10 +123,25 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("CoachApplicationStatus")
+                        .HasColumnType("integer");
+
                     b.Property<string>("CoachConsId")
                         .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)");
+
+                    b.Property<string>("CompanyImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyPosition")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -164,11 +178,30 @@ namespace ItConsultations.Database.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<List<string>>("Skills")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text[]")
+                        .HasDefaultValueSql("'{}'");
+
+                    b.Property<string>("TelegramUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<List<string>>("Topics")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text[]")
+                        .HasDefaultValueSql("'{}'");
+
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Username")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VideoCardUrl")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -196,11 +229,7 @@ namespace ItConsultations.Database.Migrations
                         .HasColumnType("character varying(300)");
 
                     b.Property<string>("ConsultationConsId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("ConsultationId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("character varying(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -223,6 +252,14 @@ namespace ItConsultations.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("MeetingProvider")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<long>("OrganizerId")
                         .HasColumnType("bigint");
@@ -248,7 +285,7 @@ namespace ItConsultations.Database.Migrations
                     b.HasIndex("ConferenceUrl")
                         .IsUnique();
 
-                    b.HasIndex("ConsultationId");
+                    b.HasIndex("ConsultationConsId");
 
                     b.HasIndex("OrganizerId");
 
@@ -410,15 +447,11 @@ namespace ItConsultations.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<List<string>>("AssigneeEmails")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<DateTime>("BeginDateTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Color")
                         .HasColumnType("text");
+
+                    b.Property<long?>("ConferenceId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -453,17 +486,8 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime?>("LastGoogleSync")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Location")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("MeetingProvider")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("MeetingUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<int>("LocationId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("RecurrenceCount")
                         .HasColumnType("integer");
@@ -489,6 +513,9 @@ namespace ItConsultations.Database.Migrations
                     b.Property<DateTime?>("ReminderTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -505,7 +532,11 @@ namespace ItConsultations.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ConferenceId");
+
                     b.HasIndex("CreatorId");
+
+                    b.HasIndex("LocationId");
 
                     b.ToTable("Events", (string)null);
                 });
@@ -608,6 +639,39 @@ namespace ItConsultations.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EventParticipant");
+                });
+
+            modelBuilder.Entity("ItConsultations.Business.Entities.Locations.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Location");
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.LogEntries.LogEntry", b =>
@@ -787,8 +851,6 @@ namespace ItConsultations.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -822,9 +884,31 @@ namespace ItConsultations.Database.Migrations
                     b.HasIndex("Token")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("RefreshTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ItConsultations.Business.Entities.RegionalSettings.Language", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.Property<long?>("CoachId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoachId");
+
+                    b.ToTable("Language");
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Reviews.Review", b =>
@@ -918,6 +1002,10 @@ namespace ItConsultations.Database.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)");
 
+                    b.Property<string>("TelegramUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
@@ -986,23 +1074,18 @@ namespace ItConsultations.Database.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TelegramUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("FirebaseUid")
-                        .IsUnique();
 
                     b.HasIndex("Role");
 
@@ -1047,7 +1130,8 @@ namespace ItConsultations.Database.Migrations
                 {
                     b.HasOne("ItConsultations.Business.Entities.Consultations.Consultation", "Consultation")
                         .WithMany()
-                        .HasForeignKey("ConsultationId")
+                        .HasForeignKey("ConsultationConsId")
+                        .HasPrincipalKey("ConsId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ItConsultations.Business.Entities.Users.UserEntity", "Organizer")
@@ -1106,13 +1190,27 @@ namespace ItConsultations.Database.Migrations
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Events.Event", b =>
                 {
+                    b.HasOne("ItConsultations.Business.Entities.Conferences.Conference", "Conference")
+                        .WithMany()
+                        .HasForeignKey("ConferenceId");
+
                     b.HasOne("ItConsultations.Business.Entities.Users.UserEntity", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ItConsultations.Business.Entities.Locations.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conference");
+
                     b.Navigation("Creator");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Events.EventAttachment", b =>
@@ -1194,11 +1292,18 @@ namespace ItConsultations.Database.Migrations
                 {
                     b.HasOne("ItConsultations.Business.Entities.Users.UserEntity", "User")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ItConsultations.Business.Entities.RegionalSettings.Language", b =>
+                {
+                    b.HasOne("ItConsultations.Business.Entities.Coaches.Coach", null)
+                        .WithMany("Languages")
+                        .HasForeignKey("CoachId");
                 });
 
             modelBuilder.Entity("ItConsultations.Business.Entities.Reviews.Review", b =>
@@ -1243,6 +1348,8 @@ namespace ItConsultations.Database.Migrations
             modelBuilder.Entity("ItConsultations.Business.Entities.Coaches.Coach", b =>
                 {
                     b.Navigation("Consultations");
+
+                    b.Navigation("Languages");
 
                     b.Navigation("Reviews");
                 });

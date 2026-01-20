@@ -32,19 +32,19 @@ public class ConferenceService : IConferenceService
 
         conference = await _conferenceRepository.CreateAsync(conference);
 
-        if (dto.ParticipantUserIds.Any())
+        if (!dto.ParticipantUserIds.Any())
         {
-            foreach (var userId in dto.ParticipantUserIds)
-            {
-                var participant = new ConferenceParticipant
-                {
-                    ConferenceConsId = conference.ConferenceConsId,
-                    UserId = userId,
-                    Role = ConferenceParticipantRole.Guest
-                };
-
-                await _participantRepository.CreateAsync(participant);
-            }
+            return MapperManager.Map<ConferenceDto>(conference);
+        }
+        
+        foreach (var participant in dto.ParticipantUserIds.Select(userId => 
+            new ConferenceParticipant {
+                ConferenceConsId = conference.ConferenceConsId,
+                UserId = userId,
+                Role = ConferenceParticipantRole.Guest
+            }))
+        {
+            await _participantRepository.CreateAsync(participant);
         }
 
         return MapperManager.Map<ConferenceDto>(conference);
@@ -53,11 +53,6 @@ public class ConferenceService : IConferenceService
     public async Task<ConferenceDto> UpdateConferenceAsync(long id, UpdateConferenceDto dto)
     {
         var conference = await _conferenceRepository.GetAsync(id);
-
-        if (conference == null)
-        {
-            return null;
-        }
 
         MapperManager.Map(dto, conference);
         conference.UpdatedAt = DateTime.UtcNow;
@@ -70,19 +65,14 @@ public class ConferenceService : IConferenceService
     {
         var conference = await _conferenceRepository.GetAsync(id);
 
-        if (conference == null)
-        {
-            return false;
-        }
-
         await _conferenceRepository.DeleteAsync(conference);
         return true;
     }
 
-    public async Task<ConferenceDto?> GetConferenceAsync(long id)
+    public async Task<ConferenceDto> GetConferenceAsync(long id)
     {
         var conference = await _conferenceRepository.GetAsync(id);
-        return conference != null ? MapperManager.Map<ConferenceDto>(conference) : null;
+        return MapperManager.Map<ConferenceDto>(conference);
     }
 
     public async Task<ConferenceDto?> GetConferenceAsync(string id)
@@ -91,13 +81,14 @@ public class ConferenceService : IConferenceService
         return conference != null ? MapperManager.Map<ConferenceDto>(conference) : null;
     }
 
-    public async Task<IEnumerable<ConferenceDto>> GetUserConferencesAsync(long userId)
+    public Task<IEnumerable<ConferenceDto>> GetUserConferencesAsync(long userId)
     {
-        var conferences = _conferenceRepository.Get(c => c.OrganizerId == userId || c.Participants.Any(p => p.UserId == userId));
-        return MapperManager.Map<IEnumerable<ConferenceDto>>(conferences);
+        throw new NotImplementedException();
+        /*var conferences = _conferenceRepository.Get(c => c.Organizer.UserId == userId || c.Participants.Any(p => p.UserId == userId));
+        return Task.FromResult(MapperManager.Map<IEnumerable<ConferenceDto>>(conferences));*/
     }
 
-    public async Task<ConferenceDto[]> SearchConferencesAsync(ConferenceSearchDto searchDto)
+    public Task<ConferenceDto[]> SearchConferencesAsync(ConferenceSearchDto searchDto)
     {
         throw new NotImplementedException();
     }

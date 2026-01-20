@@ -40,6 +40,9 @@ public class StudentMap : IEntityTypeConfiguration<Student>
         builder.Property(s => s.LinkedInUrl)
             .HasMaxLength(255);
 
+        builder.Property(s => s.TelegramUrl)
+            .HasMaxLength(255);
+
         builder.HasOne(s => s.Consultation)
             .WithMany(c => c.Students)
             .HasForeignKey("ConsultationId")

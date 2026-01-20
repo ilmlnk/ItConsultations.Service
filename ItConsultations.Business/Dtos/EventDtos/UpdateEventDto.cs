@@ -1,4 +1,7 @@
-﻿using ItConsultations.Business.Entities.Users;
+﻿using ItConsultations.Business.Entities.Conferences;
+using ItConsultations.Business.Entities.Events;
+using ItConsultations.Business.Entities.Locations;
+using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.SharedTypes.Enums.Event;
 
 namespace ItConsultations.Business.Dtos.EventDtos;
@@ -9,17 +12,13 @@ public class UpdateEventDto
 
     public string? Description { get; set; }
 
-    public string? Location { get; set; }
+    public Location Location { get; set; }
+    
+    public Conference Conference { get; set; }
 
-    public string? MeetingUrl { get; set; }
+    public List<EventParticipant> Participants { get; set; }
 
-    public string? MeetingProvider { get; set; }
-
-    public List<string> AssigneeEmails { get; set; }
-
-    public List<long> ParticipantUserIds { get; set; }
-
-    public DateTime BeginDateTime { get; set; }
+    public DateTime StartDateTime { get; set; }
 
     public DateTime EndDateTime { get; set; }
 
@@ -31,7 +30,7 @@ public class UpdateEventDto
 
     public RecurrenceType RecurrenceType { get; set; }
 
-    public int? RecurrenceInterval { get; set; } = 1;
+    public int? RecurrenceInterval { get; set; }
 
     public DayOfWeek? RecurrenceDayOfWeek { get; set; }
 

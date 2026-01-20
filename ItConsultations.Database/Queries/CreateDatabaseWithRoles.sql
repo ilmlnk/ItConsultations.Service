@@ -144,7 +144,7 @@ BEGIN
 END
 GO
 
-CREATE INDEX IF NOT EXISTS IX_Users_FirebaseUid ON Users(FirebaseUid);
+/*CREATE INDEX IF NOT EXISTS IX_Users_FirebaseUid ON Users(FirebaseUid);
 CREATE INDEX IF NOT EXISTS IX_Users_Email ON Users(Email);
 CREATE INDEX IF NOT EXISTS IX_Users_Role ON Users(Role);
 CREATE INDEX IF NOT EXISTS IX_Users_IsActive ON Users(IsActive);
@@ -173,7 +173,7 @@ CREATE INDEX IF NOT EXISTS IX_Reviews_CoachId ON Reviews(CoachId);
 CREATE INDEX IF NOT EXISTS IX_Reviews_Rating ON Reviews(Rating);
 
 CREATE INDEX IF NOT EXISTS IX_Attachments_EntityId ON Attachments(EntityId);
-CREATE INDEX IF NOT EXISTS IX_Attachments_EntityName ON Attachments(EntityName);
+CREATE INDEX IF NOT EXISTS IX_Attachments_EntityName ON Attachments(EntityName);*/
 
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_Users_Coaches')
 BEGIN

@@ -30,6 +30,11 @@ public class FileService : IFileService
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
+    public Task<FileDto> CreateAsync(CreateFileDto createFileDto)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<FileDto> UploadAsync(UploadFileDto uploadDto, Stream fileStream)
     {
         Guard.NotNull(uploadDto);

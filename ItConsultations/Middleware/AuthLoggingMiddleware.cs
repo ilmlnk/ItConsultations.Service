@@ -1,8 +1,8 @@
+using System.Security.Claims;
 using ItConsultations.Logger.Services;
 using ItConsultations.Utilities.Guards;
-using System.Security.Claims;
 
-namespace ItConsultations.Middleware;
+namespace ItConsultations.WebApi.Middleware;
 
 public class AuthLoggingMiddleware
 {

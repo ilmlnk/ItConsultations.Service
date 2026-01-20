@@ -16,9 +16,6 @@ public class UserEntity : Entity<long>
     public string ConsId { get; set; }
 
     [Required]
-    public long UserId { get; set; }
-
-    [Required]
     public string FirstName { get; set; }
 
     public string? LastName { get; set; }
@@ -30,8 +27,7 @@ public class UserEntity : Entity<long>
     public string Email { get; set; }
 
     public string Username { get; set; }
-
-    [MaxLength(500)]
+    
     public string PhotoUrl { get; set; }
 
     [Required]
@@ -44,11 +40,13 @@ public class UserEntity : Entity<long>
     public DateTime LastLoginAt { get; set; }
 
     [JsonIgnore]
-    public List<RefreshToken> RefreshTokens { get; set; } = new();
+    public List<RefreshToken> RefreshTokens { get; set; }
 
     public string? LinkedInUrl { get; set; }
 
     public string? GitHubUrl { get; set; }
+    
+    public string? TelegramUrl { get; set; }
 
     public string? PhoneNumber { get; set; }
 }

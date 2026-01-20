@@ -1,11 +1,11 @@
-﻿using ItConsultations.Attributes;
-using ItConsultations.Business.Dtos.StudentDtos;
+﻿using ItConsultations.Business.Dtos.StudentDtos;
 using ItConsultations.Business.Services.StudentService;
 using ItConsultations.Business.SharedTypes.Enums.System;
+using ItConsultations.WebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [Authorize]
 [Route("api/students")]
@@ -30,14 +30,14 @@ public class StudentController : Controller
     public async Task<IActionResult> GetAsync(long id)
     {
         var student = await _studentService.GetAsync(id);
-        return student == null ? NotFound() : Ok(student);
+        return Ok(student);
     }
 
     [HttpGet("cons/{studentConsId}")]
     public async Task<IActionResult> GetByConsIdAsync(string studentConsId)
     {
         var student = await _studentService.GetAsync(studentConsId);
-        return student == null ? NotFound() : Ok(student);
+        return Ok(student);
     }
 
     [HttpGet]
@@ -72,7 +72,7 @@ public class StudentController : Controller
     public async Task<IActionResult> UpdateAsync(long id, [FromBody] UpdateStudentDto dto)
     {
         var student = await _studentService.UpdateAsync(dto, id);
-        return student == null ? NotFound() : Ok(student);
+        return Ok(student);
     }
 
     [Authorize]
@@ -81,6 +81,6 @@ public class StudentController : Controller
     public async Task<IActionResult> UpdateByConsIdAsync(string studentConsId, [FromBody] UpdateStudentDto dto)
     {
         var student = await _studentService.UpdateAsync(dto, studentConsId);
-        return student == null ? NotFound() : Ok(student);
+        return Ok(student);
     }
 }

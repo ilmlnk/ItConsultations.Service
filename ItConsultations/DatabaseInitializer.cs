@@ -1,7 +1,7 @@
 ﻿using ItConsultations.DataAccess.Repository.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 
-namespace ItConsultations.Configuration;
+namespace ItConsultations.WebApi;
 
 public static class DatabaseInitializer
 {

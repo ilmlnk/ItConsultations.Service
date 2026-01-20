@@ -26,12 +26,14 @@ public class Student : Entity<long>
     public string Email { get; set; }
 
     public string? PictureUrl { get; set; }
-
+    
     public string? GitHubUrl { get; set; }
 
     public string? LinkedInUrl { get; set; }
+    
+    public string? TelegramUrl { get; set; }
 
     public Consultation? Consultation { get; set; }
 
-    public UserEntity User { get; set; } = null!;
+    public UserEntity User { get; set; }
 }

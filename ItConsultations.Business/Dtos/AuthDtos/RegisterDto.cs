@@ -4,11 +4,11 @@ namespace ItConsultations.Business.Dtos.AuthDtos;
 
 public class RegisterDto
 {
-    public string IdToken { get; set; }
+    public string FirebaseUid { get; set; }
 
-    public string ConsId { get; set; }
-
-    public long UserId { get; set; }
+    public string? ConsId { get; set; }
+    
+    public string AccessToken { get; set; }
 
     public UserRole Role { get; set; }
 

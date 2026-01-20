@@ -1,5 +1,7 @@
+using AutoMapper;
 using ItConsultations.Business.AutoMapperConfiguration;
 using ItConsultations.Business.DataAccess.Interfaces;
+using ItConsultations.Business.Dtos.AuthDtos;
 using ItConsultations.Business.Dtos.UserDtos;
 using ItConsultations.Business.Entities.Users;
 using ItConsultations.Utilities.Guards;
@@ -51,6 +53,28 @@ public class UserService : IUserService
         //Guard.NotNull(user);
         //await _repository.DeleteAsync(user);
         //return MapperManager.Map<UserDto>(user);
+    }
+
+    public Task<UserDto> GetByFirebaseUidAsync(string firebaseUid)
+    {
+        var user = _repository.Get(u => u.FirebaseUid == firebaseUid);
+        return Task.FromResult(MapperManager.Map<UserDto>(user));
+    }
+
+    public async Task<UserDto> CreateOrUpdateAsync(string firebaseUid, RegisterDto dto)
+    {
+        var existingUser = _repository.Get(u => u.FirebaseUid == firebaseUid).FirstOrDefault();
+        
+        if (existingUser != null)
+        {
+            return MapperManager.Map<UserDto>(existingUser);
+        }
+        
+        var newUser = MapperManager.Map<UserEntity>(dto);
+        newUser.FirebaseUid = firebaseUid;
+
+        await _repository.CreateAsync(newUser);
+        return MapperManager.Map<UserDto>(newUser);
     }
 
     public async Task<UserDto> GetAsync(long id)

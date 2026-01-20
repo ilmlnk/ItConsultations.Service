@@ -4,6 +4,8 @@ namespace ItConsultations.Business.Services.FileService;
 
 public interface IFileService
 {
+    Task<FileDto> CreateAsync(CreateFileDto createFileDto);
+    
     Task<FileDto> UploadAsync(UploadFileDto uploadDto, Stream fileStream);
 
     Task<Stream> DownloadAsync(string filePath);

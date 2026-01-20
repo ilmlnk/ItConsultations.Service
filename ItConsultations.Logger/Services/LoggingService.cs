@@ -1,7 +1,6 @@
 using ItConsultations.Logger.Configs;
 using ItConsultations.Logger.Models;
 using ItConsultations.Logger.Providers;
-using log4net.Core;
 
 namespace ItConsultations.Logger.Services;
 
@@ -10,21 +9,13 @@ public class LoggingService : ILoggingService
     private readonly LogConfigs _config;
     private readonly IFileLoggerProvider _fileLoggerProvider;
     private readonly IDatabaseLoggerProvider _databaseLoggerProvider;
-    private readonly ILogger _logger;
 
-    public LoggingService(LogConfigs config)
+    public LoggingService(LogConfigs config, IDatabaseLoggerProvider databaseLoggerProvider)
     {
         _config = config ?? throw new ArgumentNullException(nameof(config));
-        
+        _databaseLoggerProvider = databaseLoggerProvider;
+
         _fileLoggerProvider = new FileLoggerProvider(config);
-        
-        if (_config.EnableDatabaseLogging && !string.IsNullOrEmpty(_config.DatabaseConnectionString))
-        {
-            _databaseLoggerProvider = new DatabaseLoggerProvider(config);
-        }
-        
-        var loggerFactory = new Factory.LoggerFactory(config);
-        //_logger = loggerFactory.CreateLogger<LoggingService>();
     }
 
     public async Task LogAsync(string message, LogLevel level = LogLevel.Info, Exception? exception = null)
@@ -67,7 +58,7 @@ public class LoggingService : ILoggingService
             tasks.Add(_fileLoggerProvider.WriteLogAsync(logEntry));
         }
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             tasks.Add(_databaseLoggerProvider.WriteLogAsync(logEntry));
         }
@@ -98,7 +89,7 @@ public class LoggingService : ILoggingService
             }
         }
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             try
             {
@@ -131,7 +122,7 @@ public class LoggingService : ILoggingService
             }
         }
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             try
             {
@@ -151,7 +142,7 @@ public class LoggingService : ILoggingService
     {
         var logs = new List<LogEntry>();
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             try
             {
@@ -176,7 +167,7 @@ public class LoggingService : ILoggingService
             tasks.Add(_fileLoggerProvider.ClearLogsAsync());
         }
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             tasks.Add(_databaseLoggerProvider.ClearLogsAsync(before));
         }
@@ -193,7 +184,7 @@ public class LoggingService : ILoggingService
             healthChecks.Add(_fileLoggerProvider.IsLogFileAccessibleAsync());
         }
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             healthChecks.Add(_databaseLoggerProvider.IsDatabaseAccessibleAsync());
         }
@@ -209,7 +200,7 @@ public class LoggingService : ILoggingService
     {
         var count = 0;
 
-        if (_config.EnableDatabaseLogging && _databaseLoggerProvider != null)
+        if (_config.EnableDatabaseLogging)
         {
             try
             {
@@ -245,4 +236,4 @@ public class LoggingService : ILoggingService
 
         return formattedMessage;
     }
-} 
+}

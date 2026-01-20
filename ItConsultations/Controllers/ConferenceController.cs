@@ -1,11 +1,11 @@
+using System.Security.Claims;
 using ItConsultations.Business.Dtos.ConferenceDtos.Conference;
 using ItConsultations.Business.Dtos.ConferenceDtos.RecordingDtos;
 using ItConsultations.Business.Services.ConferenceService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [Route("api/conferences")]
 [Authorize]

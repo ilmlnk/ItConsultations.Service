@@ -1,6 +1,7 @@
 ﻿using ItConsultations.Business.Entities.Coaches;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace ItConsultations.DataAccess.Repository.EntityFramework.Mappings;
 
@@ -21,7 +22,14 @@ public class CoachMap : IEntityTypeConfiguration<Coach>
         builder.Property(c => c.PictureUrl).HasMaxLength(500);
         builder.Property(c => c.LinkedInUrl).HasMaxLength(500);
         builder.Property(c => c.GitHubUrl).HasMaxLength(500);
+        builder.Property(c => c.TelegramUrl).HasMaxLength(255);
         builder.Property(c => c.AverageRating).HasPrecision(3, 2);
+        
+        builder.Property(c => c.Skills)
+            .HasDefaultValueSql("'{}'"); 
+
+        builder.Property(c => c.Topics)
+            .HasDefaultValueSql("'{}'");
         
         builder.HasMany(c => c.Consultations)
                .WithOne(c => c.Coach)

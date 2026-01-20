@@ -1,4 +1,5 @@
-﻿using ItConsultations.Business.Entities.Users;
+﻿using ItConsultations.Business.Entities.Conferences;
+using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.SharedTypes.Enums.Event;
 
 namespace ItConsultations.Business.Dtos.EventDtos;
@@ -12,18 +13,14 @@ public class EventDto
     public string? Description { get; set; }
 
     public string? Location { get; set; }
+    
+    public Conference Conference { get; set; }
 
-    public string? MeetingUrl { get; set; }
-
-    public string? MeetingProvider { get; set; }
-
-    public List<string> AssigneeEmails { get; set; } = new();
-
-    public List<EventParticipantDto> Participants { get; set; } = new();
+    public List<EventParticipantDto> Participants { get; set; }
 
     public UserEntity Creator { get; set; } = null!;
 
-    public DateTime BeginDateTime { get; set; }
+    public DateTime StartDateTime { get; set; }
 
     public DateTime EndDateTime { get; set; }
 

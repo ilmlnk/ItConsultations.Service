@@ -4,7 +4,7 @@ using ItConsultations.Business.Services.Validation.AccessValidation.Coaches;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [Authorize]
 [Route("api/coaches")]

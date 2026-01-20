@@ -20,18 +20,31 @@ public class ConsultationsDbContext : DbContext
     public ConsultationsDbContext(DbContextOptions<ConsultationsDbContext> options) : base(options) { }
 
     public DbSet<Article> Articles { get; set; }
+    
     public DbSet<Attachment> Attachments { get; set; }
+    
     public DbSet<Coach> Coaches { get; set; }
+    
     public DbSet<Consultation> Consultations { get; set; }
+    
     public DbSet<Student> Students { get; set; }
+    
     public DbSet<Review> Reviews { get; set; }
+    
     public DbSet<Event> Events { get; set; }
+    
     public DbSet<Note> Notes { get; set; }
+    
     public DbSet<Conference> Conferences { get; set; }
+    
     public DbSet<ConferenceParticipant> ConferenceParticipants { get; set; }
+    
     public DbSet<ConferenceRecording> ConferenceRecordings { get; set; }
+    
     public DbSet<UserEntity> Users { get; set; }
+    
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    
     public DbSet<LogEntry> LogEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,7 +68,7 @@ public class ConsultationsDbContext : DbContext
             entity.ToTable("Attachments");
             entity.HasKey(a => a.Id);
             entity.Property(a => a.Id).IsRequired();
-            entity.Property(a => a.AttachmentConsId).HasMaxLength(36).IsRequired();
+            entity.Property(a => a.AttachmentId).HasMaxLength(36).IsRequired();
             entity.Property(a => a.Name).IsRequired().HasMaxLength(255);
             entity.Property(a => a.FileName).IsRequired().HasMaxLength(255);
             entity.Property(a => a.CreatedAt).IsRequired();
@@ -93,7 +106,7 @@ public class ConsultationsDbContext : DbContext
             entity.Property(e => e.EventConsId).HasMaxLength(36).IsRequired();
             entity.Property(e => e.Title).IsRequired().HasMaxLength(500);
             entity.Property(e => e.Description).HasMaxLength(2000);
-            entity.Property(e => e.BeginDateTime).IsRequired();
+            entity.Property(e => e.StartDateTime).IsRequired();
             entity.Property(e => e.EndDateTime).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.Property(e => e.UpdatedAt).IsRequired();

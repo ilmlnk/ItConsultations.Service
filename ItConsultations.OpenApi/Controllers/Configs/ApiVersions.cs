@@ -2,5 +2,5 @@
 
 internal static class ApiVersions
 {
-    public const string ApiVersionV1 = "v1";
+    public const string ApiVersionV1 = "1.0";
 }

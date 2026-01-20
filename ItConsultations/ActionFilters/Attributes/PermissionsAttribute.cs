@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace ItConsultations.ActionFilters.Attributes;
+namespace ItConsultations.WebApi.ActionFilters.Attributes;
 
 public class PermissionsAttribute : TypeFilterAttribute
 {

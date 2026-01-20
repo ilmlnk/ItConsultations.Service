@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ItConsultations.Business.Entities.Conferences;
+using ItConsultations.Business.Entities.Locations;
 using ItConsultations.Business.Entities.Users;
 using ItConsultations.Business.SharedTypes.Enums.Event;
 
@@ -13,33 +15,26 @@ public class Event : Entity<long>
     public long Id { get; set; }
 
     [MaxLength(36)]
-    public string EventConsId { get; set; } = string.Empty;
+    public string EventConsId { get; set; }
 
     [Required]
     [MaxLength(200)]
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; }
 
     [MaxLength(2000)]
     public string? Description { get; set; }
+    
+    public Conference? Conference { get; set; }
+    
+    public Location Location { get; set; }
 
-    [MaxLength(500)]
-    public string? Location { get; set; }
-
-    [MaxLength(500)]
-    public string? MeetingUrl { get; set; }
-
-    [MaxLength(100)]
-    public string? MeetingProvider { get; set; }
-
-    public List<string> AssigneeEmails { get; set; } = new();
-
-    public List<EventParticipant> Participants { get; set; } = new();
+    public List<EventParticipant> Participants { get; set; }
 
     [Required]
-    public UserEntity Creator { get; set; } = null!;
+    public UserEntity Creator { get; set; }
 
     [Required]
-    public DateTime BeginDateTime { get; set; }
+    public DateTime StartDateTime { get; set; }
 
     [Required]
     public DateTime EndDateTime { get; set; }
@@ -64,7 +59,7 @@ public class Event : Entity<long>
 
     public EventVisibility Visibility { get; set; }
 
-    public bool IsAllDay { get; set; } = false;
+    public bool IsAllDay { get; set; }
 
     public string? GoogleCalendarEventId { get; set; }
 
@@ -74,7 +69,7 @@ public class Event : Entity<long>
 
     public string? Color { get; set; }
 
-    public List<EventAttachment> Attachments { get; set; } = new();
+    public List<EventAttachment> Attachments { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

@@ -4,7 +4,7 @@ using ItConsultations.Business.Services.Validation.AccessValidation.Consultation
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ItConsultations.Controllers;
+namespace ItConsultations.WebApi.Controllers;
 
 [Route("api/consultations")]
 public class ConsultationController : Controller

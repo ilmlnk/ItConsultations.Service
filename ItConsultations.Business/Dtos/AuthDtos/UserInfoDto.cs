@@ -27,6 +27,8 @@ public class UserInfoDto
     public string LinkedInUrl { get; set; }
 
     public string GitHubUrl { get; set; }
+    
+    public string TelegramUrl { get; set; }
 
     public string PhoneNumber { get; set; }
 } 
